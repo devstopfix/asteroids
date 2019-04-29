@@ -1,25 +1,25 @@
 import { fabric } from 'fabric'
 
 export default class FpsCounter {
-    
+
     constructor(canvas) {
         this.text = new fabric.Text('FPS: 0', {
-            fontFamily: 'Arial',
+            fontFamily: 'Source Code Pro,Arial,Sans',
             fontSize: 12,
-            fill: 'white',
+            fill: '#410000',
             fontWeight: 'bold',
             left: 5,
             top: 5,
             selectable: false
         })
-        
+
         canvas.add(this.text)
-        
+
         this.frames = 0
         this.startTime = Date.now()
         this.prevTime = this.startTime
     }
-    
+
     update() {
         var time = Date.now()
         this.frames++
@@ -29,7 +29,11 @@ export default class FpsCounter {
             this.prevTime = time
             this.frames = 0
 
-            this.text.setText("FPS: " + fps)
+            if (fps < 50) {
+                this.text.setText("FPS: " + fps)
+            } else {
+                this.text.setText("")
+            }
         }
     }
 }
