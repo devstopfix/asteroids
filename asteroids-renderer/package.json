@@ -1,13 +1,20 @@
 {
   "name": "asteroids-renderer",
-  "version": "1.19.2",
-  "description": "",
+  "version": "1.19.4",
+  "description": "Graphics for the Elixoids Game Engine",
   "scripts": {
     "start": "webpack-dev-server",
     "build": "node ./node_modules/webpack/bin/webpack.js -d",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "lachok",
+  "homepage": "https://github.com/lachok/asteroids",
+  "contributors": [
+    {
+      "name" : "devstopfix",
+      "url": "https://github.com/devstopfix/asteroids-graphics"
+    }
+  ],
   "license": "ISC",
   "devDependencies": {
     "babel-core": "^6.9.1",
