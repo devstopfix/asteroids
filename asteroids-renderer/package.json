@@ -1,6 +1,6 @@
 {
   "name": "asteroids-renderer",
-  "version": "1.19.6",
+  "version": "1.19.19",
   "description": "Graphics for the Elixoids Game Engine",
   "scripts": {
     "start": "webpack-dev-server",
