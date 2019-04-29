@@ -13,9 +13,9 @@ export default class Ship {
             originX: 'center',
             originY: 'center'
         })
-        
+
         this.text = new fabric.Text(id + '', {
-            fontFamily: 'Courier New',
+            fontFamily: 'Source Code Pro,Courier New',
             left: x,
             top: y + r,
             fontSize: 16,
@@ -23,13 +23,13 @@ export default class Ship {
             originX: 'center',
             originY: 'top',
         })
-        
+
         this.id = id
-        
+
         canvas.add(this.ship)
         canvas.add(this.text)
     }
-    
+
     update({x, y, r,  angle}, duration) {
         this.ship.set('angle', angle)
         this.ship.set('left', x)
@@ -38,7 +38,7 @@ export default class Ship {
         this.text.set('top', y + r)
         var animation = { angle: Math.abs(angle) }
         let animationSettings = { duration: duration, easing: utils.easing.linear }
-        
-        this.ship.animate(animation, animationSettings)        
+
+        this.ship.animate(animation, animationSettings)
     }
 }
