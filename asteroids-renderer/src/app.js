@@ -3,9 +3,6 @@ import Server from './Server'
 import Renderer from './Renderer'
 import transformFrame from './transformFrame'
 
-// console.log('fabric', fabric)
-// console.log('window.fabric', window.fabric);
-
 const serverDimensions = {WIDTH: 4000, HEIGHT: 2250}
 const clientDimensions = {WIDTH: 1920, HEIGHT: 1080}
 
@@ -31,5 +28,4 @@ window.onfocus = () => {
 }
 
 renderer.start()
-//server.connect('ws://ec2-52-58-193-54.eu-central-1.compute.amazonaws.com/websocket')
-server.connect('ws://ec2-52-28-1-127.eu-central-1.compute.amazonaws.com/websocket')
+server.connect()
