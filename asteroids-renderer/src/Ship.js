@@ -25,7 +25,7 @@ export default class Ship {
         })
 
         this.id = id
-
+        this.canvas = canvas
         canvas.add(this.ship)
         canvas.add(this.text)
     }
@@ -41,4 +41,10 @@ export default class Ship {
 
         this.ship.animate(animation, animationSettings)
     }
+
+    remove() {
+        this.canvas.remove(this.ship)
+        this.canvas.remove(this.text)
+    }
+
 }
