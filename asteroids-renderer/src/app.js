@@ -22,4 +22,4 @@ const transformRatio = {
 // window.onfocus = () => { renderer.resume(); }
 
 renderer.start()
-server.connect()
+server.connect('ws://' + window.location.host + '/0/graphics')
