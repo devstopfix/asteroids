@@ -24,16 +24,16 @@ Supported Game State Protocol
   t:   [  [team, score]  ]                  // Team high score
 }
 ```
-				
+
 Asteroid Definition
-```					
+```
 id	integer 	id of rock, autoincrementing, never reused
 x	float	metres from bottom left
 y	float	metres from bottom left
 r	float	radius in metres
-```					
+```
 Ship Definition
-```					
+```
 tag	String	3 unicode chars. unique
 x	float	metres from bottom left
 y	float	metres from bottom left
@@ -43,18 +43,24 @@ col	string	color - six char hex code (e.g. FFFFFF for white)
 ```
 
 Bullet Definition
-```					
-id	integer	
+```
+id	integer
 x	float	metres from bottom left
 y	float	metres from bottom left
-```					
+```
 eXplosion Definition		Duration and design is determined by GUI
-```					
+```
 x	float	metres from bottom left
 y	float	metres from bottom left
-```					
+```
 Frame
-```					
+```
 n	integer	Frame can be ignored if out of order (e.g. ignore frame with smaller number than last)
         Might not be sequential though - just increasing!
 ```
+
+## Build
+
+To build a minified HTML and JS file in the `bin/` folder, run:
+
+    npm run buildmin
