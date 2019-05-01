@@ -5,7 +5,7 @@ import * as utils from './utils'
 export default class Asteroid {
     constructor({ id, x, y, r }, canvas) {
 
-        this.roid = new fabric.Polygon(shapes.asteroid(r), {
+        this.roid = new fabric.Polygon(shapes.asteroid(Math.trunc(x), r), {
             left: x,
             top: y,
             fill: 'black',
@@ -27,22 +27,18 @@ export default class Asteroid {
             angle: '+=' + (duration / 20)
         }
 
-        //let textAnimation = { left: this.roid.left - 15, top: this.roid.top - 25 }
         let animationSettings = { duration: duration, easing: utils.easing.linear }
 
-        if (Math.abs(this.roid.left - x) > 100) {
+        if (Math.abs(this.roid.left - x) > 10) {
             this.roid.set('left', x)
-            //this.text.set('left', x)
         }
-        if (Math.abs(this.top - y) > 100) {
+        if (Math.abs(this.top - y) > 10) {
             this.roid.set('top', y)
-            //this.text.set('top', y)
         }
         this.roid.animate(animation, animationSettings)
     }
 
     remove() {
         this.canvas.remove(this.roid)
-        //this.canvas.remove(this.text)
     }
 }

@@ -1,21 +1,39 @@
 
-const scale = (value, radius) => value / 10 * radius 
+const scale = (value, radius) => value / 10 * radius
 
-export const asteroid = (radius) => ([
-    { x: scale(-10, radius), y: scale(0, radius)},
-    { x: scale(-5, radius), y: scale(7, radius)},
-    { x: scale(-3, radius), y: scale(4, radius)},
-    { x: scale(1, radius), y: scale(10, radius)},
-    { x: scale(5, radius), y: scale(4, radius)},
-    { x: scale(10, radius), y: scale(0, radius)},
-    { x: scale(5, radius), y: scale(-6, radius)},
-    { x: scale(2, radius), y: scale(-10, radius)},
-    { x: scale(-4, radius), y: scale(-10, radius)},
-    { x: scale(-4, radius), y: scale(-5, radius)}
-])
+const rock0 = [
+    { x: -1, y: 0 },
+    { x: -0.5, y: 0.7 },
+    { x: -0.3, y: 0.4 },
+    { x: 0.1, y: 1 },
+    { x: 0.5, y: 0.4 },
+    { x: 1, y: 0 },
+    { x: 0.5, y: -0.6 },
+    { x: 0.2, y: -1 },
+    { x: -0.4, y: -1 },
+    { x: -0.4, y: -0.5 }
+];
+
+const rock1 = [{ "x": 0.5, "y": 1.0 }, { "x": 1.0, "y": 0.5 }, { "x": 0.75, "y": 0.0 }, { "x": 1.0, "y": -0.5 }, { "x": 0.25, "y": -1.0 }, { "x": -0.5, "y": -1.0 }, { "x": -1.0, "y": -0.5 }, { "x": -1.0, "y": 0.5 }, { "x": -0.5, "y": 1.0 }, { "x": 0.0, "y": 0.5 }];
+
+const rock2 = [{"x":1.0,"y":0.5},{"x":0.5,"y":1.0},{"x":0.0,"y":0.75},{"x":-0.5,"y":1.0},{"x":-1.0,"y":0.5},{"x":-0.75,"y":0.0},{"x":-1.0,"y":-0.5},{"x":-0.5,"y":-1.0},{"x":-0.25,"y":-0.75},{"x":0.5,"y":-1.0},{"x":1.0,"y":-0.25},{"x":0.5,"y":0.25}];
+
+const rock3 = [{ "x": -1.0, "y": -0.25 }, { "x": -0.5, "y": -1.0 }, { "x": 0.0, "y": -0.25 }, { "x": 0.0, "y": -1.0 }, { "x": 0.5, "y": -1.0 }, { "x": 1.0, "y": -0.25 }, { "x": 1.0, "y": 0.25 }, { "x": 0.5, "y": 1.0 }, { "x": -0.25, "y": 1.0 }, { "x": -1.0, "y": 0.25 }, { "x": -0.5, "y": 0.0 }];
+
+const rock4 = [{"x":1.0,"y":0.25},{"x":1.0,"y":0.5},{"x":0.25,"y":1.0},{"x":-0.5,"y":1.0},{"x":-0.25,"y":0.5},{"x":-1.0,"y":0.5},{"x":-1.0,"y":-0.25},{"x":-0.5,"y":-1.0},{"x":0.25,"y":-0.75},{"x":0.5,"y":-1.0},{"x":1.0,"y":-0.5},{"x":0.25,"y":0.0}];
+
+const rocks = [rock0, rock1, rock2, rock3, rock4];
+
+
+export const asteroid = (n, radius) => rocks[n % rocks.length].map(p => scalePoint(p, radius))
+
+function scalePoint(p, s) {
+    return { x: p.x * s, y: p.y * s };
+}
+
 
 export const ship = (radius) => ([
-    {x: scale(-5, radius), y: scale(4, radius)},
-    {x: scale(0, radius), y: scale(-12, radius)},
-    {x: scale(5, radius), y: scale(4, radius)}
+    { x: scale(-5, radius), y: scale(4, radius) },
+    { x: scale(0, radius), y: scale(-12, radius) },
+    { x: scale(5, radius), y: scale(4, radius) }
 ])

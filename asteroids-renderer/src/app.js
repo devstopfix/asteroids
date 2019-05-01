@@ -23,3 +23,4 @@ const transformRatio = {
 
 renderer.start()
 server.connect('ws://' + window.location.host + '/0/graphics')
+// server.connect('ws://' + 'localhost:8065' + '/0/graphics')
