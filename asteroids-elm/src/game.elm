@@ -6,6 +6,7 @@ import Canvas exposing (..)
 import Color exposing (Color)
 import Html exposing (Html)
 import Html.Attributes exposing (style)
+import Ships exposing (..)
 
 
 type alias Dimension =
@@ -16,6 +17,7 @@ type alias Game =
     { dimension : Dimension
     , asteroids : List Asteroid
     , bullets : List Bullet
+    , ships : List Ship
     , spaceColor : Color
     , transform : Transform
     }
@@ -51,6 +53,10 @@ newGame dims =
         , newBullet 1 ( 3000, 1000 )
         , newBullet 1 ( 2000, 1000 )
         ]
+    , ships =
+        [ newShip "EST" (500, 500) 0.0
+        , newShip "WST" (3500, 500) 3.14
+        ]
     , spaceColor = Color.black
     , transform = scale (canvas_x / game_x) (canvas_y / game_y)
     }
@@ -68,12 +74,15 @@ viewGame game =
         bullets =
             renderBullets game.transform game.bullets
 
+        ships =
+            renderShips game.transform game.ships
+
         space =
             renderSpace game
     in
     Canvas.toHtml ( round width, round height )
         [ style "border" "2px solid darkred" ]
-        (List.foldl List.append [] [ asteroids, bullets, space ])
+        (List.foldl List.append [] [ asteroids, ships, bullets, space ])
 
 
 renderSpace : Game -> List Renderable
@@ -122,3 +131,18 @@ renderBullet tf bullet =
     shapes
         [ stroke bullet.color, fill bullet.color, transform [ tf, translate x y ] ]
         [ bullet.shape ]
+
+renderShips : Transform -> List Ship -> List Renderable
+renderShips tf ships =
+    List.map (renderShip tf) ships
+
+
+renderShip : Transform -> Ship -> Renderable
+renderShip tf ship =
+    let
+        ( x, y ) =
+            ship.position
+    in
+    shapes
+        [ stroke ship.color, transform [ tf, translate x y, scale 3.0 3.0, rotate ship.theta ], lineWidth 2.0 ]
+        [ ship.shape ]

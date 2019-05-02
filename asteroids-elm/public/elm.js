@@ -4911,6 +4911,24 @@ var author$project$Bullets$newBullet = F2(
 		};
 	});
 var author$project$Game$gameDimensions = _Utils_Tuple2(4000.0, 2250.0);
+var author$project$Ships$shipEast = author$project$Polygon$pointsToShape(
+	_List_fromArray(
+		[
+			_Utils_Tuple2(-5, 4),
+			_Utils_Tuple2(0, -12),
+			_Utils_Tuple2(5, 4),
+			_Utils_Tuple2(-5, 4)
+		]));
+var author$project$Ships$newShip = F3(
+	function (id, position, theta) {
+		return {
+			color: A3(avh4$elm_color$Color$rgb255, 251, 255, 251),
+			id: id,
+			position: position,
+			shape: author$project$Ships$shipEast,
+			theta: theta
+		};
+	});
 var avh4$elm_color$Color$black = A4(avh4$elm_color$Color$RgbaSpace, 0 / 255, 0 / 255, 0 / 255, 1.0);
 var joakin$elm_canvas$Canvas$Scale = F2(
 	function (a, b) {
@@ -4988,6 +5006,19 @@ var author$project$Game$newGame = function (dims) {
 				_Utils_Tuple2(2000, 1000))
 			]),
 		dimension: dims,
+		ships: _List_fromArray(
+			[
+				A3(
+				author$project$Ships$newShip,
+				'EST',
+				_Utils_Tuple2(500, 500),
+				0.0),
+				A3(
+				author$project$Ships$newShip,
+				'WST',
+				_Utils_Tuple2(3500, 500),
+				3.14)
+			]),
 		spaceColor: avh4$elm_color$Color$black,
 		transform: A2(joakin$elm_canvas$Canvas$scale, canvas_x / game_x, canvas_y / game_y)
 	};
@@ -5760,6 +5791,36 @@ var author$project$Game$renderBullets = F2(
 			author$project$Game$renderBullet(tf),
 			bullets);
 	});
+var author$project$Game$renderShip = F2(
+	function (tf, ship) {
+		var _n0 = ship.position;
+		var x = _n0.a;
+		var y = _n0.b;
+		return A2(
+			joakin$elm_canvas$Canvas$shapes,
+			_List_fromArray(
+				[
+					joakin$elm_canvas$Canvas$stroke(ship.color),
+					joakin$elm_canvas$Canvas$transform(
+					_List_fromArray(
+						[
+							tf,
+							A2(joakin$elm_canvas$Canvas$translate, x, y),
+							A2(joakin$elm_canvas$Canvas$scale, 3.0, 3.0),
+							joakin$elm_canvas$Canvas$rotate(ship.theta)
+						])),
+					joakin$elm_canvas$Canvas$lineWidth(2.0)
+				]),
+			_List_fromArray(
+				[ship.shape]));
+	});
+var author$project$Game$renderShips = F2(
+	function (tf, ships) {
+		return A2(
+			elm$core$List$map,
+			author$project$Game$renderShip(tf),
+			ships);
+	});
 var joakin$elm_canvas$Canvas$Rect = F3(
 	function (a, b, c) {
 		return {$: 'Rect', a: a, b: b, c: c};
@@ -6337,6 +6398,7 @@ var joakin$elm_canvas$Canvas$toHtml = F3(
 	});
 var author$project$Game$viewGame = function (game) {
 	var space = author$project$Game$renderSpace(game);
+	var ships = A2(author$project$Game$renderShips, game.transform, game.ships);
 	var bullets = A2(author$project$Game$renderBullets, game.transform, game.bullets);
 	var asteroids = A2(author$project$Game$renderAsteroids, game.transform, game.asteroids);
 	var _n0 = game.dimension;
@@ -6356,7 +6418,7 @@ var author$project$Game$viewGame = function (game) {
 			elm$core$List$append,
 			_List_Nil,
 			_List_fromArray(
-				[asteroids, bullets, space])));
+				[asteroids, ships, bullets, space])));
 };
 var elm$html$Html$div = _VirtualDom_node('div');
 var elm$html$Html$p = _VirtualDom_node('p');
