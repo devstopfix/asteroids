@@ -14,13 +14,14 @@ type alias Theta =
 
 
 type alias Ship =
-    { id : Id, position : Point, theta : Theta, color : Color, shape : Shape }
+    { id : Id, position : Point, theta : Theta, color : Color, tagColor : Color, shape : Shape }
 
 
 newShip : Id -> Point -> Theta -> Ship
 newShip id position theta =
     { id = id
     , color = Color.rgb255 251 255 251
+    , tagColor = Color.rgba 1 1 1 0.8
     , position = position
     , shape = shipEast
     , theta = theta

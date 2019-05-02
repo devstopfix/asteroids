@@ -6,6 +6,7 @@ import Canvas exposing (..)
 import Color exposing (Color)
 import Html exposing (Html)
 import Html.Attributes exposing (style)
+import List.FlatMap exposing (flatMap)
 import Ships exposing (..)
 
 
@@ -54,8 +55,8 @@ newGame dims =
         , newBullet 1 ( 2000, 1000 )
         ]
     , ships =
-        [ newShip "EST" (500, 500) 0.0
-        , newShip "WST" (3500, 500) 3.14
+        [ newShip "EST" ( 500, 500 ) 0.0
+        , newShip "WST" ( 3500, 500 ) 3.14
         ]
     , spaceColor = Color.black
     , transform = scale (canvas_x / game_x) (canvas_y / game_y)
@@ -132,9 +133,17 @@ renderBullet tf bullet =
         [ stroke bullet.color, fill bullet.color, transform [ tf, translate x y ] ]
         [ bullet.shape ]
 
+
 renderShips : Transform -> List Ship -> List Renderable
 renderShips tf ships =
-    List.map (renderShip tf) ships
+    List.FlatMap.flatMap (renderSpaceShip tf) ships
+
+
+renderSpaceShip : Transform -> Ship -> List Renderable
+renderSpaceShip tf ship =
+    List.append
+        [ renderShip tf ship ]
+        (renderShipName tf ship)
 
 
 renderShip : Transform -> Ship -> Renderable
@@ -146,3 +155,18 @@ renderShip tf ship =
     shapes
         [ stroke ship.color, transform [ tf, translate x y, scale 3.0 3.0, rotate ship.theta ], lineWidth 2.0 ]
         [ ship.shape ]
+
+
+renderShipName : Transform -> Ship -> List Renderable
+renderShipName tf ship =
+    let
+        ( x, y ) =
+            ship.position
+
+        tag =
+            ship.id
+
+        color =
+            ship.tagColor
+    in
+    [ text [ stroke color, fill color, transform [ tf, translate 0 60 ], font { size = 48, family = "Source Code Pro" }, align Center ] ( x , y ) tag ]

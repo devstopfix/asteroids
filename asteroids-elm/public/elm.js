@@ -4919,6 +4919,10 @@ var author$project$Ships$shipEast = author$project$Polygon$pointsToShape(
 			_Utils_Tuple2(5, 4),
 			_Utils_Tuple2(-5, 4)
 		]));
+var avh4$elm_color$Color$rgba = F4(
+	function (r, g, b, a) {
+		return A4(avh4$elm_color$Color$RgbaSpace, r, g, b, a);
+	});
 var author$project$Ships$newShip = F3(
 	function (id, position, theta) {
 		return {
@@ -4926,6 +4930,7 @@ var author$project$Ships$newShip = F3(
 			id: id,
 			position: position,
 			shape: author$project$Ships$shipEast,
+			tagColor: A4(avh4$elm_color$Color$rgba, 1, 1, 1, 0.8),
 			theta: theta
 		};
 	});
@@ -5814,11 +5819,111 @@ var author$project$Game$renderShip = F2(
 			_List_fromArray(
 				[ship.shape]));
 	});
+var joakin$elm_canvas$Canvas$Center = {$: 'Center'};
+var joakin$elm_canvas$Canvas$textAlignToString = function (alignment) {
+	switch (alignment.$) {
+		case 'Left':
+			return 'left';
+		case 'Right':
+			return 'right';
+		case 'Center':
+			return 'center';
+		case 'Start':
+			return 'start';
+		default:
+			return 'end';
+	}
+};
+var joakin$elm_canvas$Canvas$Internal$textAlign = function (align) {
+	return A2(
+		joakin$elm_canvas$Canvas$Internal$field,
+		'textAlign',
+		elm$json$Json$Encode$string(align));
+};
+var joakin$elm_canvas$Canvas$align = function (alignment) {
+	return joakin$elm_canvas$Canvas$SettingCommand(
+		joakin$elm_canvas$Canvas$Internal$textAlign(
+			joakin$elm_canvas$Canvas$textAlignToString(alignment)));
+};
+var joakin$elm_canvas$Canvas$Internal$font = function (f) {
+	return A2(
+		joakin$elm_canvas$Canvas$Internal$field,
+		'font',
+		elm$json$Json$Encode$string(f));
+};
+var joakin$elm_canvas$Canvas$font = function (_n0) {
+	var size = _n0.size;
+	var family = _n0.family;
+	return joakin$elm_canvas$Canvas$SettingCommand(
+		joakin$elm_canvas$Canvas$Internal$font(
+			elm$core$String$fromInt(size) + ('px ' + family)));
+};
+var joakin$elm_canvas$Canvas$DrawableText = function (a) {
+	return {$: 'DrawableText', a: a};
+};
+var joakin$elm_canvas$Canvas$text = F3(
+	function (settings, point, str) {
+		return A2(
+			joakin$elm_canvas$Canvas$addSettingsToRenderable,
+			settings,
+			joakin$elm_canvas$Canvas$Renderable(
+				{
+					commands: _List_Nil,
+					drawOp: joakin$elm_canvas$Canvas$NotSpecified,
+					drawable: joakin$elm_canvas$Canvas$DrawableText(
+						{maxWidth: elm$core$Maybe$Nothing, point: point, text: str})
+				}));
+	});
+var author$project$Game$renderShipName = F2(
+	function (tf, ship) {
+		var tag = ship.id;
+		var color = ship.tagColor;
+		var _n0 = ship.position;
+		var x = _n0.a;
+		var y = _n0.b;
+		return _List_fromArray(
+			[
+				A3(
+				joakin$elm_canvas$Canvas$text,
+				_List_fromArray(
+					[
+						joakin$elm_canvas$Canvas$stroke(color),
+						joakin$elm_canvas$Canvas$fill(color),
+						joakin$elm_canvas$Canvas$transform(
+						_List_fromArray(
+							[
+								tf,
+								A2(joakin$elm_canvas$Canvas$translate, 0, 60)
+							])),
+						joakin$elm_canvas$Canvas$font(
+						{family: 'Source Code Pro', size: 48}),
+						joakin$elm_canvas$Canvas$align(joakin$elm_canvas$Canvas$Center)
+					]),
+				_Utils_Tuple2(x, y),
+				tag)
+			]);
+	});
+var author$project$Game$renderSpaceShip = F2(
+	function (tf, ship) {
+		return A2(
+			elm$core$List$append,
+			_List_fromArray(
+				[
+					A2(author$project$Game$renderShip, tf, ship)
+				]),
+			A2(author$project$Game$renderShipName, tf, ship));
+	});
+var ccapndave$elm_flat_map$List$FlatMap$join = A2(elm$core$List$foldr, elm$core$Basics$append, _List_Nil);
+var ccapndave$elm_flat_map$List$FlatMap$flatMap = F2(
+	function (f, list) {
+		return ccapndave$elm_flat_map$List$FlatMap$join(
+			A2(elm$core$List$map, f, list));
+	});
 var author$project$Game$renderShips = F2(
 	function (tf, ships) {
 		return A2(
-			elm$core$List$map,
-			author$project$Game$renderShip(tf),
+			ccapndave$elm_flat_map$List$FlatMap$flatMap,
+			author$project$Game$renderSpaceShip(tf),
 			ships);
 	});
 var joakin$elm_canvas$Canvas$Rect = F3(
