@@ -33,7 +33,10 @@ newGame dims =
         newAsteroid 1 ( 2000, 1125 ) 120.0,
         newAsteroid 2 ( 4000, 2250 ) 60.0,
         newAsteroid 3 (    0, 2250 ) 30.0,
-        newAsteroid 4 ( 4000,    0 ) 15.0
+        newAsteroid 4 ( 4000,    0 ) 15.0,
+        newAsteroid 5 ( 4000 - 30,   30 ) 30.0,
+        newAsteroid 6 ( 4000 - 60 - 30,   60 + 30 ) 60.0,
+        newAsteroid 7 ( 4000 - 120 - 60 - 30,  120 + 60 + 30 ) 120.0
         ]
     , spaceColor = Color.black
     , transform = scale (canvas_x / game_x) (canvas_y / game_y)

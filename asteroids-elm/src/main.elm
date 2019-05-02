@@ -27,7 +27,8 @@ view model =
     div []
         (List.append
             (List.map (\g -> Game.viewGame g t) model.games)
-            [ p [] [ text "Hello, Player!" ] ])
+            [ p [] [ text "Hello, Player!" ] ]
+        )
 
 
 update msg model =
@@ -39,7 +40,17 @@ update msg model =
 main : Program () Model Msg
 main =
     Browser.element
-        { init = \() -> ( { count = 0, games = [ newGame ( 400, 225 ), newGame ( 400, 225 ), newGame ( 800, 450 )] }, Cmd.none )
+        { init =
+            \() ->
+                ( { count = 0
+                  , games =
+                        [ newGame ( 800, 450 )
+                        , newGame ( 400, 225 )
+                        , newGame ( 400, 225 )
+                        ]
+                  }
+                , Cmd.none
+                )
         , view = view
         , update = update
         , subscriptions = \model -> onAnimationFrameDelta Frame

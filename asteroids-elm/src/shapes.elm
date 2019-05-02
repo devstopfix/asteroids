@@ -1,21 +1,54 @@
 module Shapes exposing (rockWithRadius)
 
-import Points exposing (closePolygon)
 import Point2d exposing (Point2d, fromCoordinates, origin)
-import Polygon2d exposing (scaleAbout, singleLoop, outerLoop)
+import Points exposing (closePolygon)
+import Polygon2d exposing (Polygon2d, outerLoop, scaleAbout, singleLoop)
+import Rocks exposing (..)
 
--- type RockType = Classic1
 
-rockDef1 =
-    [ ( 0.5, 1.0 ), ( 1.0, 0.5 ), ( 0.75, 0.0 ), ( 1.0, -0.5 ), ( 0.25, -1.0 ), ( -0.5, -1.0 ), ( -1.0, -0.5 ), ( -1.0, 0.5 ), ( -0.5, 1.0 ), ( 0.0, 0.5 ) ]
+rockWithRadius : RockType -> Float -> List Point2d
+rockWithRadius rt radius =
+    let
+        rock =
+            lookup rt
+    in
+    scaleAbout origin radius rock |> outerLoop |> closePolygon
 
 
 points ps =
     List.map (\( x, y ) -> fromCoordinates ( x, y )) ps
 
-rock1 =
-    rockDef1 |> points |> singleLoop
 
-rockWithRadius : Float -> List Point2d
-rockWithRadius radius =
-    (scaleAbout origin radius rock1) |> outerLoop |> closePolygon
+polygon =
+    singleLoop << points
+
+
+classicRockPolygon1 =
+    polygon classicRock1
+
+
+classicRockPolygon2 =
+    polygon classicRock2
+
+
+classicRockPolygon3 =
+    polygon classicRock3
+
+
+classicRockPolygon4 =
+    polygon classicRock4
+
+
+lookup rockType =
+    case rockType of
+        Classic1 ->
+            classicRockPolygon1
+
+        Classic2 ->
+            classicRockPolygon2
+
+        Classic3 ->
+            classicRockPolygon3
+
+        Classic4 ->
+            classicRockPolygon4
