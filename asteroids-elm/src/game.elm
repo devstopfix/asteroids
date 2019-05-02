@@ -43,8 +43,8 @@ newGame dims =
     }
 
 
-viewGame : Game -> Int -> Html msg
-viewGame game t =
+viewGame : Game -> Html msg
+viewGame game =
     let
         ( width, height ) =
             game.dimension
@@ -56,38 +56,20 @@ viewGame game t =
                 [ fill game.spaceColor ]
                 [ rect ( 0, 0 ) width height ]
             ]
-            (List.map (\a -> renderAsteroid a t game.transform) game.asteroids)
+            (List.map (\a -> renderAsteroid a game.transform) game.asteroids)
         )
-
-
-cycle : Int -> Float
-cycle t =
-    let
-        framesPerRevolution =
-            480
-
-        n =
-            modBy framesPerRevolution t
-
-        f =
-            toFloat n / framesPerRevolution
-    in
-    f * 2 * pi
 
 
 
 -- [ translate x y, rotate theta ]
 
 
-renderAsteroid : Asteroid -> Int -> Transform -> Renderable
-renderAsteroid asteroid t tf =
+renderAsteroid : Asteroid -> Transform -> Renderable
+renderAsteroid asteroid tf =
     let
         ( x, y ) =
             asteroid.position
-
-        theta =
-            cycle t
     in
     shapes
-        [ stroke Color.white, fill asteroid.color, transform [ tf, translate x y, rotate theta ], lineWidth 4.0 ]
+        [ stroke Color.white, fill asteroid.color, transform [ tf, translate x y, rotate asteroid.theta ], lineWidth 4.0 ]
         [ asteroid.shape ]

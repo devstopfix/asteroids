@@ -1,5 +1,6 @@
 module Main exposing (main)
 
+import Asteroids exposing (rotateAsteroids)
 import Browser
 import Browser.Events exposing (onAnimationFrameDelta)
 import Canvas exposing (..)
@@ -9,7 +10,7 @@ import Html.Attributes exposing (style)
 
 
 type alias Model =
-    { count : Float
+    { count : Int
     , games : List Game
     }
 
@@ -22,11 +23,11 @@ view : Model -> Html msg
 view model =
     let
         t =
-            round model.count
+            model.count
     in
     div []
         (List.append
-            (List.map (\g -> Game.viewGame g t) model.games)
+            (List.map (\g -> Game.viewGame g) model.games)
             [ p [] [ text "Hello, Player!" ] ]
         )
 
@@ -34,7 +35,9 @@ view model =
 update msg model =
     case msg of
         Frame _ ->
-            ( { model | count = model.count + 1 }, Cmd.none )
+            ( { model | count = (model.count + 1), games = (updateGames model.games model.count) }
+            , Cmd.none
+            )
 
 
 main : Program () Model Msg
@@ -47,6 +50,10 @@ main =
                         [ newGame ( 800, 450 )
                         , newGame ( 400, 225 )
                         , newGame ( 400, 225 )
+                        , newGame ( 200, 112 )
+                        , newGame ( 200, 112 )
+                        , newGame ( 200, 112 )
+                        , newGame ( 200, 112 )
                         ]
                   }
                 , Cmd.none
@@ -55,3 +62,13 @@ main =
         , update = update
         , subscriptions = \model -> onAnimationFrameDelta Frame
         }
+
+
+updateGames : List Game -> Int -> List Game
+updateGames games t =
+    List.map (updateGame t) games
+
+
+updateGame : Int -> Game -> Game
+updateGame t game =
+    { game | asteroids = rotateAsteroids t game.asteroids }

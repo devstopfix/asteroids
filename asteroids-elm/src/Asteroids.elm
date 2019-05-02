@@ -1,4 +1,4 @@
-module Asteroids exposing (Asteroid, newAsteroid)
+module Asteroids exposing (Asteroid, newAsteroid, rotateAsteroids)
 
 import Canvas exposing (Point, Shape)
 import Color exposing (Color)
@@ -60,3 +60,33 @@ chooseShape i =
 
         _ ->
             Classic4
+
+
+rotateAsteroids : Int -> List Asteroid -> List Asteroid
+rotateAsteroids t asteroids =
+    let
+        theta =
+            cycle t
+    in
+    List.map (rotateAsteroid theta) asteroids
+
+
+-- TODO prevent all asteroids rotating in lockstep
+rotateAsteroid : Theta -> Asteroid -> Asteroid
+rotateAsteroid theta asteroid =
+    { asteroid | theta = theta }
+
+
+cycle : Int -> Theta
+cycle t =
+    let
+        framesPerRevolution =
+            480
+
+        n =
+            modBy framesPerRevolution t
+
+        f =
+            toFloat n / framesPerRevolution
+    in
+    f * 2 * pi

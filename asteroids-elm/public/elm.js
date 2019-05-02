@@ -4951,6 +4951,42 @@ var author$project$Game$newGame = function (dims) {
 var author$project$Main$Frame = function (a) {
 	return {$: 'Frame', a: a};
 };
+var elm$core$Basics$pi = _Basics_pi;
+var author$project$Asteroids$cycle = function (t) {
+	var framesPerRevolution = 480;
+	var n = A2(elm$core$Basics$modBy, framesPerRevolution, t);
+	var f = n / framesPerRevolution;
+	return (f * 2) * elm$core$Basics$pi;
+};
+var author$project$Asteroids$rotateAsteroid = F2(
+	function (theta, asteroid) {
+		return _Utils_update(
+			asteroid,
+			{theta: theta});
+	});
+var author$project$Asteroids$rotateAsteroids = F2(
+	function (t, asteroids) {
+		var theta = author$project$Asteroids$cycle(t);
+		return A2(
+			elm$core$List$map,
+			author$project$Asteroids$rotateAsteroid(theta),
+			asteroids);
+	});
+var author$project$Main$updateGame = F2(
+	function (t, game) {
+		return _Utils_update(
+			game,
+			{
+				asteroids: A2(author$project$Asteroids$rotateAsteroids, t, game.asteroids)
+			});
+	});
+var author$project$Main$updateGames = F2(
+	function (games, t) {
+		return A2(
+			elm$core$List$map,
+			author$project$Main$updateGame(t),
+			games);
+	});
 var elm$core$Basics$False = {$: 'False'};
 var elm$core$Basics$True = {$: 'True'};
 var elm$core$Result$isOk = function (result) {
@@ -5319,16 +5355,12 @@ var author$project$Main$update = F2(
 		return _Utils_Tuple2(
 			_Utils_update(
 				model,
-				{count: model.count + 1}),
+				{
+					count: model.count + 1,
+					games: A2(author$project$Main$updateGames, model.games, model.count)
+				}),
 			elm$core$Platform$Cmd$none);
 	});
-var elm$core$Basics$pi = _Basics_pi;
-var author$project$Game$cycle = function (t) {
-	var framesPerRevolution = 480;
-	var n = A2(elm$core$Basics$modBy, framesPerRevolution, t);
-	var f = n / framesPerRevolution;
-	return (f * 2) * elm$core$Basics$pi;
-};
 var avh4$elm_color$Color$white = A4(avh4$elm_color$Color$RgbaSpace, 255 / 255, 255 / 255, 255 / 255, 1.0);
 var joakin$elm_canvas$Canvas$Fill = function (a) {
 	return {$: 'Fill', a: a};
@@ -5626,9 +5658,8 @@ var joakin$elm_canvas$Canvas$Translate = F2(
 		return {$: 'Translate', a: a, b: b};
 	});
 var joakin$elm_canvas$Canvas$translate = joakin$elm_canvas$Canvas$Translate;
-var author$project$Game$renderAsteroid = F3(
-	function (asteroid, t, tf) {
-		var theta = author$project$Game$cycle(t);
+var author$project$Game$renderAsteroid = F2(
+	function (asteroid, tf) {
 		var _n0 = asteroid.position;
 		var x = _n0.a;
 		var y = _n0.b;
@@ -5643,7 +5674,7 @@ var author$project$Game$renderAsteroid = F3(
 						[
 							tf,
 							A2(joakin$elm_canvas$Canvas$translate, x, y),
-							joakin$elm_canvas$Canvas$rotate(theta)
+							joakin$elm_canvas$Canvas$rotate(asteroid.theta)
 						])),
 					joakin$elm_canvas$Canvas$lineWidth(4.0)
 				]),
@@ -6203,52 +6234,51 @@ var joakin$elm_canvas$Canvas$toHtml = F3(
 					_List_Nil)
 				]));
 	});
-var author$project$Game$viewGame = F2(
-	function (game, t) {
-		var _n0 = game.dimension;
-		var width = _n0.a;
-		var height = _n0.b;
-		return A3(
-			joakin$elm_canvas$Canvas$toHtml,
-			_Utils_Tuple2(
-				elm$core$Basics$round(width),
-				elm$core$Basics$round(height)),
+var author$project$Game$viewGame = function (game) {
+	var _n0 = game.dimension;
+	var width = _n0.a;
+	var height = _n0.b;
+	return A3(
+		joakin$elm_canvas$Canvas$toHtml,
+		_Utils_Tuple2(
+			elm$core$Basics$round(width),
+			elm$core$Basics$round(height)),
+		_List_fromArray(
+			[
+				A2(elm$html$Html$Attributes$style, 'border', '2px solid darkred')
+			]),
+		A2(
+			elm$core$List$append,
 			_List_fromArray(
 				[
-					A2(elm$html$Html$Attributes$style, 'border', '2px solid darkred')
+					A2(
+					joakin$elm_canvas$Canvas$shapes,
+					_List_fromArray(
+						[
+							joakin$elm_canvas$Canvas$fill(game.spaceColor)
+						]),
+					_List_fromArray(
+						[
+							A3(
+							joakin$elm_canvas$Canvas$rect,
+							_Utils_Tuple2(0, 0),
+							width,
+							height)
+						]))
 				]),
 			A2(
-				elm$core$List$append,
-				_List_fromArray(
-					[
-						A2(
-						joakin$elm_canvas$Canvas$shapes,
-						_List_fromArray(
-							[
-								joakin$elm_canvas$Canvas$fill(game.spaceColor)
-							]),
-						_List_fromArray(
-							[
-								A3(
-								joakin$elm_canvas$Canvas$rect,
-								_Utils_Tuple2(0, 0),
-								width,
-								height)
-							]))
-					]),
-				A2(
-					elm$core$List$map,
-					function (a) {
-						return A3(author$project$Game$renderAsteroid, a, t, game.transform);
-					},
-					game.asteroids)));
-	});
+				elm$core$List$map,
+				function (a) {
+					return A2(author$project$Game$renderAsteroid, a, game.transform);
+				},
+				game.asteroids)));
+};
 var elm$html$Html$div = _VirtualDom_node('div');
 var elm$html$Html$p = _VirtualDom_node('p');
 var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
 var author$project$Main$view = function (model) {
-	var t = elm$core$Basics$round(model.count);
+	var t = model.count;
 	return A2(
 		elm$html$Html$div,
 		_List_Nil,
@@ -6257,7 +6287,7 @@ var author$project$Main$view = function (model) {
 			A2(
 				elm$core$List$map,
 				function (g) {
-					return A2(author$project$Game$viewGame, g, t);
+					return author$project$Game$viewGame(g);
 				},
 				model.games),
 			_List_fromArray(
@@ -6640,7 +6670,15 @@ var author$project$Main$main = elm$browser$Browser$element(
 							author$project$Game$newGame(
 							_Utils_Tuple2(400, 225)),
 							author$project$Game$newGame(
-							_Utils_Tuple2(400, 225))
+							_Utils_Tuple2(400, 225)),
+							author$project$Game$newGame(
+							_Utils_Tuple2(200, 112)),
+							author$project$Game$newGame(
+							_Utils_Tuple2(200, 112)),
+							author$project$Game$newGame(
+							_Utils_Tuple2(200, 112)),
+							author$project$Game$newGame(
+							_Utils_Tuple2(200, 112))
 						])
 				},
 				elm$core$Platform$Cmd$none);
