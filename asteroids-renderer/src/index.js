@@ -1,2 +1,2 @@
-require('file?name=[name].[ext]!./index.html')
+require('file?name=[name].[ext]!./game.html')
 require('./app')
