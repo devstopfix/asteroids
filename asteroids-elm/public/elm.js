@@ -4910,7 +4910,7 @@ var author$project$Bullets$newBullet = F2(
 				4)
 		};
 	});
-var author$project$Explosions$explosionDuration = 30;
+var author$project$Explosions$explosionDuration = 20;
 var avh4$elm_color$Color$rgba = F4(
 	function (r, g, b, a) {
 		return A4(avh4$elm_color$Color$RgbaSpace, r, g, b, a);
@@ -4919,6 +4919,7 @@ var author$project$Explosions$newExplosion = function (p) {
 	return {
 		color: A4(avh4$elm_color$Color$rgba, 1, 1, 0.8, 0.8),
 		framesRemaining: author$project$Explosions$explosionDuration,
+		opacity: 0.98,
 		position: p,
 		radius: 60.0
 	};
@@ -4998,42 +4999,7 @@ var author$project$Game$newGame = function (dims) {
 				author$project$Asteroids$newAsteroid,
 				7,
 				_Utils_Tuple2(((4000 - 120) - 60) - 30, (120 + 60) + 30),
-				120.0),
-				A3(
-				author$project$Asteroids$newAsteroid,
-				21,
-				_Utils_Tuple2(1000, 2250),
-				60.0),
-				A3(
-				author$project$Asteroids$newAsteroid,
-				22,
-				_Utils_Tuple2(1000, 2250),
-				60.0),
-				A3(
-				author$project$Asteroids$newAsteroid,
-				23,
-				_Utils_Tuple2(1000, 2250),
-				60.0),
-				A3(
-				author$project$Asteroids$newAsteroid,
-				24,
-				_Utils_Tuple2(1000, 2250),
-				60.0),
-				A3(
-				author$project$Asteroids$newAsteroid,
-				25,
-				_Utils_Tuple2(1000, 2250),
-				60.0),
-				A3(
-				author$project$Asteroids$newAsteroid,
-				26,
-				_Utils_Tuple2(1000, 2250),
-				60.0),
-				A3(
-				author$project$Asteroids$newAsteroid,
-				27,
-				_Utils_Tuple2(1000, 2250),
-				60.0)
+				120.0)
 			]),
 		bullets: _List_fromArray(
 			[
@@ -5101,12 +5067,43 @@ var author$project$Asteroids$rotateAsteroids = F2(
 			author$project$Asteroids$rotateAsteroid(theta),
 			asteroids);
 	});
+var author$project$Explosions$isActive = function (e) {
+	return e.framesRemaining > 0;
+};
+var author$project$Explosions$updateExplosion = F2(
+	function (t, explosion) {
+		return _Utils_update(
+			explosion,
+			{framesRemaining: explosion.framesRemaining - 1, opacity: explosion.opacity * 0.99, radius: explosion.radius * 1.05});
+	});
+var elm$core$List$filter = F2(
+	function (isGood, list) {
+		return A3(
+			elm$core$List$foldr,
+			F2(
+				function (x, xs) {
+					return isGood(x) ? A2(elm$core$List$cons, x, xs) : xs;
+				}),
+			_List_Nil,
+			list);
+	});
+var author$project$Explosions$updateExplosions = F2(
+	function (t, explosions) {
+		return A2(
+			elm$core$List$filter,
+			author$project$Explosions$isActive,
+			A2(
+				elm$core$List$map,
+				author$project$Explosions$updateExplosion(t),
+				explosions));
+	});
 var author$project$Main$updateGame = F2(
 	function (t, game) {
 		return _Utils_update(
 			game,
 			{
-				asteroids: A2(author$project$Asteroids$rotateAsteroids, t, game.asteroids)
+				asteroids: A2(author$project$Asteroids$rotateAsteroids, t, game.asteroids),
+				explosions: A2(author$project$Explosions$updateExplosions, t, game.explosions)
 			});
 	});
 var author$project$Main$updateGames = F2(

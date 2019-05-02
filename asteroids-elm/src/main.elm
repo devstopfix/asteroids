@@ -4,6 +4,7 @@ import Asteroids exposing (rotateAsteroids)
 import Browser
 import Browser.Events exposing (onAnimationFrameDelta)
 import Canvas exposing (..)
+import Explosions exposing (updateExplosions)
 import Game exposing (Game, newGame, viewGame)
 import Html exposing (Html, div, p, text)
 import Html.Attributes exposing (style)
@@ -35,7 +36,10 @@ view model =
 update msg model =
     case msg of
         Frame _ ->
-            ( { model | count = (model.count + 1), games = (updateGames model.games model.count) }
+            ( { model
+                | count = model.count + 1
+                , games = updateGames model.games model.count
+              }
             , Cmd.none
             )
 
@@ -71,4 +75,5 @@ updateGames games t =
 
 updateGame : Int -> Game -> Game
 updateGame t game =
-    { game | asteroids = rotateAsteroids t game.asteroids }
+    { game | asteroids = rotateAsteroids t game.asteroids
+    , explosions = (updateExplosions t game.explosions ) }
