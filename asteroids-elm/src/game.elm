@@ -4,6 +4,7 @@ import Asteroids exposing (Asteroid, newAsteroid)
 import Bullets exposing (Bullet, newBullet)
 import Canvas exposing (..)
 import Color exposing (Color)
+import Explosions exposing (Explosion, newExplosion)
 import Html exposing (Html)
 import Html.Attributes exposing (style)
 import List.FlatMap exposing (flatMap)
@@ -18,6 +19,7 @@ type alias Game =
     { dimension : Dimension
     , asteroids : List Asteroid
     , bullets : List Bullet
+    , explosions : List Explosion
     , ships : List Ship
     , spaceColor : Color
     , transform : Transform
@@ -54,6 +56,7 @@ newGame dims =
         , newBullet 1 ( 3000, 1000 )
         , newBullet 1 ( 2000, 1000 )
         ]
+    , explosions = [ newExplosion ( 3000, 500 ) ]
     , ships =
         [ newShip "EST" ( 500, 500 ) 0.0
         , newShip "WST" ( 3500, 500 ) 3.14
@@ -75,6 +78,9 @@ viewGame game =
         bullets =
             renderBullets game.transform game.bullets
 
+        explosions =
+            renderExplosions game.transform game.explosions
+
         ships =
             renderShips game.transform game.ships
 
@@ -83,7 +89,7 @@ viewGame game =
     in
     Canvas.toHtml ( round width, round height )
         [ style "border" "2px solid darkred" ]
-        (List.foldl List.append [] [ asteroids, ships, bullets, space ])
+        (List.foldl List.append [] [ explosions, asteroids, ships, bullets, space ])
 
 
 renderSpace : Game -> List Renderable
@@ -134,6 +140,25 @@ renderBullet tf bullet =
         [ bullet.shape ]
 
 
+renderExplosions : Transform -> List Explosion -> List Renderable
+renderExplosions tf explosions =
+    List.map (renderExplosion tf) explosions
+
+
+renderExplosion : Transform -> Explosion -> Renderable
+renderExplosion tf explosion =
+    let
+        ( x, y ) =
+            explosion.position
+
+        color =
+            explosion.color
+    in
+    shapes
+        [ stroke color, fill color, transform [ tf, translate x y ] ]
+        [ circle ( 0, 0 ) explosion.radius ]
+
+
 renderShips : Transform -> List Ship -> List Renderable
 renderShips tf ships =
     List.FlatMap.flatMap (renderSpaceShip tf) ships
@@ -169,4 +194,4 @@ renderShipName tf ship =
         color =
             ship.tagColor
     in
-    [ text [ stroke color, fill color, transform [ tf, translate 0 60 ], font { size = 48, family = "Source Code Pro" }, align Center ] ( x , y ) tag ]
+    [ text [ stroke color, fill color, transform [ tf, translate 0 60 ], font { size = 48, family = "Source Code Pro" }, align Center ] ( x, y ) tag ]

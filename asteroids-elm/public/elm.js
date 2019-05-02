@@ -4910,6 +4910,19 @@ var author$project$Bullets$newBullet = F2(
 				4)
 		};
 	});
+var author$project$Explosions$explosionDuration = 30;
+var avh4$elm_color$Color$rgba = F4(
+	function (r, g, b, a) {
+		return A4(avh4$elm_color$Color$RgbaSpace, r, g, b, a);
+	});
+var author$project$Explosions$newExplosion = function (p) {
+	return {
+		color: A4(avh4$elm_color$Color$rgba, 1, 1, 0.8, 0.8),
+		framesRemaining: author$project$Explosions$explosionDuration,
+		position: p,
+		radius: 60.0
+	};
+};
 var author$project$Game$gameDimensions = _Utils_Tuple2(4000.0, 2250.0);
 var author$project$Ships$shipEast = author$project$Polygon$pointsToShape(
 	_List_fromArray(
@@ -4919,10 +4932,6 @@ var author$project$Ships$shipEast = author$project$Polygon$pointsToShape(
 			_Utils_Tuple2(5, 4),
 			_Utils_Tuple2(-5, 4)
 		]));
-var avh4$elm_color$Color$rgba = F4(
-	function (r, g, b, a) {
-		return A4(avh4$elm_color$Color$RgbaSpace, r, g, b, a);
-	});
 var author$project$Ships$newShip = F3(
 	function (id, position, theta) {
 		return {
@@ -4989,7 +4998,42 @@ var author$project$Game$newGame = function (dims) {
 				author$project$Asteroids$newAsteroid,
 				7,
 				_Utils_Tuple2(((4000 - 120) - 60) - 30, (120 + 60) + 30),
-				120.0)
+				120.0),
+				A3(
+				author$project$Asteroids$newAsteroid,
+				21,
+				_Utils_Tuple2(1000, 2250),
+				60.0),
+				A3(
+				author$project$Asteroids$newAsteroid,
+				22,
+				_Utils_Tuple2(1000, 2250),
+				60.0),
+				A3(
+				author$project$Asteroids$newAsteroid,
+				23,
+				_Utils_Tuple2(1000, 2250),
+				60.0),
+				A3(
+				author$project$Asteroids$newAsteroid,
+				24,
+				_Utils_Tuple2(1000, 2250),
+				60.0),
+				A3(
+				author$project$Asteroids$newAsteroid,
+				25,
+				_Utils_Tuple2(1000, 2250),
+				60.0),
+				A3(
+				author$project$Asteroids$newAsteroid,
+				26,
+				_Utils_Tuple2(1000, 2250),
+				60.0),
+				A3(
+				author$project$Asteroids$newAsteroid,
+				27,
+				_Utils_Tuple2(1000, 2250),
+				60.0)
 			]),
 		bullets: _List_fromArray(
 			[
@@ -5011,6 +5055,11 @@ var author$project$Game$newGame = function (dims) {
 				_Utils_Tuple2(2000, 1000))
 			]),
 		dimension: dims,
+		explosions: _List_fromArray(
+			[
+				author$project$Explosions$newExplosion(
+				_Utils_Tuple2(3000, 500))
+			]),
 		ships: _List_fromArray(
 			[
 				A3(
@@ -5796,6 +5845,40 @@ var author$project$Game$renderBullets = F2(
 			author$project$Game$renderBullet(tf),
 			bullets);
 	});
+var author$project$Game$renderExplosion = F2(
+	function (tf, explosion) {
+		var color = explosion.color;
+		var _n0 = explosion.position;
+		var x = _n0.a;
+		var y = _n0.b;
+		return A2(
+			joakin$elm_canvas$Canvas$shapes,
+			_List_fromArray(
+				[
+					joakin$elm_canvas$Canvas$stroke(color),
+					joakin$elm_canvas$Canvas$fill(color),
+					joakin$elm_canvas$Canvas$transform(
+					_List_fromArray(
+						[
+							tf,
+							A2(joakin$elm_canvas$Canvas$translate, x, y)
+						]))
+				]),
+			_List_fromArray(
+				[
+					A2(
+					joakin$elm_canvas$Canvas$circle,
+					_Utils_Tuple2(0, 0),
+					explosion.radius)
+				]));
+	});
+var author$project$Game$renderExplosions = F2(
+	function (tf, explosions) {
+		return A2(
+			elm$core$List$map,
+			author$project$Game$renderExplosion(tf),
+			explosions);
+	});
 var author$project$Game$renderShip = F2(
 	function (tf, ship) {
 		var _n0 = ship.position;
@@ -6504,6 +6587,7 @@ var joakin$elm_canvas$Canvas$toHtml = F3(
 var author$project$Game$viewGame = function (game) {
 	var space = author$project$Game$renderSpace(game);
 	var ships = A2(author$project$Game$renderShips, game.transform, game.ships);
+	var explosions = A2(author$project$Game$renderExplosions, game.transform, game.explosions);
 	var bullets = A2(author$project$Game$renderBullets, game.transform, game.bullets);
 	var asteroids = A2(author$project$Game$renderAsteroids, game.transform, game.asteroids);
 	var _n0 = game.dimension;
@@ -6523,7 +6607,7 @@ var author$project$Game$viewGame = function (game) {
 			elm$core$List$append,
 			_List_Nil,
 			_List_fromArray(
-				[asteroids, ships, bullets, space])));
+				[explosions, asteroids, ships, bullets, space])));
 };
 var elm$html$Html$div = _VirtualDom_node('div');
 var elm$html$Html$p = _VirtualDom_node('p');
