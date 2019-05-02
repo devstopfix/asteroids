@@ -3953,7 +3953,7 @@ var ianmackenzie$elm_geometry$Point2d$coordinates = function (_n0) {
 	var coordinates_ = _n0.a;
 	return coordinates_;
 };
-var author$project$Asteroid$p2p = function (p) {
+var author$project$Points$p2p = function (p) {
 	var _n0 = ianmackenzie$elm_geometry$Point2d$coordinates(p);
 	var x = _n0.a;
 	var y = _n0.b;
@@ -4052,15 +4052,9 @@ var elm$core$List$map = F2(
 			_List_Nil,
 			xs);
 	});
-var elm$core$Basics$identity = function (x) {
-	return x;
+var author$project$Points$convertPoints = function (ps) {
+	return A2(elm$core$List$map, author$project$Points$p2p, ps);
 };
-var ianmackenzie$elm_geometry$Geometry$Types$Point2d = function (a) {
-	return {$: 'Point2d', a: a};
-};
-var ianmackenzie$elm_geometry$Point2d$fromCoordinates = ianmackenzie$elm_geometry$Geometry$Types$Point2d;
-var ianmackenzie$elm_geometry$Point2d$origin = ianmackenzie$elm_geometry$Point2d$fromCoordinates(
-	_Utils_Tuple2(0, 0));
 var joakin$elm_canvas$Canvas$LineTo = function (a) {
 	return {$: 'LineTo', a: a};
 };
@@ -4075,23 +4069,22 @@ var joakin$elm_canvas$Canvas$path = F2(
 	function (startingPoint, segments) {
 		return A2(joakin$elm_canvas$Canvas$Path, startingPoint, segments);
 	});
-var author$project$Asteroid$asteroidPath = function (points) {
+var author$project$Polygon$pointsToShape = function (points) {
 	if (!points.b) {
 		return A2(
 			joakin$elm_canvas$Canvas$path,
-			author$project$Asteroid$p2p(ianmackenzie$elm_geometry$Point2d$origin),
+			_Utils_Tuple2(0, 0),
 			_List_Nil);
 	} else {
 		var p0 = points.a;
 		var ps = points.b;
 		return A2(
 			joakin$elm_canvas$Canvas$path,
-			author$project$Asteroid$p2p(p0),
+			p0,
 			A2(
 				elm$core$List$map,
 				function (p) {
-					return joakin$elm_canvas$Canvas$lineTo(
-						author$project$Asteroid$p2p(p));
+					return joakin$elm_canvas$Canvas$lineTo(p);
 				},
 				ps));
 	}
@@ -4104,7 +4097,7 @@ var elm$core$List$append = F2(
 			return A3(elm$core$List$foldr, elm$core$List$cons, ys, xs);
 		}
 	});
-var author$project$Shapes$closePolygon = function (list) {
+var author$project$Points$closePolygon = function (list) {
 	if (!list.b) {
 		return _List_Nil;
 	} else {
@@ -4117,6 +4110,13 @@ var author$project$Shapes$closePolygon = function (list) {
 				[p]));
 	}
 };
+var elm$core$Basics$identity = function (x) {
+	return x;
+};
+var ianmackenzie$elm_geometry$Geometry$Types$Point2d = function (a) {
+	return {$: 'Point2d', a: a};
+};
+var ianmackenzie$elm_geometry$Point2d$fromCoordinates = ianmackenzie$elm_geometry$Geometry$Types$Point2d;
 var author$project$Shapes$points = function (ps) {
 	return A2(
 		elm$core$List$map,
@@ -4254,6 +4254,8 @@ var ianmackenzie$elm_geometry$Polygon2d$singleLoop = function (vertices_) {
 };
 var author$project$Shapes$rock1 = ianmackenzie$elm_geometry$Polygon2d$singleLoop(
 	author$project$Shapes$points(author$project$Shapes$rockDef1));
+var ianmackenzie$elm_geometry$Point2d$origin = ianmackenzie$elm_geometry$Point2d$fromCoordinates(
+	_Utils_Tuple2(0, 0));
 var ianmackenzie$elm_geometry$Polygon2d$outerLoop = function (_n0) {
 	var polygon = _n0.a;
 	return polygon.outerLoop;
@@ -4321,12 +4323,22 @@ var ianmackenzie$elm_geometry$Polygon2d$scaleAbout = F2(
 			scale < 0);
 	});
 var author$project$Shapes$rockWithRadius = function (radius) {
-	return author$project$Shapes$closePolygon(
+	return author$project$Points$closePolygon(
 		ianmackenzie$elm_geometry$Polygon2d$outerLoop(
 			A3(ianmackenzie$elm_geometry$Polygon2d$scaleAbout, ianmackenzie$elm_geometry$Point2d$origin, radius, author$project$Shapes$rock1)));
 };
-var author$project$Asteroid$newAsteroid = author$project$Asteroid$asteroidPath(
-	author$project$Shapes$rockWithRadius(200.0));
+var author$project$Asteroids$newAsteroid = function (radius) {
+	var shape = author$project$Polygon$pointsToShape(
+		author$project$Points$convertPoints(
+			author$project$Shapes$rockWithRadius(radius)));
+	return {
+		id: 0,
+		position: _Utils_Tuple2(200, 100),
+		radius: radius,
+		shape: shape,
+		theta: 0.0
+	};
+};
 var avh4$elm_color$Color$RgbaSpace = F4(
 	function (a, b, c, d) {
 		return {$: 'RgbaSpace', a: a, b: b, c: c, d: d};
@@ -4993,6 +5005,10 @@ var joakin$elm_canvas$Canvas$Translate = F2(
 	});
 var joakin$elm_canvas$Canvas$translate = joakin$elm_canvas$Canvas$Translate;
 var author$project$Game$renderAsteroid = function (asteroid) {
+	var theta = asteroid.theta;
+	var _n0 = asteroid.position;
+	var x = _n0.a;
+	var y = _n0.b;
 	return A2(
 		joakin$elm_canvas$Canvas$shapes,
 		_List_fromArray(
@@ -5002,13 +5018,13 @@ var author$project$Game$renderAsteroid = function (asteroid) {
 				joakin$elm_canvas$Canvas$transform(
 				_List_fromArray(
 					[
-						A2(joakin$elm_canvas$Canvas$translate, 400, 255),
-						joakin$elm_canvas$Canvas$rotate(1.5)
+						A2(joakin$elm_canvas$Canvas$translate, x, y),
+						joakin$elm_canvas$Canvas$rotate(theta)
 					])),
 				joakin$elm_canvas$Canvas$lineWidth(2.0)
 			]),
 		_List_fromArray(
-			[asteroid]));
+			[asteroid.shape]));
 };
 var avh4$elm_color$Color$scaleFrom255 = function (c) {
 	return c / 255;
@@ -5580,7 +5596,7 @@ var author$project$Game$view = function () {
 	var width = 800;
 	var spaceColor = A3(avh4$elm_color$Color$rgb255, 16, 16, 16);
 	var height = 510;
-	var asteroid = author$project$Asteroid$newAsteroid;
+	var asteroid = author$project$Asteroids$newAsteroid(120.0);
 	return A3(
 		joakin$elm_canvas$Canvas$toHtml,
 		_Utils_Tuple2(width, height),

@@ -1,6 +1,6 @@
 module Game exposing (main)
 
-import Asteroid exposing (newAsteroid)
+import Asteroids exposing (Asteroid, newAsteroid)
 import Canvas exposing (..)
 import Color exposing (Color)
 import Html exposing (Html)
@@ -14,7 +14,7 @@ view =
             Color.rgb255 16 16 16
 
         asteroid =
-            newAsteroid
+            newAsteroid 120.0
 
         width =
             800
@@ -30,10 +30,16 @@ view =
 
 
 renderAsteroid asteroid =
-    shapes
-        [ stroke Color.white, fill Color.black, transform [ translate 400 255, rotate 1.5 ], lineWidth 2.0 ]
-        [ asteroid ]
+    let
+        ( x, y ) =
+            asteroid.position
 
+        theta =
+            asteroid.theta
+    in
+    shapes
+        [ stroke Color.white, fill Color.black, transform [ translate x y, rotate theta ], lineWidth 2.0 ]
+        [ asteroid.shape ]
 
 
 main =

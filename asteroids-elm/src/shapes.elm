@@ -1,5 +1,6 @@
 module Shapes exposing (rockWithRadius)
 
+import Points exposing (closePolygon)
 import Point2d exposing (Point2d, fromCoordinates, origin)
 import Polygon2d exposing (scaleAbout, singleLoop, outerLoop)
 
@@ -11,14 +12,6 @@ rockDef1 =
 
 points ps =
     List.map (\( x, y ) -> fromCoordinates ( x, y )) ps
-
-closePolygon : List Point2d -> List Point2d
-closePolygon list =
-    case list of
-        [] ->
-            []
-        p :: ps ->
-            List.append (p :: ps) [p]
 
 rock1 =
     rockDef1 |> points |> singleLoop
