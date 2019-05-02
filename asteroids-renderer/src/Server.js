@@ -4,11 +4,11 @@ export default class Server {
         this.subscribers = {};
     }
 
-    connect(url = 'ws://localhost:8065/0/graphics') {
+    connect(url) {
         const onOpen = (event) => console.log('WebSocket: Open')
         const onClose = (event) => console.log('WebSocket: Closed')
 
-        this.websocket = new WebSocket(url)
+        this.websocket = new WebSocket(url.href)
         this.websocket.onopen = (event) => { onOpen(event) }
         this.websocket.onclose = (event) => { onClose(event) }
         this.websocket.onmessage = (event) => { this.onMessage(event) }

@@ -8,6 +8,7 @@ Usage
 ```
 npm install
 npm start
+open http://localhost:3030/game.index
 ```
 
 Supported Game State Protocol

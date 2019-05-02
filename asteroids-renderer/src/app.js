@@ -21,6 +21,33 @@ const transformRatio = {
 // window.onblur = () => {  renderer.pause(); }
 // window.onfocus = () => { renderer.resume(); }
 
+function graphicsURL(window_location_href) {
+    var url = new URL(window_location_href);
+
+    switch (url.protocol) {
+        case 'http:':
+            url.protocol = 'ws';
+            break;
+        case 'https:':
+            url.protocol = 'wss';
+            break;
+    }
+
+    /* If running in development, override with default ports. TODO config? */
+    switch (url.port) {
+        case '3030':
+            url.port = 8065;
+    }
+
+    /* If in development, hardcode to game zero. TODO config? */
+    if (url.pathname.match(/\/\d+\/game$/)) {
+        url.pathname = url.pathname.replace(/game$/, 'graphics');
+    } else {
+        url.pathname = "/0/graphics";
+    }
+
+    return url;
+}
+
 renderer.start()
-server.connect('ws://' + window.location.host + '/0/graphics')
-// server.connect('ws://' + 'localhost:8065' + '/0/graphics')
+server.connect(graphicsURL(window.location.href))
