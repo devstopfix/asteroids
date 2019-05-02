@@ -16,7 +16,7 @@ newGame : Game
 newGame =
     {
         dimension = (800, 510),
-        asteroids = [newAsteroid 120.0],
+        asteroids = [newAsteroid (0, 0) 60.0, newAsteroid (400, 205) 120.0, newAsteroid (720, 0) 60.0],
         spaceColor = Color.rgb255 16 16 16
     }
 

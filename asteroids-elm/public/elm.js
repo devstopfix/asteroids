@@ -4768,18 +4768,13 @@ var author$project$Shapes$rockWithRadius = function (radius) {
 		ianmackenzie$elm_geometry$Polygon2d$outerLoop(
 			A3(ianmackenzie$elm_geometry$Polygon2d$scaleAbout, ianmackenzie$elm_geometry$Point2d$origin, radius, author$project$Shapes$rock1)));
 };
-var author$project$Asteroids$newAsteroid = function (radius) {
-	var shape = author$project$Polygon$pointsToShape(
-		author$project$Points$convertPoints(
-			author$project$Shapes$rockWithRadius(radius)));
-	return {
-		id: 0,
-		position: _Utils_Tuple2(200, 100),
-		radius: radius,
-		shape: shape,
-		theta: 0.0
-	};
-};
+var author$project$Asteroids$newAsteroid = F2(
+	function (position, radius) {
+		var shape = author$project$Polygon$pointsToShape(
+			author$project$Points$convertPoints(
+				author$project$Shapes$rockWithRadius(radius)));
+		return {id: 0, position: position, radius: radius, shape: shape, theta: 0.0};
+	});
 var avh4$elm_color$Color$RgbaSpace = F4(
 	function (a, b, c, d) {
 		return {$: 'RgbaSpace', a: a, b: b, c: c, d: d};
@@ -4801,7 +4796,18 @@ var avh4$elm_color$Color$rgb255 = F3(
 var author$project$Game$newGame = {
 	asteroids: _List_fromArray(
 		[
-			author$project$Asteroids$newAsteroid(120.0)
+			A2(
+			author$project$Asteroids$newAsteroid,
+			_Utils_Tuple2(0, 0),
+			60.0),
+			A2(
+			author$project$Asteroids$newAsteroid,
+			_Utils_Tuple2(400, 205),
+			120.0),
+			A2(
+			author$project$Asteroids$newAsteroid,
+			_Utils_Tuple2(720, 0),
+			60.0)
 		]),
 	dimension: _Utils_Tuple2(800, 510),
 	spaceColor: A3(avh4$elm_color$Color$rgb255, 16, 16, 16)

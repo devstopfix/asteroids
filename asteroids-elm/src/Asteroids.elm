@@ -13,14 +13,14 @@ type alias Radius = Float
 
 type alias Asteroid = {id: Id, position: Point, theta: Theta, radius: Radius, shape: Shape}
 
-newAsteroid : Radius -> Asteroid
+newAsteroid : Point -> Radius -> Asteroid
 
-newAsteroid radius =
+newAsteroid position radius =
     let
         shape = rockWithRadius radius |> convertPoints |> pointsToShape
     in
         {id = 0,
-        position = (200, 100),
+        position = position,
         theta = 0.0,
         radius = radius,
         shape = shape}
