@@ -5,7 +5,7 @@ import * as utils from './utils'
 export default class Asteroid {
     constructor({ id, x, y, r }, canvas) {
 
-        this.roid = new fabric.Polygon(shapes.asteroid(Math.trunc(x), r), {
+        this.roid = new fabric.Polygon(shapes.asteroid(Math.trunc(x + y), r), {
             left: x,
             top: y,
             fill: 'black',
@@ -33,6 +33,7 @@ export default class Asteroid {
             this.roid.set('left', x)
         }
         if (Math.abs(this.top - y) > 10) {
+            console.log("Y");
             this.roid.set('top', y)
         }
         this.roid.animate(animation, animationSettings)
