@@ -21,7 +21,7 @@ type alias Radius =
 
 
 type alias Asteroid =
-    { id : Id, position : Point, theta : Theta, radius : Radius, shape : Shape, color : Color }
+    { id : Id, position : Point, theta : Theta, theta0 : Theta, radius : Radius, shape : Shape, color : Color }
 
 
 newAsteroid : Id -> Point -> Radius -> Asteroid
@@ -36,6 +36,7 @@ newAsteroid id position radius =
     { id = id
     , position = position
     , theta = 0.0
+    , theta0 = thetaOffset id
     , radius = radius
     , shape = shape
     , color = Color.rgb255 4 4 4
@@ -71,17 +72,16 @@ rotateAsteroids t asteroids =
     List.map (rotateAsteroid theta) asteroids
 
 
--- TODO prevent all asteroids rotating in lockstep
 rotateAsteroid : Theta -> Asteroid -> Asteroid
 rotateAsteroid theta asteroid =
-    { asteroid | theta = theta }
+    { asteroid | theta = theta + asteroid.theta0 }
 
 
 cycle : Int -> Theta
 cycle t =
     let
         framesPerRevolution =
-            480
+            960
 
         n =
             modBy framesPerRevolution t
@@ -90,3 +90,11 @@ cycle t =
             toFloat n / framesPerRevolution
     in
     f * 2 * pi
+
+
+thetaOffset: Int -> Theta
+thetaOffset n =
+    let
+        two_pi = 314
+    in
+        toFloat (modBy two_pi n) / two_pi

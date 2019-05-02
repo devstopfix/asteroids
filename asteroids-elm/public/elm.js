@@ -4554,6 +4554,12 @@ var elm$core$Basics$composeL = F3(
 			f(x));
 	});
 var author$project$Asteroids$convertToShape = A2(elm$core$Basics$composeL, author$project$Polygon$pointsToShape, author$project$Points$convertPoints);
+var elm$core$Basics$fdiv = _Basics_fdiv;
+var elm$core$Basics$toFloat = _Basics_toFloat;
+var author$project$Asteroids$thetaOffset = function (n) {
+	var two_pi = 314;
+	return A2(elm$core$Basics$modBy, two_pi, n) / two_pi;
+};
 var elm$core$List$append = F2(
 	function (xs, ys) {
 		if (!ys.b) {
@@ -4857,8 +4863,6 @@ var avh4$elm_color$Color$RgbaSpace = F4(
 	function (a, b, c, d) {
 		return {$: 'RgbaSpace', a: a, b: b, c: c, d: d};
 	});
-var elm$core$Basics$fdiv = _Basics_fdiv;
-var elm$core$Basics$toFloat = _Basics_toFloat;
 var avh4$elm_color$Color$scaleFrom255 = function (c) {
 	return c / 255;
 };
@@ -4882,7 +4886,8 @@ var author$project$Asteroids$newAsteroid = F3(
 			position: position,
 			radius: radius,
 			shape: shape,
-			theta: 0.0
+			theta: 0.0,
+			theta0: author$project$Asteroids$thetaOffset(id)
 		};
 	});
 var author$project$Game$gameDimensions = _Utils_Tuple2(4000.0, 2250.0);
@@ -4953,7 +4958,7 @@ var author$project$Main$Frame = function (a) {
 };
 var elm$core$Basics$pi = _Basics_pi;
 var author$project$Asteroids$cycle = function (t) {
-	var framesPerRevolution = 480;
+	var framesPerRevolution = 960;
 	var n = A2(elm$core$Basics$modBy, framesPerRevolution, t);
 	var f = n / framesPerRevolution;
 	return (f * 2) * elm$core$Basics$pi;
@@ -4962,7 +4967,7 @@ var author$project$Asteroids$rotateAsteroid = F2(
 	function (theta, asteroid) {
 		return _Utils_update(
 			asteroid,
-			{theta: theta});
+			{theta: theta + asteroid.theta0});
 	});
 var author$project$Asteroids$rotateAsteroids = F2(
 	function (t, asteroids) {
