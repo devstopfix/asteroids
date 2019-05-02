@@ -4786,14 +4786,14 @@ var avh4$elm_color$Color$rgb255 = F3(
 			avh4$elm_color$Color$scaleFrom255(b),
 			1.0);
 	});
-var author$project$Asteroids$newAsteroid = F2(
-	function (position, radius) {
+var author$project$Asteroids$newAsteroid = F3(
+	function (id, position, radius) {
 		var shape = author$project$Polygon$pointsToShape(
 			author$project$Points$convertPoints(
 				author$project$Shapes$rockWithRadius(radius)));
 		return {
 			color: A3(avh4$elm_color$Color$rgb255, 4, 4, 4),
-			id: 0,
+			id: id,
 			position: position,
 			radius: radius,
 			shape: shape,
@@ -4817,18 +4817,31 @@ var author$project$Game$newGame = function (dims) {
 	return {
 		asteroids: _List_fromArray(
 			[
-				A2(
+				A3(
 				author$project$Asteroids$newAsteroid,
+				0,
 				_Utils_Tuple2(0, 0),
 				60.0),
-				A2(
+				A3(
 				author$project$Asteroids$newAsteroid,
+				1,
 				_Utils_Tuple2(2000, 1125),
 				120.0),
-				A2(
+				A3(
 				author$project$Asteroids$newAsteroid,
+				2,
 				_Utils_Tuple2(4000, 2250),
-				60.0)
+				60.0),
+				A3(
+				author$project$Asteroids$newAsteroid,
+				3,
+				_Utils_Tuple2(0, 2250),
+				30.0),
+				A3(
+				author$project$Asteroids$newAsteroid,
+				4,
+				_Utils_Tuple2(4000, 0),
+				15.0)
 			]),
 		dimension: dims,
 		spaceColor: avh4$elm_color$Color$black,
@@ -5533,7 +5546,7 @@ var author$project$Game$renderAsteroid = F3(
 							A2(joakin$elm_canvas$Canvas$translate, x, y),
 							joakin$elm_canvas$Canvas$rotate(theta)
 						])),
-					joakin$elm_canvas$Canvas$lineWidth(2.0)
+					joakin$elm_canvas$Canvas$lineWidth(4.0)
 				]),
 			_List_fromArray(
 				[asteroid.shape]));

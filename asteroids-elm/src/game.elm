@@ -29,7 +29,12 @@ newGame dims =
             gameDimensions
     in
     { dimension = dims
-    , asteroids = [ newAsteroid ( 0, 0 ) 60.0, newAsteroid ( 2000, 1125 ) 120.0, newAsteroid ( 4000, 2250 ) 60.0 ]
+    , asteroids = [ newAsteroid 0 ( 0, 0 ) 60.0,
+        newAsteroid 1 ( 2000, 1125 ) 120.0,
+        newAsteroid 2 ( 4000, 2250 ) 60.0,
+        newAsteroid 3 (    0, 2250 ) 30.0,
+        newAsteroid 4 ( 4000,    0 ) 15.0
+        ]
     , spaceColor = Color.black
     , transform = scale (canvas_x / game_x) (canvas_y / game_y)
     }
@@ -81,5 +86,5 @@ renderAsteroid asteroid t tf =
             cycle t
     in
     shapes
-        [ stroke Color.white, fill asteroid.color, transform [ tf, translate x y, rotate theta ], lineWidth 2.0 ]
+        [ stroke Color.white, fill asteroid.color, transform [ tf, translate x y, rotate theta ], lineWidth 4.0 ]
         [ asteroid.shape ]
