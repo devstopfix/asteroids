@@ -3869,22 +3869,9 @@ function _VirtualDom_dekey(keyedNode)
 		b: keyedNode.b
 	};
 }
-var elm$core$Basics$identity = function (x) {
-	return x;
-};
-var elm$core$Basics$False = {$: 'False'};
-var elm$core$Basics$True = {$: 'True'};
-var elm$core$Result$isOk = function (result) {
-	if (result.$ === 'Ok') {
-		return true;
-	} else {
-		return false;
-	}
-};
-var elm$core$Array$branchFactor = 32;
-var elm$core$Array$Array_elm_builtin = F4(
+var avh4$elm_color$Color$RgbaSpace = F4(
 	function (a, b, c, d) {
-		return {$: 'Array_elm_builtin', a: a, b: b, c: c, d: d};
+		return {$: 'RgbaSpace', a: a, b: b, c: c, d: d};
 	});
 var elm$core$Basics$EQ = {$: 'EQ'};
 var elm$core$Basics$GT = {$: 'GT'};
@@ -3966,24 +3953,44 @@ var elm$core$Array$foldr = F3(
 var elm$core$Array$toList = function (array) {
 	return A3(elm$core$Array$foldr, elm$core$List$cons, _List_Nil, array);
 };
-var elm$core$Basics$ceiling = _Basics_ceiling;
 var elm$core$Basics$fdiv = _Basics_fdiv;
-var elm$core$Basics$logBase = F2(
-	function (base, number) {
-		return _Basics_log(number) / _Basics_log(base);
+var avh4$elm_color$Color$red = A4(avh4$elm_color$Color$RgbaSpace, 204 / 255, 0 / 255, 0 / 255, 1.0);
+var avh4$elm_color$Color$rgba = F4(
+	function (r, g, b, a) {
+		return A4(avh4$elm_color$Color$RgbaSpace, r, g, b, a);
 	});
-var elm$core$Basics$toFloat = _Basics_toFloat;
-var elm$core$Array$shiftStep = elm$core$Basics$ceiling(
-	A2(elm$core$Basics$logBase, 2, elm$core$Array$branchFactor));
-var elm$core$Elm$JsArray$empty = _JsArray_empty;
-var elm$core$Array$empty = A4(elm$core$Array$Array_elm_builtin, 0, elm$core$Array$shiftStep, elm$core$Elm$JsArray$empty, elm$core$Elm$JsArray$empty);
-var elm$core$Array$Leaf = function (a) {
-	return {$: 'Leaf', a: a};
+var joakin$elm_canvas$Canvas$Fill = function (a) {
+	return {$: 'Fill', a: a};
 };
-var elm$core$Array$SubTree = function (a) {
-	return {$: 'SubTree', a: a};
+var joakin$elm_canvas$Canvas$SettingDrawOp = function (a) {
+	return {$: 'SettingDrawOp', a: a};
 };
-var elm$core$Elm$JsArray$initializeFromList = _JsArray_initializeFromList;
+var joakin$elm_canvas$Canvas$fill = function (color) {
+	return joakin$elm_canvas$Canvas$SettingDrawOp(
+		joakin$elm_canvas$Canvas$Fill(color));
+};
+var joakin$elm_canvas$Canvas$Rect = F3(
+	function (a, b, c) {
+		return {$: 'Rect', a: a, b: b, c: c};
+	});
+var joakin$elm_canvas$Canvas$rect = F3(
+	function (pos, width, height) {
+		return A3(joakin$elm_canvas$Canvas$Rect, pos, width, height);
+	});
+var elm$core$Basics$identity = function (x) {
+	return x;
+};
+var joakin$elm_canvas$Canvas$DrawableShapes = function (a) {
+	return {$: 'DrawableShapes', a: a};
+};
+var joakin$elm_canvas$Canvas$NotSpecified = {$: 'NotSpecified'};
+var joakin$elm_canvas$Canvas$Renderable = function (a) {
+	return {$: 'Renderable', a: a};
+};
+var elm$core$Basics$apL = F2(
+	function (f, x) {
+		return f(x);
+	});
 var elm$core$List$foldl = F3(
 	function (func, acc, list) {
 		foldl:
@@ -4003,6 +4010,180 @@ var elm$core$List$foldl = F3(
 			}
 		}
 	});
+var joakin$elm_canvas$Canvas$FillAndStroke = F2(
+	function (a, b) {
+		return {$: 'FillAndStroke', a: a, b: b};
+	});
+var joakin$elm_canvas$Canvas$Stroke = function (a) {
+	return {$: 'Stroke', a: a};
+};
+var joakin$elm_canvas$Canvas$mergeDrawOp = F2(
+	function (op1, op2) {
+		var _n0 = _Utils_Tuple2(op1, op2);
+		_n0$7:
+		while (true) {
+			switch (_n0.b.$) {
+				case 'FillAndStroke':
+					var _n1 = _n0.b;
+					var c = _n1.a;
+					var sc = _n1.b;
+					return A2(joakin$elm_canvas$Canvas$FillAndStroke, c, sc);
+				case 'Fill':
+					switch (_n0.a.$) {
+						case 'Fill':
+							var c = _n0.b.a;
+							return joakin$elm_canvas$Canvas$Fill(c);
+						case 'Stroke':
+							var c1 = _n0.a.a;
+							var c2 = _n0.b.a;
+							return A2(joakin$elm_canvas$Canvas$FillAndStroke, c2, c1);
+						case 'FillAndStroke':
+							var _n2 = _n0.a;
+							var c = _n2.a;
+							var sc = _n2.b;
+							var c2 = _n0.b.a;
+							return A2(joakin$elm_canvas$Canvas$FillAndStroke, c2, sc);
+						default:
+							break _n0$7;
+					}
+				case 'Stroke':
+					switch (_n0.a.$) {
+						case 'Stroke':
+							var c = _n0.b.a;
+							return joakin$elm_canvas$Canvas$Stroke(c);
+						case 'Fill':
+							var c1 = _n0.a.a;
+							var c2 = _n0.b.a;
+							return A2(joakin$elm_canvas$Canvas$FillAndStroke, c1, c2);
+						case 'FillAndStroke':
+							var _n3 = _n0.a;
+							var c = _n3.a;
+							var sc = _n3.b;
+							var sc2 = _n0.b.a;
+							return A2(joakin$elm_canvas$Canvas$FillAndStroke, c, sc2);
+						default:
+							break _n0$7;
+					}
+				default:
+					if (_n0.a.$ === 'NotSpecified') {
+						break _n0$7;
+					} else {
+						var whatever = _n0.a;
+						var _n5 = _n0.b;
+						return whatever;
+					}
+			}
+		}
+		var _n4 = _n0.a;
+		var whatever = _n0.b;
+		return whatever;
+	});
+var joakin$elm_canvas$Canvas$addSettingsToRenderable = F2(
+	function (settings, renderable) {
+		var addSetting = F2(
+			function (setting, _n1) {
+				var r = _n1.a;
+				return joakin$elm_canvas$Canvas$Renderable(
+					function () {
+						switch (setting.$) {
+							case 'SettingCommand':
+								var cmd = setting.a;
+								return _Utils_update(
+									r,
+									{
+										commands: A2(elm$core$List$cons, cmd, r.commands)
+									});
+							case 'SettingCommands':
+								var cmds = setting.a;
+								return _Utils_update(
+									r,
+									{
+										commands: A3(elm$core$List$foldl, elm$core$List$cons, r.commands, cmds)
+									});
+							case 'SettingUpdateDrawable':
+								var f = setting.a;
+								return _Utils_update(
+									r,
+									{
+										drawable: f(r.drawable)
+									});
+							default:
+								var op = setting.a;
+								return _Utils_update(
+									r,
+									{
+										drawOp: A2(joakin$elm_canvas$Canvas$mergeDrawOp, r.drawOp, op)
+									});
+						}
+					}());
+			});
+		return A3(elm$core$List$foldl, addSetting, renderable, settings);
+	});
+var joakin$elm_canvas$Canvas$shapes = F2(
+	function (settings, ss) {
+		return A2(
+			joakin$elm_canvas$Canvas$addSettingsToRenderable,
+			settings,
+			joakin$elm_canvas$Canvas$Renderable(
+				{
+					commands: _List_Nil,
+					drawOp: joakin$elm_canvas$Canvas$NotSpecified,
+					drawable: joakin$elm_canvas$Canvas$DrawableShapes(ss)
+				}));
+	});
+var joakin$elm_canvas$Canvas$stroke = function (color) {
+	return joakin$elm_canvas$Canvas$SettingDrawOp(
+		joakin$elm_canvas$Canvas$Stroke(color));
+};
+var author$project$Game$renderSquare = A2(
+	joakin$elm_canvas$Canvas$shapes,
+	_List_fromArray(
+		[
+			joakin$elm_canvas$Canvas$fill(
+			A4(avh4$elm_color$Color$rgba, 0, 0, 0, 0.5)),
+			joakin$elm_canvas$Canvas$stroke(avh4$elm_color$Color$red)
+		]),
+	_List_fromArray(
+		[
+			A3(
+			joakin$elm_canvas$Canvas$rect,
+			_Utils_Tuple2(0, 0),
+			100,
+			50)
+		]));
+var avh4$elm_color$Color$black = A4(avh4$elm_color$Color$RgbaSpace, 0 / 255, 0 / 255, 0 / 255, 1.0);
+var avh4$elm_color$Color$darkCharcoal = A4(avh4$elm_color$Color$RgbaSpace, 46 / 255, 52 / 255, 54 / 255, 1.0);
+var elm$core$Basics$False = {$: 'False'};
+var elm$core$Basics$True = {$: 'True'};
+var elm$core$Result$isOk = function (result) {
+	if (result.$ === 'Ok') {
+		return true;
+	} else {
+		return false;
+	}
+};
+var elm$core$Array$branchFactor = 32;
+var elm$core$Array$Array_elm_builtin = F4(
+	function (a, b, c, d) {
+		return {$: 'Array_elm_builtin', a: a, b: b, c: c, d: d};
+	});
+var elm$core$Basics$ceiling = _Basics_ceiling;
+var elm$core$Basics$logBase = F2(
+	function (base, number) {
+		return _Basics_log(number) / _Basics_log(base);
+	});
+var elm$core$Basics$toFloat = _Basics_toFloat;
+var elm$core$Array$shiftStep = elm$core$Basics$ceiling(
+	A2(elm$core$Basics$logBase, 2, elm$core$Array$branchFactor));
+var elm$core$Elm$JsArray$empty = _JsArray_empty;
+var elm$core$Array$empty = A4(elm$core$Array$Array_elm_builtin, 0, elm$core$Array$shiftStep, elm$core$Elm$JsArray$empty, elm$core$Elm$JsArray$empty);
+var elm$core$Array$Leaf = function (a) {
+	return {$: 'Leaf', a: a};
+};
+var elm$core$Array$SubTree = function (a) {
+	return {$: 'SubTree', a: a};
+};
+var elm$core$Elm$JsArray$initializeFromList = _JsArray_initializeFromList;
 var elm$core$List$reverse = function (list) {
 	return A3(elm$core$List$foldl, elm$core$List$cons, _List_Nil, list);
 };
@@ -4054,10 +4235,6 @@ var elm$core$Array$treeFromBuilder = F2(
 		}
 	});
 var elm$core$Basics$add = _Basics_add;
-var elm$core$Basics$apL = F2(
-	function (f, x) {
-		return f(x);
-	});
 var elm$core$Basics$floor = _Basics_floor;
 var elm$core$Basics$gt = _Utils_gt;
 var elm$core$Basics$max = F2(
@@ -4364,63 +4541,6 @@ var elm$virtual_dom$VirtualDom$toHandlerInt = function (handler) {
 };
 var elm$virtual_dom$VirtualDom$style = _VirtualDom_style;
 var elm$html$Html$Attributes$style = elm$virtual_dom$VirtualDom$style;
-var joakin$elm_canvas$Canvas$Center = {$: 'Center'};
-var joakin$elm_canvas$Canvas$SettingCommand = function (a) {
-	return {$: 'SettingCommand', a: a};
-};
-var joakin$elm_canvas$Canvas$textAlignToString = function (alignment) {
-	switch (alignment.$) {
-		case 'Left':
-			return 'left';
-		case 'Right':
-			return 'right';
-		case 'Center':
-			return 'center';
-		case 'Start':
-			return 'start';
-		default:
-			return 'end';
-	}
-};
-var elm$json$Json$Encode$string = _Json_wrap;
-var elm$json$Json$Encode$object = function (pairs) {
-	return _Json_wrap(
-		A3(
-			elm$core$List$foldl,
-			F2(
-				function (_n0, obj) {
-					var k = _n0.a;
-					var v = _n0.b;
-					return A3(_Json_addField, k, v, obj);
-				}),
-			_Json_emptyObject(_Utils_Tuple0),
-			pairs));
-};
-var joakin$elm_canvas$Canvas$Internal$field = F2(
-	function (name, value) {
-		return elm$json$Json$Encode$object(
-			_List_fromArray(
-				[
-					_Utils_Tuple2(
-					'type',
-					elm$json$Json$Encode$string('field')),
-					_Utils_Tuple2(
-					'name',
-					elm$json$Json$Encode$string(name)),
-					_Utils_Tuple2('value', value)
-				]));
-	});
-var joakin$elm_canvas$Canvas$Internal$textAlign = function (align) {
-	return A2(
-		joakin$elm_canvas$Canvas$Internal$field,
-		'textAlign',
-		elm$json$Json$Encode$string(align));
-};
-var joakin$elm_canvas$Canvas$align = function (alignment) {
-	return joakin$elm_canvas$Canvas$SettingCommand(
-		joakin$elm_canvas$Canvas$Internal$textAlign(
-			joakin$elm_canvas$Canvas$textAlignToString(alignment)));
-};
 var joakin$elm_canvas$Canvas$Circle = F2(
 	function (a, b) {
 		return {$: 'Circle', a: a, b: b};
@@ -4428,153 +4548,6 @@ var joakin$elm_canvas$Canvas$Circle = F2(
 var joakin$elm_canvas$Canvas$circle = F2(
 	function (pos, radius) {
 		return A2(joakin$elm_canvas$Canvas$Circle, pos, radius);
-	});
-var joakin$elm_canvas$Canvas$DrawableShapes = function (a) {
-	return {$: 'DrawableShapes', a: a};
-};
-var joakin$elm_canvas$Canvas$NotSpecified = {$: 'NotSpecified'};
-var joakin$elm_canvas$Canvas$Renderable = function (a) {
-	return {$: 'Renderable', a: a};
-};
-var joakin$elm_canvas$Canvas$Fill = function (a) {
-	return {$: 'Fill', a: a};
-};
-var joakin$elm_canvas$Canvas$FillAndStroke = F2(
-	function (a, b) {
-		return {$: 'FillAndStroke', a: a, b: b};
-	});
-var joakin$elm_canvas$Canvas$Stroke = function (a) {
-	return {$: 'Stroke', a: a};
-};
-var joakin$elm_canvas$Canvas$mergeDrawOp = F2(
-	function (op1, op2) {
-		var _n0 = _Utils_Tuple2(op1, op2);
-		_n0$7:
-		while (true) {
-			switch (_n0.b.$) {
-				case 'FillAndStroke':
-					var _n1 = _n0.b;
-					var c = _n1.a;
-					var sc = _n1.b;
-					return A2(joakin$elm_canvas$Canvas$FillAndStroke, c, sc);
-				case 'Fill':
-					switch (_n0.a.$) {
-						case 'Fill':
-							var c = _n0.b.a;
-							return joakin$elm_canvas$Canvas$Fill(c);
-						case 'Stroke':
-							var c1 = _n0.a.a;
-							var c2 = _n0.b.a;
-							return A2(joakin$elm_canvas$Canvas$FillAndStroke, c2, c1);
-						case 'FillAndStroke':
-							var _n2 = _n0.a;
-							var c = _n2.a;
-							var sc = _n2.b;
-							var c2 = _n0.b.a;
-							return A2(joakin$elm_canvas$Canvas$FillAndStroke, c2, sc);
-						default:
-							break _n0$7;
-					}
-				case 'Stroke':
-					switch (_n0.a.$) {
-						case 'Stroke':
-							var c = _n0.b.a;
-							return joakin$elm_canvas$Canvas$Stroke(c);
-						case 'Fill':
-							var c1 = _n0.a.a;
-							var c2 = _n0.b.a;
-							return A2(joakin$elm_canvas$Canvas$FillAndStroke, c1, c2);
-						case 'FillAndStroke':
-							var _n3 = _n0.a;
-							var c = _n3.a;
-							var sc = _n3.b;
-							var sc2 = _n0.b.a;
-							return A2(joakin$elm_canvas$Canvas$FillAndStroke, c, sc2);
-						default:
-							break _n0$7;
-					}
-				default:
-					if (_n0.a.$ === 'NotSpecified') {
-						break _n0$7;
-					} else {
-						var whatever = _n0.a;
-						var _n5 = _n0.b;
-						return whatever;
-					}
-			}
-		}
-		var _n4 = _n0.a;
-		var whatever = _n0.b;
-		return whatever;
-	});
-var joakin$elm_canvas$Canvas$addSettingsToRenderable = F2(
-	function (settings, renderable) {
-		var addSetting = F2(
-			function (setting, _n1) {
-				var r = _n1.a;
-				return joakin$elm_canvas$Canvas$Renderable(
-					function () {
-						switch (setting.$) {
-							case 'SettingCommand':
-								var cmd = setting.a;
-								return _Utils_update(
-									r,
-									{
-										commands: A2(elm$core$List$cons, cmd, r.commands)
-									});
-							case 'SettingCommands':
-								var cmds = setting.a;
-								return _Utils_update(
-									r,
-									{
-										commands: A3(elm$core$List$foldl, elm$core$List$cons, r.commands, cmds)
-									});
-							case 'SettingUpdateDrawable':
-								var f = setting.a;
-								return _Utils_update(
-									r,
-									{
-										drawable: f(r.drawable)
-									});
-							default:
-								var op = setting.a;
-								return _Utils_update(
-									r,
-									{
-										drawOp: A2(joakin$elm_canvas$Canvas$mergeDrawOp, r.drawOp, op)
-									});
-						}
-					}());
-			});
-		return A3(elm$core$List$foldl, addSetting, renderable, settings);
-	});
-var joakin$elm_canvas$Canvas$shapes = F2(
-	function (settings, ss) {
-		return A2(
-			joakin$elm_canvas$Canvas$addSettingsToRenderable,
-			settings,
-			joakin$elm_canvas$Canvas$Renderable(
-				{
-					commands: _List_Nil,
-					drawOp: joakin$elm_canvas$Canvas$NotSpecified,
-					drawable: joakin$elm_canvas$Canvas$DrawableShapes(ss)
-				}));
-	});
-var joakin$elm_canvas$Canvas$DrawableText = function (a) {
-	return {$: 'DrawableText', a: a};
-};
-var joakin$elm_canvas$Canvas$text = F3(
-	function (settings, point, str) {
-		return A2(
-			joakin$elm_canvas$Canvas$addSettingsToRenderable,
-			settings,
-			joakin$elm_canvas$Canvas$Renderable(
-				{
-					commands: _List_Nil,
-					drawOp: joakin$elm_canvas$Canvas$NotSpecified,
-					drawable: joakin$elm_canvas$Canvas$DrawableText(
-						{maxWidth: elm$core$Maybe$Nothing, point: point, text: str})
-				}));
 	});
 var elm$html$Html$canvas = _VirtualDom_node('canvas');
 var elm$virtual_dom$VirtualDom$node = function (tag) {
@@ -4606,6 +4579,20 @@ var elm$json$Json$Encode$list = F2(
 				_Json_emptyArray(_Utils_Tuple0),
 				entries));
 	});
+var elm$json$Json$Encode$object = function (pairs) {
+	return _Json_wrap(
+		A3(
+			elm$core$List$foldl,
+			F2(
+				function (_n0, obj) {
+					var k = _n0.a;
+					var v = _n0.b;
+					return A3(_Json_addField, k, v, obj);
+				}),
+			_Json_emptyObject(_Utils_Tuple0),
+			pairs));
+};
+var elm$json$Json$Encode$string = _Json_wrap;
 var joakin$elm_canvas$Canvas$Internal$fn = F2(
 	function (name, args) {
 		return elm$json$Json$Encode$object(
@@ -4839,11 +4826,6 @@ var joakin$elm_canvas$Canvas$renderShape = F2(
 						cmds));
 		}
 	});
-var avh4$elm_color$Color$RgbaSpace = F4(
-	function (a, b, c, d) {
-		return {$: 'RgbaSpace', a: a, b: b, c: c, d: d};
-	});
-var avh4$elm_color$Color$black = A4(avh4$elm_color$Color$RgbaSpace, 0 / 255, 0 / 255, 0 / 255, 1.0);
 var joakin$elm_canvas$Canvas$Internal$NonZero = {$: 'NonZero'};
 var joakin$elm_canvas$Canvas$Internal$fillRuleToString = function (fillRule) {
 	if (fillRule.$ === 'NonZero') {
@@ -4896,6 +4878,20 @@ var avh4$elm_color$Color$toCssString = function (_n0) {
 				')'
 			]));
 };
+var joakin$elm_canvas$Canvas$Internal$field = F2(
+	function (name, value) {
+		return elm$json$Json$Encode$object(
+			_List_fromArray(
+				[
+					_Utils_Tuple2(
+					'type',
+					elm$json$Json$Encode$string('field')),
+					_Utils_Tuple2(
+					'name',
+					elm$json$Json$Encode$string(name)),
+					_Utils_Tuple2('value', value)
+				]));
+	});
 var joakin$elm_canvas$Canvas$Internal$fillStyle = function (color) {
 	return A2(
 		joakin$elm_canvas$Canvas$Internal$field,
@@ -5137,8 +5133,8 @@ var joakin$elm_canvas$Canvas$toHtml = F3(
 				]));
 	});
 var author$project$Game$view = function () {
-	var width = 400;
-	var height = 255;
+	var width = 800;
+	var height = 510;
 	return A3(
 		joakin$elm_canvas$Canvas$toHtml,
 		_Utils_Tuple2(width, height),
@@ -5148,14 +5144,34 @@ var author$project$Game$view = function () {
 			]),
 		_List_fromArray(
 			[
-				A3(
-				joakin$elm_canvas$Canvas$text,
+				A2(
+				joakin$elm_canvas$Canvas$shapes,
 				_List_fromArray(
 					[
-						joakin$elm_canvas$Canvas$align(joakin$elm_canvas$Canvas$Center)
+						joakin$elm_canvas$Canvas$fill(avh4$elm_color$Color$black)
 					]),
-				_Utils_Tuple2(50, 50),
-				'Hello player'),
+				_List_fromArray(
+					[
+						A3(
+						joakin$elm_canvas$Canvas$rect,
+						_Utils_Tuple2(0, 0),
+						width,
+						height)
+					])),
+				A2(
+				joakin$elm_canvas$Canvas$shapes,
+				_List_fromArray(
+					[
+						joakin$elm_canvas$Canvas$fill(avh4$elm_color$Color$darkCharcoal)
+					]),
+				_List_fromArray(
+					[
+						A3(
+						joakin$elm_canvas$Canvas$rect,
+						_Utils_Tuple2(100, 100),
+						width,
+						height)
+					])),
 				A2(
 				joakin$elm_canvas$Canvas$shapes,
 				_List_Nil,
@@ -5165,7 +5181,8 @@ var author$project$Game$view = function () {
 						joakin$elm_canvas$Canvas$circle,
 						_Utils_Tuple2(0, 0),
 						100)
-					]))
+					])),
+				author$project$Game$renderSquare
 			]));
 }();
 var author$project$Game$main = author$project$Game$view;

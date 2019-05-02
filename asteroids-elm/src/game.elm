@@ -10,23 +10,18 @@ view : Html msg
 view =
     let
         width =
-            400
+            800
 
         height =
-            255
+            510
     in
     Canvas.toHtml ( width, height )
         [ style "border" "2px solid darkred" ]
-        [ text [ align Center ] ( 50, 50 ) "Hello player"
-        , shapes [] [ circle (0, 0) 100 ]
+        [ shapes [ fill Color.black ] [ rect ( 0, 0 ) width height ]
+            , shapes [ fill Color.darkCharcoal] [ rect ( 100, 100 ) width height ]
+            , shapes [] [ circle (0, 0) 100 ]
+        , renderSquare
         ]
-
-        -- [ style "border" "2px solid darkred" ]
-        -- [ shapes [ fill Color.black ] [ rect ( 0, 0 ) width height ]
-        --     , shapes [ fill Color.darkCharcoal] [ rect ( 100, 100 ) width height ]
-        --     , shapes [] [ circle (0, 0) 100 ]
-        -- , renderSquare
-        -- ]
 
 
 renderSquare =
