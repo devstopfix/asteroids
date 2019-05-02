@@ -2,41 +2,45 @@ module Main exposing (main)
 
 import Browser
 import Browser.Events exposing (onAnimationFrameDelta)
-
-
 import Canvas exposing (..)
-import Game exposing (view)
+import Game exposing (Game, newGame, viewGame)
 import Html exposing (Html, div, p, text)
 import Html.Attributes exposing (style)
 
 
 type alias Model =
-    { count : Float }
+    { count : Float
+    , games : List Game
+    }
 
 
 type Msg
     = Frame Float
 
-view : Model -> Html Msg
+
+view : Model -> Html msg
 view model =
+    let
+        t =
+            round model.count
+    in
     div []
-        [ p []
-            [ --text "Hello, Player!"
-              text (String.fromFloat model.count)
-            ]
-        , Game.view (round model.count // 2)
-        , Game.view (round model.count)
-        ]
+        (List.append
+            (List.map (\g -> Game.viewGame g t) model.games)
+            [ p [] [ text "Hello, Player!" ] ])
+
+
+update msg model =
+    case msg of
+        Frame _ ->
+            ( { model | count = model.count + 1 }, Cmd.none )
+
 
 main : Program () Model Msg
 main =
     Browser.element
-        { init = \() -> ( { count = 0 }, Cmd.none )
+        { init = \() -> ( { count = 0, games = [ newGame, newGame ] }, Cmd.none )
         , view = view
-        , update =
-            \msg model ->
-                case msg of
-                    Frame _ ->
-                        ( { model | count = model.count + 1 }, Cmd.none )
+        , update = update
         , subscriptions = \model -> onAnimationFrameDelta Frame
         }

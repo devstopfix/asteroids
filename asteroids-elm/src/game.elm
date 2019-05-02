@@ -1,4 +1,4 @@
-module Game exposing (view)
+module Game exposing (Game, viewGame, newGame)
 
 import Asteroids exposing (Asteroid, newAsteroid)
 import Canvas exposing (..)
@@ -7,26 +7,34 @@ import Html exposing (Html)
 import Html.Attributes exposing (style)
 
 
-view : Int -> Html msg
-view t =
+type alias Dimension = (Float, Float)
+
+type alias Game = {dimension: Dimension, asteroids: List Asteroid, spaceColor: Color}
+
+
+newGame : Game
+newGame =
+    {
+        dimension = (800, 510),
+        asteroids = [newAsteroid 120.0],
+        spaceColor = Color.rgb255 16 16 16
+    }
+
+
+viewGame : Game -> Int -> Html msg
+viewGame game t =
     let
-        spaceColor =
-            Color.rgb255 16 16 16
-
-        asteroid =
-            newAsteroid 120.0
-
-        width =
-            800
-
-        height =
-            510
+        (width, height)
+            = game.dimension
     in
-    Canvas.toHtml ( width, height )
+    Canvas.toHtml ( round width, round height )
         [ style "border" "2px solid darkred" ]
-        [ shapes [ fill spaceColor ] [ rect ( 0, 0 ) width height ]
-        , renderAsteroid asteroid t
-        ]
+        (List.append
+            [ shapes
+                [ fill game.spaceColor ]
+                [ rect ( 0, 0 ) width height ]
+            ]
+            (List.map (\a -> renderAsteroid a t) game.asteroids))
 
 
 cycle : Int -> Float
