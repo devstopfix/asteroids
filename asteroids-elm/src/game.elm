@@ -1,5 +1,6 @@
 module Game exposing (main)
 
+import Asteroid exposing (newAsteroid)
 import Canvas exposing (..)
 import Color exposing (Color)
 import Html exposing (Html)
@@ -9,6 +10,12 @@ import Html.Attributes exposing (style)
 view : Html msg
 view =
     let
+        spaceColor =
+            Color.rgb255 16 16 16
+
+        asteroid =
+            newAsteroid
+
         width =
             800
 
@@ -17,18 +24,16 @@ view =
     in
     Canvas.toHtml ( width, height )
         [ style "border" "2px solid darkred" ]
-        [ shapes [ fill Color.black ] [ rect ( 0, 0 ) width height ]
-            , shapes [ fill Color.darkCharcoal] [ rect ( 100, 100 ) width height ]
-            , shapes [] [ circle (0, 0) 100 ]
-        , renderSquare
+        [ shapes [ fill spaceColor ] [ rect ( 0, 0 ) width height ]
+        , renderAsteroid asteroid
         ]
 
 
-renderSquare =
+renderAsteroid asteroid =
     shapes
-        [ fill (Color.rgba 0 0 0 0.5)
-        , stroke Color.red ]
-        [ rect ( 0, 0 ) 100 50 ]
+        [ stroke Color.white, fill Color.black, transform [ translate 400 255, rotate 1.5 ], lineWidth 2.0 ]
+        [ asteroid ]
+
 
 
 main =

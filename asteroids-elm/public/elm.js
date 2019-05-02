@@ -80,271 +80,6 @@ function A9(fun, a, b, c, d, e, f, g, h, i) {
 console.warn('Compiled in DEV mode. Follow the advice at https://elm-lang.org/0.19.0/optimize for better performance and smaller assets.');
 
 
-var _List_Nil_UNUSED = { $: 0 };
-var _List_Nil = { $: '[]' };
-
-function _List_Cons_UNUSED(hd, tl) { return { $: 1, a: hd, b: tl }; }
-function _List_Cons(hd, tl) { return { $: '::', a: hd, b: tl }; }
-
-
-var _List_cons = F2(_List_Cons);
-
-function _List_fromArray(arr)
-{
-	var out = _List_Nil;
-	for (var i = arr.length; i--; )
-	{
-		out = _List_Cons(arr[i], out);
-	}
-	return out;
-}
-
-function _List_toArray(xs)
-{
-	for (var out = []; xs.b; xs = xs.b) // WHILE_CONS
-	{
-		out.push(xs.a);
-	}
-	return out;
-}
-
-var _List_map2 = F3(function(f, xs, ys)
-{
-	for (var arr = []; xs.b && ys.b; xs = xs.b, ys = ys.b) // WHILE_CONSES
-	{
-		arr.push(A2(f, xs.a, ys.a));
-	}
-	return _List_fromArray(arr);
-});
-
-var _List_map3 = F4(function(f, xs, ys, zs)
-{
-	for (var arr = []; xs.b && ys.b && zs.b; xs = xs.b, ys = ys.b, zs = zs.b) // WHILE_CONSES
-	{
-		arr.push(A3(f, xs.a, ys.a, zs.a));
-	}
-	return _List_fromArray(arr);
-});
-
-var _List_map4 = F5(function(f, ws, xs, ys, zs)
-{
-	for (var arr = []; ws.b && xs.b && ys.b && zs.b; ws = ws.b, xs = xs.b, ys = ys.b, zs = zs.b) // WHILE_CONSES
-	{
-		arr.push(A4(f, ws.a, xs.a, ys.a, zs.a));
-	}
-	return _List_fromArray(arr);
-});
-
-var _List_map5 = F6(function(f, vs, ws, xs, ys, zs)
-{
-	for (var arr = []; vs.b && ws.b && xs.b && ys.b && zs.b; vs = vs.b, ws = ws.b, xs = xs.b, ys = ys.b, zs = zs.b) // WHILE_CONSES
-	{
-		arr.push(A5(f, vs.a, ws.a, xs.a, ys.a, zs.a));
-	}
-	return _List_fromArray(arr);
-});
-
-var _List_sortBy = F2(function(f, xs)
-{
-	return _List_fromArray(_List_toArray(xs).sort(function(a, b) {
-		return _Utils_cmp(f(a), f(b));
-	}));
-});
-
-var _List_sortWith = F2(function(f, xs)
-{
-	return _List_fromArray(_List_toArray(xs).sort(function(a, b) {
-		var ord = A2(f, a, b);
-		return ord === elm$core$Basics$EQ ? 0 : ord === elm$core$Basics$LT ? -1 : 1;
-	}));
-});
-
-
-
-// EQUALITY
-
-function _Utils_eq(x, y)
-{
-	for (
-		var pair, stack = [], isEqual = _Utils_eqHelp(x, y, 0, stack);
-		isEqual && (pair = stack.pop());
-		isEqual = _Utils_eqHelp(pair.a, pair.b, 0, stack)
-		)
-	{}
-
-	return isEqual;
-}
-
-function _Utils_eqHelp(x, y, depth, stack)
-{
-	if (depth > 100)
-	{
-		stack.push(_Utils_Tuple2(x,y));
-		return true;
-	}
-
-	if (x === y)
-	{
-		return true;
-	}
-
-	if (typeof x !== 'object' || x === null || y === null)
-	{
-		typeof x === 'function' && _Debug_crash(5);
-		return false;
-	}
-
-	/**/
-	if (x.$ === 'Set_elm_builtin')
-	{
-		x = elm$core$Set$toList(x);
-		y = elm$core$Set$toList(y);
-	}
-	if (x.$ === 'RBNode_elm_builtin' || x.$ === 'RBEmpty_elm_builtin')
-	{
-		x = elm$core$Dict$toList(x);
-		y = elm$core$Dict$toList(y);
-	}
-	//*/
-
-	/**_UNUSED/
-	if (x.$ < 0)
-	{
-		x = elm$core$Dict$toList(x);
-		y = elm$core$Dict$toList(y);
-	}
-	//*/
-
-	for (var key in x)
-	{
-		if (!_Utils_eqHelp(x[key], y[key], depth + 1, stack))
-		{
-			return false;
-		}
-	}
-	return true;
-}
-
-var _Utils_equal = F2(_Utils_eq);
-var _Utils_notEqual = F2(function(a, b) { return !_Utils_eq(a,b); });
-
-
-
-// COMPARISONS
-
-// Code in Generate/JavaScript.hs, Basics.js, and List.js depends on
-// the particular integer values assigned to LT, EQ, and GT.
-
-function _Utils_cmp(x, y, ord)
-{
-	if (typeof x !== 'object')
-	{
-		return x === y ? /*EQ*/ 0 : x < y ? /*LT*/ -1 : /*GT*/ 1;
-	}
-
-	/**/
-	if (x instanceof String)
-	{
-		var a = x.valueOf();
-		var b = y.valueOf();
-		return a === b ? 0 : a < b ? -1 : 1;
-	}
-	//*/
-
-	/**_UNUSED/
-	if (typeof x.$ === 'undefined')
-	//*/
-	/**/
-	if (x.$[0] === '#')
-	//*/
-	{
-		return (ord = _Utils_cmp(x.a, y.a))
-			? ord
-			: (ord = _Utils_cmp(x.b, y.b))
-				? ord
-				: _Utils_cmp(x.c, y.c);
-	}
-
-	// traverse conses until end of a list or a mismatch
-	for (; x.b && y.b && !(ord = _Utils_cmp(x.a, y.a)); x = x.b, y = y.b) {} // WHILE_CONSES
-	return ord || (x.b ? /*GT*/ 1 : y.b ? /*LT*/ -1 : /*EQ*/ 0);
-}
-
-var _Utils_lt = F2(function(a, b) { return _Utils_cmp(a, b) < 0; });
-var _Utils_le = F2(function(a, b) { return _Utils_cmp(a, b) < 1; });
-var _Utils_gt = F2(function(a, b) { return _Utils_cmp(a, b) > 0; });
-var _Utils_ge = F2(function(a, b) { return _Utils_cmp(a, b) >= 0; });
-
-var _Utils_compare = F2(function(x, y)
-{
-	var n = _Utils_cmp(x, y);
-	return n < 0 ? elm$core$Basics$LT : n ? elm$core$Basics$GT : elm$core$Basics$EQ;
-});
-
-
-// COMMON VALUES
-
-var _Utils_Tuple0_UNUSED = 0;
-var _Utils_Tuple0 = { $: '#0' };
-
-function _Utils_Tuple2_UNUSED(a, b) { return { a: a, b: b }; }
-function _Utils_Tuple2(a, b) { return { $: '#2', a: a, b: b }; }
-
-function _Utils_Tuple3_UNUSED(a, b, c) { return { a: a, b: b, c: c }; }
-function _Utils_Tuple3(a, b, c) { return { $: '#3', a: a, b: b, c: c }; }
-
-function _Utils_chr_UNUSED(c) { return c; }
-function _Utils_chr(c) { return new String(c); }
-
-
-// RECORDS
-
-function _Utils_update(oldRecord, updatedFields)
-{
-	var newRecord = {};
-
-	for (var key in oldRecord)
-	{
-		newRecord[key] = oldRecord[key];
-	}
-
-	for (var key in updatedFields)
-	{
-		newRecord[key] = updatedFields[key];
-	}
-
-	return newRecord;
-}
-
-
-// APPEND
-
-var _Utils_append = F2(_Utils_ap);
-
-function _Utils_ap(xs, ys)
-{
-	// append Strings
-	if (typeof xs === 'string')
-	{
-		return xs + ys;
-	}
-
-	// append Lists
-	if (!xs.b)
-	{
-		return ys;
-	}
-	var root = _List_Cons(xs.a, ys);
-	xs = xs.b
-	for (var curr = root; xs.b; xs = xs.b) // WHILE_CONS
-	{
-		curr = curr.b = _List_Cons(xs.a, ys);
-	}
-	return root;
-}
-
-
-
 var _JsArray_empty = [];
 
 function _JsArray_singleton(value)
@@ -493,6 +228,87 @@ var _JsArray_appendN = F3(function(n, dest, source)
     }
 
     return result;
+});
+
+
+
+var _List_Nil_UNUSED = { $: 0 };
+var _List_Nil = { $: '[]' };
+
+function _List_Cons_UNUSED(hd, tl) { return { $: 1, a: hd, b: tl }; }
+function _List_Cons(hd, tl) { return { $: '::', a: hd, b: tl }; }
+
+
+var _List_cons = F2(_List_Cons);
+
+function _List_fromArray(arr)
+{
+	var out = _List_Nil;
+	for (var i = arr.length; i--; )
+	{
+		out = _List_Cons(arr[i], out);
+	}
+	return out;
+}
+
+function _List_toArray(xs)
+{
+	for (var out = []; xs.b; xs = xs.b) // WHILE_CONS
+	{
+		out.push(xs.a);
+	}
+	return out;
+}
+
+var _List_map2 = F3(function(f, xs, ys)
+{
+	for (var arr = []; xs.b && ys.b; xs = xs.b, ys = ys.b) // WHILE_CONSES
+	{
+		arr.push(A2(f, xs.a, ys.a));
+	}
+	return _List_fromArray(arr);
+});
+
+var _List_map3 = F4(function(f, xs, ys, zs)
+{
+	for (var arr = []; xs.b && ys.b && zs.b; xs = xs.b, ys = ys.b, zs = zs.b) // WHILE_CONSES
+	{
+		arr.push(A3(f, xs.a, ys.a, zs.a));
+	}
+	return _List_fromArray(arr);
+});
+
+var _List_map4 = F5(function(f, ws, xs, ys, zs)
+{
+	for (var arr = []; ws.b && xs.b && ys.b && zs.b; ws = ws.b, xs = xs.b, ys = ys.b, zs = zs.b) // WHILE_CONSES
+	{
+		arr.push(A4(f, ws.a, xs.a, ys.a, zs.a));
+	}
+	return _List_fromArray(arr);
+});
+
+var _List_map5 = F6(function(f, vs, ws, xs, ys, zs)
+{
+	for (var arr = []; vs.b && ws.b && xs.b && ys.b && zs.b; vs = vs.b, ws = ws.b, xs = xs.b, ys = ys.b, zs = zs.b) // WHILE_CONSES
+	{
+		arr.push(A5(f, vs.a, ws.a, xs.a, ys.a, zs.a));
+	}
+	return _List_fromArray(arr);
+});
+
+var _List_sortBy = F2(function(f, xs)
+{
+	return _List_fromArray(_List_toArray(xs).sort(function(a, b) {
+		return _Utils_cmp(f(a), f(b));
+	}));
+});
+
+var _List_sortWith = F2(function(f, xs)
+{
+	return _List_fromArray(_List_toArray(xs).sort(function(a, b) {
+		var ord = A2(f, a, b);
+		return ord === elm$core$Basics$EQ ? 0 : ord === elm$core$Basics$LT ? -1 : 1;
+	}));
 });
 
 
@@ -789,6 +605,190 @@ function _Debug_regionToString(region)
 		return 'on line ' + region.start.line;
 	}
 	return 'on lines ' + region.start.line + ' through ' + region.end.line;
+}
+
+
+
+// EQUALITY
+
+function _Utils_eq(x, y)
+{
+	for (
+		var pair, stack = [], isEqual = _Utils_eqHelp(x, y, 0, stack);
+		isEqual && (pair = stack.pop());
+		isEqual = _Utils_eqHelp(pair.a, pair.b, 0, stack)
+		)
+	{}
+
+	return isEqual;
+}
+
+function _Utils_eqHelp(x, y, depth, stack)
+{
+	if (depth > 100)
+	{
+		stack.push(_Utils_Tuple2(x,y));
+		return true;
+	}
+
+	if (x === y)
+	{
+		return true;
+	}
+
+	if (typeof x !== 'object' || x === null || y === null)
+	{
+		typeof x === 'function' && _Debug_crash(5);
+		return false;
+	}
+
+	/**/
+	if (x.$ === 'Set_elm_builtin')
+	{
+		x = elm$core$Set$toList(x);
+		y = elm$core$Set$toList(y);
+	}
+	if (x.$ === 'RBNode_elm_builtin' || x.$ === 'RBEmpty_elm_builtin')
+	{
+		x = elm$core$Dict$toList(x);
+		y = elm$core$Dict$toList(y);
+	}
+	//*/
+
+	/**_UNUSED/
+	if (x.$ < 0)
+	{
+		x = elm$core$Dict$toList(x);
+		y = elm$core$Dict$toList(y);
+	}
+	//*/
+
+	for (var key in x)
+	{
+		if (!_Utils_eqHelp(x[key], y[key], depth + 1, stack))
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
+var _Utils_equal = F2(_Utils_eq);
+var _Utils_notEqual = F2(function(a, b) { return !_Utils_eq(a,b); });
+
+
+
+// COMPARISONS
+
+// Code in Generate/JavaScript.hs, Basics.js, and List.js depends on
+// the particular integer values assigned to LT, EQ, and GT.
+
+function _Utils_cmp(x, y, ord)
+{
+	if (typeof x !== 'object')
+	{
+		return x === y ? /*EQ*/ 0 : x < y ? /*LT*/ -1 : /*GT*/ 1;
+	}
+
+	/**/
+	if (x instanceof String)
+	{
+		var a = x.valueOf();
+		var b = y.valueOf();
+		return a === b ? 0 : a < b ? -1 : 1;
+	}
+	//*/
+
+	/**_UNUSED/
+	if (typeof x.$ === 'undefined')
+	//*/
+	/**/
+	if (x.$[0] === '#')
+	//*/
+	{
+		return (ord = _Utils_cmp(x.a, y.a))
+			? ord
+			: (ord = _Utils_cmp(x.b, y.b))
+				? ord
+				: _Utils_cmp(x.c, y.c);
+	}
+
+	// traverse conses until end of a list or a mismatch
+	for (; x.b && y.b && !(ord = _Utils_cmp(x.a, y.a)); x = x.b, y = y.b) {} // WHILE_CONSES
+	return ord || (x.b ? /*GT*/ 1 : y.b ? /*LT*/ -1 : /*EQ*/ 0);
+}
+
+var _Utils_lt = F2(function(a, b) { return _Utils_cmp(a, b) < 0; });
+var _Utils_le = F2(function(a, b) { return _Utils_cmp(a, b) < 1; });
+var _Utils_gt = F2(function(a, b) { return _Utils_cmp(a, b) > 0; });
+var _Utils_ge = F2(function(a, b) { return _Utils_cmp(a, b) >= 0; });
+
+var _Utils_compare = F2(function(x, y)
+{
+	var n = _Utils_cmp(x, y);
+	return n < 0 ? elm$core$Basics$LT : n ? elm$core$Basics$GT : elm$core$Basics$EQ;
+});
+
+
+// COMMON VALUES
+
+var _Utils_Tuple0_UNUSED = 0;
+var _Utils_Tuple0 = { $: '#0' };
+
+function _Utils_Tuple2_UNUSED(a, b) { return { a: a, b: b }; }
+function _Utils_Tuple2(a, b) { return { $: '#2', a: a, b: b }; }
+
+function _Utils_Tuple3_UNUSED(a, b, c) { return { a: a, b: b, c: c }; }
+function _Utils_Tuple3(a, b, c) { return { $: '#3', a: a, b: b, c: c }; }
+
+function _Utils_chr_UNUSED(c) { return c; }
+function _Utils_chr(c) { return new String(c); }
+
+
+// RECORDS
+
+function _Utils_update(oldRecord, updatedFields)
+{
+	var newRecord = {};
+
+	for (var key in oldRecord)
+	{
+		newRecord[key] = oldRecord[key];
+	}
+
+	for (var key in updatedFields)
+	{
+		newRecord[key] = updatedFields[key];
+	}
+
+	return newRecord;
+}
+
+
+// APPEND
+
+var _Utils_append = F2(_Utils_ap);
+
+function _Utils_ap(xs, ys)
+{
+	// append Strings
+	if (typeof xs === 'string')
+	{
+		return xs + ys;
+	}
+
+	// append Lists
+	if (!xs.b)
+	{
+		return ys;
+	}
+	var root = _List_Cons(xs.a, ys);
+	xs = xs.b
+	for (var curr = root; xs.b; xs = xs.b) // WHILE_CONS
+	{
+		curr = curr.b = _List_Cons(xs.a, ys);
+	}
+	return root;
 }
 
 
@@ -3869,13 +3869,34 @@ function _VirtualDom_dekey(keyedNode)
 		b: keyedNode.b
 	};
 }
-var avh4$elm_color$Color$RgbaSpace = F4(
-	function (a, b, c, d) {
-		return {$: 'RgbaSpace', a: a, b: b, c: c, d: d};
+var elm$core$Elm$JsArray$foldr = _JsArray_foldr;
+var elm$core$Array$foldr = F3(
+	function (func, baseCase, _n0) {
+		var tree = _n0.c;
+		var tail = _n0.d;
+		var helper = F2(
+			function (node, acc) {
+				if (node.$ === 'SubTree') {
+					var subTree = node.a;
+					return A3(elm$core$Elm$JsArray$foldr, helper, acc, subTree);
+				} else {
+					var values = node.a;
+					return A3(elm$core$Elm$JsArray$foldr, func, acc, values);
+				}
+			});
+		return A3(
+			elm$core$Elm$JsArray$foldr,
+			helper,
+			A3(elm$core$Elm$JsArray$foldr, func, baseCase, tail),
+			tree);
 	});
 var elm$core$Basics$EQ = {$: 'EQ'};
-var elm$core$Basics$GT = {$: 'GT'};
 var elm$core$Basics$LT = {$: 'LT'};
+var elm$core$List$cons = _List_cons;
+var elm$core$Array$toList = function (array) {
+	return A3(elm$core$Array$foldr, elm$core$List$cons, _List_Nil, array);
+};
+var elm$core$Basics$GT = {$: 'GT'};
 var elm$core$Dict$foldr = F3(
 	function (func, acc, t) {
 		foldr:
@@ -3901,7 +3922,6 @@ var elm$core$Dict$foldr = F3(
 			}
 		}
 	});
-var elm$core$List$cons = _List_cons;
 var elm$core$Dict$toList = function (dict) {
 	return A3(
 		elm$core$Dict$foldr,
@@ -3929,68 +3949,18 @@ var elm$core$Set$toList = function (_n0) {
 	var dict = _n0.a;
 	return elm$core$Dict$keys(dict);
 };
-var elm$core$Elm$JsArray$foldr = _JsArray_foldr;
-var elm$core$Array$foldr = F3(
-	function (func, baseCase, _n0) {
-		var tree = _n0.c;
-		var tail = _n0.d;
-		var helper = F2(
-			function (node, acc) {
-				if (node.$ === 'SubTree') {
-					var subTree = node.a;
-					return A3(elm$core$Elm$JsArray$foldr, helper, acc, subTree);
-				} else {
-					var values = node.a;
-					return A3(elm$core$Elm$JsArray$foldr, func, acc, values);
-				}
-			});
-		return A3(
-			elm$core$Elm$JsArray$foldr,
-			helper,
-			A3(elm$core$Elm$JsArray$foldr, func, baseCase, tail),
-			tree);
-	});
-var elm$core$Array$toList = function (array) {
-	return A3(elm$core$Array$foldr, elm$core$List$cons, _List_Nil, array);
+var ianmackenzie$elm_geometry$Point2d$coordinates = function (_n0) {
+	var coordinates_ = _n0.a;
+	return coordinates_;
 };
-var elm$core$Basics$fdiv = _Basics_fdiv;
-var avh4$elm_color$Color$red = A4(avh4$elm_color$Color$RgbaSpace, 204 / 255, 0 / 255, 0 / 255, 1.0);
-var avh4$elm_color$Color$rgba = F4(
-	function (r, g, b, a) {
-		return A4(avh4$elm_color$Color$RgbaSpace, r, g, b, a);
-	});
-var joakin$elm_canvas$Canvas$Fill = function (a) {
-	return {$: 'Fill', a: a};
+var author$project$Asteroid$p2p = function (p) {
+	var _n0 = ianmackenzie$elm_geometry$Point2d$coordinates(p);
+	var x = _n0.a;
+	var y = _n0.b;
+	return _Utils_Tuple2(x, y);
 };
-var joakin$elm_canvas$Canvas$SettingDrawOp = function (a) {
-	return {$: 'SettingDrawOp', a: a};
-};
-var joakin$elm_canvas$Canvas$fill = function (color) {
-	return joakin$elm_canvas$Canvas$SettingDrawOp(
-		joakin$elm_canvas$Canvas$Fill(color));
-};
-var joakin$elm_canvas$Canvas$Rect = F3(
-	function (a, b, c) {
-		return {$: 'Rect', a: a, b: b, c: c};
-	});
-var joakin$elm_canvas$Canvas$rect = F3(
-	function (pos, width, height) {
-		return A3(joakin$elm_canvas$Canvas$Rect, pos, width, height);
-	});
-var elm$core$Basics$identity = function (x) {
-	return x;
-};
-var joakin$elm_canvas$Canvas$DrawableShapes = function (a) {
-	return {$: 'DrawableShapes', a: a};
-};
-var joakin$elm_canvas$Canvas$NotSpecified = {$: 'NotSpecified'};
-var joakin$elm_canvas$Canvas$Renderable = function (a) {
-	return {$: 'Renderable', a: a};
-};
-var elm$core$Basics$apL = F2(
-	function (f, x) {
-		return f(x);
-	});
+var elm$core$Basics$add = _Basics_add;
+var elm$core$Basics$gt = _Utils_gt;
 var elm$core$List$foldl = F3(
 	function (func, acc, list) {
 		foldl:
@@ -4010,157 +3980,372 @@ var elm$core$List$foldl = F3(
 			}
 		}
 	});
-var joakin$elm_canvas$Canvas$FillAndStroke = F2(
-	function (a, b) {
-		return {$: 'FillAndStroke', a: a, b: b};
-	});
-var joakin$elm_canvas$Canvas$Stroke = function (a) {
-	return {$: 'Stroke', a: a};
+var elm$core$List$reverse = function (list) {
+	return A3(elm$core$List$foldl, elm$core$List$cons, _List_Nil, list);
 };
-var joakin$elm_canvas$Canvas$mergeDrawOp = F2(
-	function (op1, op2) {
-		var _n0 = _Utils_Tuple2(op1, op2);
-		_n0$7:
-		while (true) {
-			switch (_n0.b.$) {
-				case 'FillAndStroke':
-					var _n1 = _n0.b;
-					var c = _n1.a;
-					var sc = _n1.b;
-					return A2(joakin$elm_canvas$Canvas$FillAndStroke, c, sc);
-				case 'Fill':
-					switch (_n0.a.$) {
-						case 'Fill':
-							var c = _n0.b.a;
-							return joakin$elm_canvas$Canvas$Fill(c);
-						case 'Stroke':
-							var c1 = _n0.a.a;
-							var c2 = _n0.b.a;
-							return A2(joakin$elm_canvas$Canvas$FillAndStroke, c2, c1);
-						case 'FillAndStroke':
-							var _n2 = _n0.a;
-							var c = _n2.a;
-							var sc = _n2.b;
-							var c2 = _n0.b.a;
-							return A2(joakin$elm_canvas$Canvas$FillAndStroke, c2, sc);
-						default:
-							break _n0$7;
-					}
-				case 'Stroke':
-					switch (_n0.a.$) {
-						case 'Stroke':
-							var c = _n0.b.a;
-							return joakin$elm_canvas$Canvas$Stroke(c);
-						case 'Fill':
-							var c1 = _n0.a.a;
-							var c2 = _n0.b.a;
-							return A2(joakin$elm_canvas$Canvas$FillAndStroke, c1, c2);
-						case 'FillAndStroke':
-							var _n3 = _n0.a;
-							var c = _n3.a;
-							var sc = _n3.b;
-							var sc2 = _n0.b.a;
-							return A2(joakin$elm_canvas$Canvas$FillAndStroke, c, sc2);
-						default:
-							break _n0$7;
-					}
-				default:
-					if (_n0.a.$ === 'NotSpecified') {
-						break _n0$7;
+var elm$core$List$foldrHelper = F4(
+	function (fn, acc, ctr, ls) {
+		if (!ls.b) {
+			return acc;
+		} else {
+			var a = ls.a;
+			var r1 = ls.b;
+			if (!r1.b) {
+				return A2(fn, a, acc);
+			} else {
+				var b = r1.a;
+				var r2 = r1.b;
+				if (!r2.b) {
+					return A2(
+						fn,
+						a,
+						A2(fn, b, acc));
+				} else {
+					var c = r2.a;
+					var r3 = r2.b;
+					if (!r3.b) {
+						return A2(
+							fn,
+							a,
+							A2(
+								fn,
+								b,
+								A2(fn, c, acc)));
 					} else {
-						var whatever = _n0.a;
-						var _n5 = _n0.b;
-						return whatever;
+						var d = r3.a;
+						var r4 = r3.b;
+						var res = (ctr > 500) ? A3(
+							elm$core$List$foldl,
+							fn,
+							acc,
+							elm$core$List$reverse(r4)) : A4(elm$core$List$foldrHelper, fn, acc, ctr + 1, r4);
+						return A2(
+							fn,
+							a,
+							A2(
+								fn,
+								b,
+								A2(
+									fn,
+									c,
+									A2(fn, d, res))));
 					}
+				}
 			}
 		}
-		var _n4 = _n0.a;
-		var whatever = _n0.b;
-		return whatever;
 	});
-var joakin$elm_canvas$Canvas$addSettingsToRenderable = F2(
-	function (settings, renderable) {
-		var addSetting = F2(
-			function (setting, _n1) {
-				var r = _n1.a;
-				return joakin$elm_canvas$Canvas$Renderable(
-					function () {
-						switch (setting.$) {
-							case 'SettingCommand':
-								var cmd = setting.a;
-								return _Utils_update(
-									r,
-									{
-										commands: A2(elm$core$List$cons, cmd, r.commands)
-									});
-							case 'SettingCommands':
-								var cmds = setting.a;
-								return _Utils_update(
-									r,
-									{
-										commands: A3(elm$core$List$foldl, elm$core$List$cons, r.commands, cmds)
-									});
-							case 'SettingUpdateDrawable':
-								var f = setting.a;
-								return _Utils_update(
-									r,
-									{
-										drawable: f(r.drawable)
-									});
-							default:
-								var op = setting.a;
-								return _Utils_update(
-									r,
-									{
-										drawOp: A2(joakin$elm_canvas$Canvas$mergeDrawOp, r.drawOp, op)
-									});
-						}
-					}());
-			});
-		return A3(elm$core$List$foldl, addSetting, renderable, settings);
+var elm$core$List$foldr = F3(
+	function (fn, acc, ls) {
+		return A4(elm$core$List$foldrHelper, fn, acc, 0, ls);
 	});
-var joakin$elm_canvas$Canvas$shapes = F2(
-	function (settings, ss) {
-		return A2(
-			joakin$elm_canvas$Canvas$addSettingsToRenderable,
-			settings,
-			joakin$elm_canvas$Canvas$Renderable(
-				{
-					commands: _List_Nil,
-					drawOp: joakin$elm_canvas$Canvas$NotSpecified,
-					drawable: joakin$elm_canvas$Canvas$DrawableShapes(ss)
-				}));
+var elm$core$List$map = F2(
+	function (f, xs) {
+		return A3(
+			elm$core$List$foldr,
+			F2(
+				function (x, acc) {
+					return A2(
+						elm$core$List$cons,
+						f(x),
+						acc);
+				}),
+			_List_Nil,
+			xs);
 	});
-var joakin$elm_canvas$Canvas$stroke = function (color) {
-	return joakin$elm_canvas$Canvas$SettingDrawOp(
-		joakin$elm_canvas$Canvas$Stroke(color));
+var elm$core$Basics$identity = function (x) {
+	return x;
 };
-var author$project$Game$renderSquare = A2(
-	joakin$elm_canvas$Canvas$shapes,
-	_List_fromArray(
-		[
-			joakin$elm_canvas$Canvas$fill(
-			A4(avh4$elm_color$Color$rgba, 0, 0, 0, 0.5)),
-			joakin$elm_canvas$Canvas$stroke(avh4$elm_color$Color$red)
-		]),
-	_List_fromArray(
-		[
-			A3(
-			joakin$elm_canvas$Canvas$rect,
-			_Utils_Tuple2(0, 0),
-			100,
-			50)
-		]));
-var avh4$elm_color$Color$black = A4(avh4$elm_color$Color$RgbaSpace, 0 / 255, 0 / 255, 0 / 255, 1.0);
-var avh4$elm_color$Color$darkCharcoal = A4(avh4$elm_color$Color$RgbaSpace, 46 / 255, 52 / 255, 54 / 255, 1.0);
-var elm$core$Basics$False = {$: 'False'};
-var elm$core$Basics$True = {$: 'True'};
-var elm$core$Result$isOk = function (result) {
-	if (result.$ === 'Ok') {
-		return true;
+var ianmackenzie$elm_geometry$Geometry$Types$Point2d = function (a) {
+	return {$: 'Point2d', a: a};
+};
+var ianmackenzie$elm_geometry$Point2d$fromCoordinates = ianmackenzie$elm_geometry$Geometry$Types$Point2d;
+var ianmackenzie$elm_geometry$Point2d$origin = ianmackenzie$elm_geometry$Point2d$fromCoordinates(
+	_Utils_Tuple2(0, 0));
+var joakin$elm_canvas$Canvas$LineTo = function (a) {
+	return {$: 'LineTo', a: a};
+};
+var joakin$elm_canvas$Canvas$lineTo = function (point) {
+	return joakin$elm_canvas$Canvas$LineTo(point);
+};
+var joakin$elm_canvas$Canvas$Path = F2(
+	function (a, b) {
+		return {$: 'Path', a: a, b: b};
+	});
+var joakin$elm_canvas$Canvas$path = F2(
+	function (startingPoint, segments) {
+		return A2(joakin$elm_canvas$Canvas$Path, startingPoint, segments);
+	});
+var author$project$Asteroid$asteroidPath = function (points) {
+	if (!points.b) {
+		return A2(
+			joakin$elm_canvas$Canvas$path,
+			author$project$Asteroid$p2p(ianmackenzie$elm_geometry$Point2d$origin),
+			_List_Nil);
 	} else {
-		return false;
+		var p0 = points.a;
+		var ps = points.b;
+		return A2(
+			joakin$elm_canvas$Canvas$path,
+			author$project$Asteroid$p2p(p0),
+			A2(
+				elm$core$List$map,
+				function (p) {
+					return joakin$elm_canvas$Canvas$lineTo(
+						author$project$Asteroid$p2p(p));
+				},
+				ps));
 	}
+};
+var elm$core$List$append = F2(
+	function (xs, ys) {
+		if (!ys.b) {
+			return xs;
+		} else {
+			return A3(elm$core$List$foldr, elm$core$List$cons, ys, xs);
+		}
+	});
+var author$project$Shapes$closePolygon = function (list) {
+	if (!list.b) {
+		return _List_Nil;
+	} else {
+		var p = list.a;
+		var ps = list.b;
+		return A2(
+			elm$core$List$append,
+			A2(elm$core$List$cons, p, ps),
+			_List_fromArray(
+				[p]));
+	}
+};
+var author$project$Shapes$points = function (ps) {
+	return A2(
+		elm$core$List$map,
+		function (_n0) {
+			var x = _n0.a;
+			var y = _n0.b;
+			return ianmackenzie$elm_geometry$Point2d$fromCoordinates(
+				_Utils_Tuple2(x, y));
+		},
+		ps);
+};
+var elm$core$Basics$negate = function (n) {
+	return -n;
+};
+var author$project$Shapes$rockDef1 = _List_fromArray(
+	[
+		_Utils_Tuple2(0.5, 1.0),
+		_Utils_Tuple2(1.0, 0.5),
+		_Utils_Tuple2(0.75, 0.0),
+		_Utils_Tuple2(1.0, -0.5),
+		_Utils_Tuple2(0.25, -1.0),
+		_Utils_Tuple2(-0.5, -1.0),
+		_Utils_Tuple2(-1.0, -0.5),
+		_Utils_Tuple2(-1.0, 0.5),
+		_Utils_Tuple2(-0.5, 1.0),
+		_Utils_Tuple2(0.0, 0.5)
+	]);
+var elm$core$Basics$apR = F2(
+	function (x, f) {
+		return f(x);
+	});
+var ianmackenzie$elm_geometry$Geometry$Types$Polygon2d = function (a) {
+	return {$: 'Polygon2d', a: a};
+};
+var elm$core$Basics$ge = _Utils_ge;
+var elm$core$List$map2 = _List_map2;
+var elm$core$List$sum = function (numbers) {
+	return A3(elm$core$List$foldl, elm$core$Basics$add, 0, numbers);
+};
+var elm$core$Basics$mul = _Basics_mul;
+var ianmackenzie$elm_geometry$Triangle2d$vertices = function (_n0) {
+	var vertices_ = _n0.a;
+	return vertices_;
+};
+var elm$core$Basics$sub = _Basics_sub;
+var ianmackenzie$elm_geometry$Vector2d$components = function (_n0) {
+	var components_ = _n0.a;
+	return components_;
+};
+var ianmackenzie$elm_geometry$Vector2d$crossProduct = F2(
+	function (firstVector, secondVector) {
+		var _n0 = ianmackenzie$elm_geometry$Vector2d$components(secondVector);
+		var x2 = _n0.a;
+		var y2 = _n0.b;
+		var _n1 = ianmackenzie$elm_geometry$Vector2d$components(firstVector);
+		var x1 = _n1.a;
+		var y1 = _n1.b;
+		return (x1 * y2) - (y1 * x2);
+	});
+var ianmackenzie$elm_geometry$Bootstrap$Point2d$coordinates = function (_n0) {
+	var coordinates_ = _n0.a;
+	return coordinates_;
+};
+var ianmackenzie$elm_geometry$Geometry$Types$Vector2d = function (a) {
+	return {$: 'Vector2d', a: a};
+};
+var ianmackenzie$elm_geometry$Vector2d$fromComponents = ianmackenzie$elm_geometry$Geometry$Types$Vector2d;
+var ianmackenzie$elm_geometry$Vector2d$from = F2(
+	function (firstPoint, secondPoint) {
+		var _n0 = ianmackenzie$elm_geometry$Bootstrap$Point2d$coordinates(secondPoint);
+		var x2 = _n0.a;
+		var y2 = _n0.b;
+		var _n1 = ianmackenzie$elm_geometry$Bootstrap$Point2d$coordinates(firstPoint);
+		var x1 = _n1.a;
+		var y1 = _n1.b;
+		return ianmackenzie$elm_geometry$Vector2d$fromComponents(
+			_Utils_Tuple2(x2 - x1, y2 - y1));
+	});
+var ianmackenzie$elm_geometry$Triangle2d$counterclockwiseArea = function (triangle) {
+	var _n0 = ianmackenzie$elm_geometry$Triangle2d$vertices(triangle);
+	var p1 = _n0.a;
+	var p2 = _n0.b;
+	var p3 = _n0.c;
+	var firstVector = A2(ianmackenzie$elm_geometry$Vector2d$from, p1, p2);
+	var secondVector = A2(ianmackenzie$elm_geometry$Vector2d$from, p1, p3);
+	return 0.5 * A2(ianmackenzie$elm_geometry$Vector2d$crossProduct, firstVector, secondVector);
+};
+var ianmackenzie$elm_geometry$Geometry$Types$Triangle2d = function (a) {
+	return {$: 'Triangle2d', a: a};
+};
+var ianmackenzie$elm_geometry$Triangle2d$fromVertices = ianmackenzie$elm_geometry$Geometry$Types$Triangle2d;
+var ianmackenzie$elm_geometry$Polygon2d$counterclockwiseArea = function (vertices_) {
+	if (!vertices_.b) {
+		return 0;
+	} else {
+		if (!vertices_.b.b) {
+			var single = vertices_.a;
+			return 0;
+		} else {
+			if (!vertices_.b.b.b) {
+				var first = vertices_.a;
+				var _n1 = vertices_.b;
+				var second = _n1.a;
+				return 0;
+			} else {
+				var first = vertices_.a;
+				var _n2 = vertices_.b;
+				var second = _n2.a;
+				var rest = _n2.b;
+				var segmentArea = F2(
+					function (start, end) {
+						return ianmackenzie$elm_geometry$Triangle2d$counterclockwiseArea(
+							ianmackenzie$elm_geometry$Triangle2d$fromVertices(
+								_Utils_Tuple3(first, start, end)));
+					});
+				var segmentAreas = A3(
+					elm$core$List$map2,
+					segmentArea,
+					A2(elm$core$List$cons, second, rest),
+					rest);
+				return elm$core$List$sum(segmentAreas);
+			}
+		}
+	}
+};
+var ianmackenzie$elm_geometry$Polygon2d$makeOuterLoop = function (vertices_) {
+	return (ianmackenzie$elm_geometry$Polygon2d$counterclockwiseArea(vertices_) >= 0) ? vertices_ : elm$core$List$reverse(vertices_);
+};
+var ianmackenzie$elm_geometry$Polygon2d$singleLoop = function (vertices_) {
+	return ianmackenzie$elm_geometry$Geometry$Types$Polygon2d(
+		{
+			innerLoops: _List_Nil,
+			outerLoop: ianmackenzie$elm_geometry$Polygon2d$makeOuterLoop(vertices_)
+		});
+};
+var author$project$Shapes$rock1 = ianmackenzie$elm_geometry$Polygon2d$singleLoop(
+	author$project$Shapes$points(author$project$Shapes$rockDef1));
+var ianmackenzie$elm_geometry$Polygon2d$outerLoop = function (_n0) {
+	var polygon = _n0.a;
+	return polygon.outerLoop;
+};
+var elm$core$Basics$lt = _Utils_lt;
+var ianmackenzie$elm_geometry$Point2d$translateBy = F2(
+	function (vector, point) {
+		var _n0 = ianmackenzie$elm_geometry$Vector2d$components(vector);
+		var vx = _n0.a;
+		var vy = _n0.b;
+		var _n1 = ianmackenzie$elm_geometry$Point2d$coordinates(point);
+		var px = _n1.a;
+		var py = _n1.b;
+		return ianmackenzie$elm_geometry$Point2d$fromCoordinates(
+			_Utils_Tuple2(px + vx, py + vy));
+	});
+var ianmackenzie$elm_geometry$Point2d$addTo = F2(
+	function (point, vector) {
+		return A2(ianmackenzie$elm_geometry$Point2d$translateBy, vector, point);
+	});
+var ianmackenzie$elm_geometry$Vector2d$scaleBy = F2(
+	function (scale, vector) {
+		var _n0 = ianmackenzie$elm_geometry$Vector2d$components(vector);
+		var x = _n0.a;
+		var y = _n0.b;
+		return ianmackenzie$elm_geometry$Vector2d$fromComponents(
+			_Utils_Tuple2(x * scale, y * scale));
+	});
+var ianmackenzie$elm_geometry$Point2d$scaleAbout = F3(
+	function (centerPoint, scale, point) {
+		return A2(
+			ianmackenzie$elm_geometry$Point2d$addTo,
+			centerPoint,
+			A2(
+				ianmackenzie$elm_geometry$Vector2d$scaleBy,
+				scale,
+				A2(ianmackenzie$elm_geometry$Vector2d$from, centerPoint, point)));
+	});
+var ianmackenzie$elm_geometry$Polygon2d$innerLoops = function (_n0) {
+	var polygon = _n0.a;
+	return polygon.innerLoops;
+};
+var ianmackenzie$elm_geometry$Polygon2d$mapVertices = F3(
+	function (_function, invert, polygon) {
+		var mappedOuterLoop = A2(
+			elm$core$List$map,
+			_function,
+			ianmackenzie$elm_geometry$Polygon2d$outerLoop(polygon));
+		var mappedInnerLoops = A2(
+			elm$core$List$map,
+			elm$core$List$map(_function),
+			ianmackenzie$elm_geometry$Polygon2d$innerLoops(polygon));
+		return invert ? ianmackenzie$elm_geometry$Geometry$Types$Polygon2d(
+			{
+				innerLoops: A2(elm$core$List$map, elm$core$List$reverse, mappedInnerLoops),
+				outerLoop: elm$core$List$reverse(mappedOuterLoop)
+			}) : ianmackenzie$elm_geometry$Geometry$Types$Polygon2d(
+			{innerLoops: mappedInnerLoops, outerLoop: mappedOuterLoop});
+	});
+var ianmackenzie$elm_geometry$Polygon2d$scaleAbout = F2(
+	function (point, scale) {
+		return A2(
+			ianmackenzie$elm_geometry$Polygon2d$mapVertices,
+			A2(ianmackenzie$elm_geometry$Point2d$scaleAbout, point, scale),
+			scale < 0);
+	});
+var author$project$Shapes$rockWithRadius = function (radius) {
+	return author$project$Shapes$closePolygon(
+		ianmackenzie$elm_geometry$Polygon2d$outerLoop(
+			A3(ianmackenzie$elm_geometry$Polygon2d$scaleAbout, ianmackenzie$elm_geometry$Point2d$origin, radius, author$project$Shapes$rock1)));
+};
+var author$project$Asteroid$newAsteroid = author$project$Asteroid$asteroidPath(
+	author$project$Shapes$rockWithRadius(200.0));
+var avh4$elm_color$Color$RgbaSpace = F4(
+	function (a, b, c, d) {
+		return {$: 'RgbaSpace', a: a, b: b, c: c, d: d};
+	});
+var elm$core$Basics$fdiv = _Basics_fdiv;
+var avh4$elm_color$Color$black = A4(avh4$elm_color$Color$RgbaSpace, 0 / 255, 0 / 255, 0 / 255, 1.0);
+var avh4$elm_color$Color$white = A4(avh4$elm_color$Color$RgbaSpace, 255 / 255, 255 / 255, 255 / 255, 1.0);
+var joakin$elm_canvas$Canvas$Fill = function (a) {
+	return {$: 'Fill', a: a};
+};
+var joakin$elm_canvas$Canvas$SettingDrawOp = function (a) {
+	return {$: 'SettingDrawOp', a: a};
+};
+var joakin$elm_canvas$Canvas$fill = function (color) {
+	return joakin$elm_canvas$Canvas$SettingDrawOp(
+		joakin$elm_canvas$Canvas$Fill(color));
+};
+var joakin$elm_canvas$Canvas$SettingCommand = function (a) {
+	return {$: 'SettingCommand', a: a};
 };
 var elm$core$Array$branchFactor = 32;
 var elm$core$Array$Array_elm_builtin = F4(
@@ -4184,9 +4369,6 @@ var elm$core$Array$SubTree = function (a) {
 	return {$: 'SubTree', a: a};
 };
 var elm$core$Elm$JsArray$initializeFromList = _JsArray_initializeFromList;
-var elm$core$List$reverse = function (list) {
-	return A3(elm$core$List$foldl, elm$core$List$cons, _List_Nil, list);
-};
 var elm$core$Array$compressNodes = F2(
 	function (nodes, acc) {
 		compressNodes:
@@ -4209,10 +4391,6 @@ var elm$core$Array$compressNodes = F2(
 			}
 		}
 	});
-var elm$core$Basics$apR = F2(
-	function (x, f) {
-		return f(x);
-	});
 var elm$core$Basics$eq = _Utils_equal;
 var elm$core$Tuple$first = function (_n0) {
 	var x = _n0.a;
@@ -4234,15 +4412,15 @@ var elm$core$Array$treeFromBuilder = F2(
 			}
 		}
 	});
-var elm$core$Basics$add = _Basics_add;
+var elm$core$Basics$apL = F2(
+	function (f, x) {
+		return f(x);
+	});
 var elm$core$Basics$floor = _Basics_floor;
-var elm$core$Basics$gt = _Utils_gt;
 var elm$core$Basics$max = F2(
 	function (x, y) {
 		return (_Utils_cmp(x, y) > 0) ? x : y;
 	});
-var elm$core$Basics$mul = _Basics_mul;
-var elm$core$Basics$sub = _Basics_sub;
 var elm$core$Elm$JsArray$length = _JsArray_length;
 var elm$core$Array$builderToArray = F2(
 	function (reverseNodeList, builder) {
@@ -4267,8 +4445,8 @@ var elm$core$Array$builderToArray = F2(
 				builder.tail);
 		}
 	});
+var elm$core$Basics$False = {$: 'False'};
 var elm$core$Basics$idiv = _Basics_idiv;
-var elm$core$Basics$lt = _Utils_lt;
 var elm$core$Elm$JsArray$initialize = _JsArray_initialize;
 var elm$core$Array$initializeHelp = F5(
 	function (fn, fromIndex, len, nodeList, tail) {
@@ -4319,6 +4497,14 @@ var elm$core$Result$Err = function (a) {
 var elm$core$Result$Ok = function (a) {
 	return {$: 'Ok', a: a};
 };
+var elm$core$Basics$True = {$: 'True'};
+var elm$core$Result$isOk = function (result) {
+	if (result.$ === 'Ok') {
+		return true;
+	} else {
+		return false;
+	}
+};
 var elm$json$Json$Decode$Failure = F2(
 	function (a, b) {
 		return {$: 'Failure', a: a, b: b};
@@ -4366,7 +4552,6 @@ var elm$core$List$length = function (xs) {
 		0,
 		xs);
 };
-var elm$core$List$map2 = _List_map2;
 var elm$core$List$rangeHelp = F3(
 	function (lo, hi, list) {
 		rangeHelp:
@@ -4524,6 +4709,319 @@ var elm$json$Json$Decode$errorToStringHelp = F2(
 			}
 		}
 	});
+var elm$json$Json$Encode$float = _Json_wrap;
+var elm$json$Json$Encode$object = function (pairs) {
+	return _Json_wrap(
+		A3(
+			elm$core$List$foldl,
+			F2(
+				function (_n0, obj) {
+					var k = _n0.a;
+					var v = _n0.b;
+					return A3(_Json_addField, k, v, obj);
+				}),
+			_Json_emptyObject(_Utils_Tuple0),
+			pairs));
+};
+var elm$json$Json$Encode$string = _Json_wrap;
+var joakin$elm_canvas$Canvas$Internal$field = F2(
+	function (name, value) {
+		return elm$json$Json$Encode$object(
+			_List_fromArray(
+				[
+					_Utils_Tuple2(
+					'type',
+					elm$json$Json$Encode$string('field')),
+					_Utils_Tuple2(
+					'name',
+					elm$json$Json$Encode$string(name)),
+					_Utils_Tuple2('value', value)
+				]));
+	});
+var joakin$elm_canvas$Canvas$Internal$lineWidth = function (value) {
+	return A2(
+		joakin$elm_canvas$Canvas$Internal$field,
+		'lineWidth',
+		elm$json$Json$Encode$float(value));
+};
+var joakin$elm_canvas$Canvas$lineWidth = function (width) {
+	return joakin$elm_canvas$Canvas$SettingCommand(
+		joakin$elm_canvas$Canvas$Internal$lineWidth(width));
+};
+var joakin$elm_canvas$Canvas$Rotate = function (a) {
+	return {$: 'Rotate', a: a};
+};
+var joakin$elm_canvas$Canvas$rotate = joakin$elm_canvas$Canvas$Rotate;
+var joakin$elm_canvas$Canvas$DrawableShapes = function (a) {
+	return {$: 'DrawableShapes', a: a};
+};
+var joakin$elm_canvas$Canvas$NotSpecified = {$: 'NotSpecified'};
+var joakin$elm_canvas$Canvas$Renderable = function (a) {
+	return {$: 'Renderable', a: a};
+};
+var joakin$elm_canvas$Canvas$FillAndStroke = F2(
+	function (a, b) {
+		return {$: 'FillAndStroke', a: a, b: b};
+	});
+var joakin$elm_canvas$Canvas$Stroke = function (a) {
+	return {$: 'Stroke', a: a};
+};
+var joakin$elm_canvas$Canvas$mergeDrawOp = F2(
+	function (op1, op2) {
+		var _n0 = _Utils_Tuple2(op1, op2);
+		_n0$7:
+		while (true) {
+			switch (_n0.b.$) {
+				case 'FillAndStroke':
+					var _n1 = _n0.b;
+					var c = _n1.a;
+					var sc = _n1.b;
+					return A2(joakin$elm_canvas$Canvas$FillAndStroke, c, sc);
+				case 'Fill':
+					switch (_n0.a.$) {
+						case 'Fill':
+							var c = _n0.b.a;
+							return joakin$elm_canvas$Canvas$Fill(c);
+						case 'Stroke':
+							var c1 = _n0.a.a;
+							var c2 = _n0.b.a;
+							return A2(joakin$elm_canvas$Canvas$FillAndStroke, c2, c1);
+						case 'FillAndStroke':
+							var _n2 = _n0.a;
+							var c = _n2.a;
+							var sc = _n2.b;
+							var c2 = _n0.b.a;
+							return A2(joakin$elm_canvas$Canvas$FillAndStroke, c2, sc);
+						default:
+							break _n0$7;
+					}
+				case 'Stroke':
+					switch (_n0.a.$) {
+						case 'Stroke':
+							var c = _n0.b.a;
+							return joakin$elm_canvas$Canvas$Stroke(c);
+						case 'Fill':
+							var c1 = _n0.a.a;
+							var c2 = _n0.b.a;
+							return A2(joakin$elm_canvas$Canvas$FillAndStroke, c1, c2);
+						case 'FillAndStroke':
+							var _n3 = _n0.a;
+							var c = _n3.a;
+							var sc = _n3.b;
+							var sc2 = _n0.b.a;
+							return A2(joakin$elm_canvas$Canvas$FillAndStroke, c, sc2);
+						default:
+							break _n0$7;
+					}
+				default:
+					if (_n0.a.$ === 'NotSpecified') {
+						break _n0$7;
+					} else {
+						var whatever = _n0.a;
+						var _n5 = _n0.b;
+						return whatever;
+					}
+			}
+		}
+		var _n4 = _n0.a;
+		var whatever = _n0.b;
+		return whatever;
+	});
+var joakin$elm_canvas$Canvas$addSettingsToRenderable = F2(
+	function (settings, renderable) {
+		var addSetting = F2(
+			function (setting, _n1) {
+				var r = _n1.a;
+				return joakin$elm_canvas$Canvas$Renderable(
+					function () {
+						switch (setting.$) {
+							case 'SettingCommand':
+								var cmd = setting.a;
+								return _Utils_update(
+									r,
+									{
+										commands: A2(elm$core$List$cons, cmd, r.commands)
+									});
+							case 'SettingCommands':
+								var cmds = setting.a;
+								return _Utils_update(
+									r,
+									{
+										commands: A3(elm$core$List$foldl, elm$core$List$cons, r.commands, cmds)
+									});
+							case 'SettingUpdateDrawable':
+								var f = setting.a;
+								return _Utils_update(
+									r,
+									{
+										drawable: f(r.drawable)
+									});
+							default:
+								var op = setting.a;
+								return _Utils_update(
+									r,
+									{
+										drawOp: A2(joakin$elm_canvas$Canvas$mergeDrawOp, r.drawOp, op)
+									});
+						}
+					}());
+			});
+		return A3(elm$core$List$foldl, addSetting, renderable, settings);
+	});
+var joakin$elm_canvas$Canvas$shapes = F2(
+	function (settings, ss) {
+		return A2(
+			joakin$elm_canvas$Canvas$addSettingsToRenderable,
+			settings,
+			joakin$elm_canvas$Canvas$Renderable(
+				{
+					commands: _List_Nil,
+					drawOp: joakin$elm_canvas$Canvas$NotSpecified,
+					drawable: joakin$elm_canvas$Canvas$DrawableShapes(ss)
+				}));
+	});
+var joakin$elm_canvas$Canvas$stroke = function (color) {
+	return joakin$elm_canvas$Canvas$SettingDrawOp(
+		joakin$elm_canvas$Canvas$Stroke(color));
+};
+var joakin$elm_canvas$Canvas$SettingCommands = function (a) {
+	return {$: 'SettingCommands', a: a};
+};
+var elm$json$Json$Encode$list = F2(
+	function (func, entries) {
+		return _Json_wrap(
+			A3(
+				elm$core$List$foldl,
+				_Json_addEntry(func),
+				_Json_emptyArray(_Utils_Tuple0),
+				entries));
+	});
+var joakin$elm_canvas$Canvas$Internal$fn = F2(
+	function (name, args) {
+		return elm$json$Json$Encode$object(
+			_List_fromArray(
+				[
+					_Utils_Tuple2(
+					'type',
+					elm$json$Json$Encode$string('function')),
+					_Utils_Tuple2(
+					'name',
+					elm$json$Json$Encode$string(name)),
+					_Utils_Tuple2(
+					'args',
+					A2(elm$json$Json$Encode$list, elm$core$Basics$identity, args))
+				]));
+	});
+var joakin$elm_canvas$Canvas$Internal$rotate = function (angle) {
+	return A2(
+		joakin$elm_canvas$Canvas$Internal$fn,
+		'rotate',
+		_List_fromArray(
+			[
+				elm$json$Json$Encode$float(angle)
+			]));
+};
+var joakin$elm_canvas$Canvas$Internal$scale = F2(
+	function (x, y) {
+		return A2(
+			joakin$elm_canvas$Canvas$Internal$fn,
+			'scale',
+			_List_fromArray(
+				[
+					elm$json$Json$Encode$float(x),
+					elm$json$Json$Encode$float(y)
+				]));
+	});
+var joakin$elm_canvas$Canvas$Internal$transform = F6(
+	function (a, b, c, d, e, f) {
+		return A2(
+			joakin$elm_canvas$Canvas$Internal$fn,
+			'transform',
+			_List_fromArray(
+				[
+					elm$json$Json$Encode$float(a),
+					elm$json$Json$Encode$float(b),
+					elm$json$Json$Encode$float(c),
+					elm$json$Json$Encode$float(d),
+					elm$json$Json$Encode$float(e),
+					elm$json$Json$Encode$float(f)
+				]));
+	});
+var joakin$elm_canvas$Canvas$Internal$translate = F2(
+	function (x, y) {
+		return A2(
+			joakin$elm_canvas$Canvas$Internal$fn,
+			'translate',
+			_List_fromArray(
+				[
+					elm$json$Json$Encode$float(x),
+					elm$json$Json$Encode$float(y)
+				]));
+	});
+var joakin$elm_canvas$Canvas$transform = function (transforms) {
+	return joakin$elm_canvas$Canvas$SettingCommands(
+		A2(
+			elm$core$List$map,
+			function (t) {
+				switch (t.$) {
+					case 'Rotate':
+						var angle = t.a;
+						return joakin$elm_canvas$Canvas$Internal$rotate(angle);
+					case 'Scale':
+						var x = t.a;
+						var y = t.b;
+						return A2(joakin$elm_canvas$Canvas$Internal$scale, x, y);
+					case 'Translate':
+						var x = t.a;
+						var y = t.b;
+						return A2(joakin$elm_canvas$Canvas$Internal$translate, x, y);
+					default:
+						var m11 = t.a.m11;
+						var m12 = t.a.m12;
+						var m21 = t.a.m21;
+						var m22 = t.a.m22;
+						var dx = t.a.dx;
+						var dy = t.a.dy;
+						return A6(joakin$elm_canvas$Canvas$Internal$transform, m11, m12, m21, m22, dx, dy);
+				}
+			},
+			transforms));
+};
+var joakin$elm_canvas$Canvas$Translate = F2(
+	function (a, b) {
+		return {$: 'Translate', a: a, b: b};
+	});
+var joakin$elm_canvas$Canvas$translate = joakin$elm_canvas$Canvas$Translate;
+var author$project$Game$renderAsteroid = function (asteroid) {
+	return A2(
+		joakin$elm_canvas$Canvas$shapes,
+		_List_fromArray(
+			[
+				joakin$elm_canvas$Canvas$stroke(avh4$elm_color$Color$white),
+				joakin$elm_canvas$Canvas$fill(avh4$elm_color$Color$black),
+				joakin$elm_canvas$Canvas$transform(
+				_List_fromArray(
+					[
+						A2(joakin$elm_canvas$Canvas$translate, 400, 255),
+						joakin$elm_canvas$Canvas$rotate(1.5)
+					])),
+				joakin$elm_canvas$Canvas$lineWidth(2.0)
+			]),
+		_List_fromArray(
+			[asteroid]));
+};
+var avh4$elm_color$Color$scaleFrom255 = function (c) {
+	return c / 255;
+};
+var avh4$elm_color$Color$rgb255 = F3(
+	function (r, g, b) {
+		return A4(
+			avh4$elm_color$Color$RgbaSpace,
+			avh4$elm_color$Color$scaleFrom255(r),
+			avh4$elm_color$Color$scaleFrom255(g),
+			avh4$elm_color$Color$scaleFrom255(b),
+			1.0);
+	});
 var elm$json$Json$Decode$map = _Json_map1;
 var elm$json$Json$Decode$map2 = _Json_map2;
 var elm$json$Json$Decode$succeed = _Json_succeed;
@@ -4541,13 +5039,13 @@ var elm$virtual_dom$VirtualDom$toHandlerInt = function (handler) {
 };
 var elm$virtual_dom$VirtualDom$style = _VirtualDom_style;
 var elm$html$Html$Attributes$style = elm$virtual_dom$VirtualDom$style;
-var joakin$elm_canvas$Canvas$Circle = F2(
-	function (a, b) {
-		return {$: 'Circle', a: a, b: b};
+var joakin$elm_canvas$Canvas$Rect = F3(
+	function (a, b, c) {
+		return {$: 'Rect', a: a, b: b, c: c};
 	});
-var joakin$elm_canvas$Canvas$circle = F2(
-	function (pos, radius) {
-		return A2(joakin$elm_canvas$Canvas$Circle, pos, radius);
+var joakin$elm_canvas$Canvas$rect = F3(
+	function (pos, width, height) {
+		return A3(joakin$elm_canvas$Canvas$Rect, pos, width, height);
 	});
 var elm$html$Html$canvas = _VirtualDom_node('canvas');
 var elm$virtual_dom$VirtualDom$node = function (tag) {
@@ -4569,46 +5067,6 @@ var elm$html$Html$Attributes$width = function (n) {
 };
 var elm$core$Basics$cos = _Basics_cos;
 var elm$core$Basics$sin = _Basics_sin;
-var elm$json$Json$Encode$float = _Json_wrap;
-var elm$json$Json$Encode$list = F2(
-	function (func, entries) {
-		return _Json_wrap(
-			A3(
-				elm$core$List$foldl,
-				_Json_addEntry(func),
-				_Json_emptyArray(_Utils_Tuple0),
-				entries));
-	});
-var elm$json$Json$Encode$object = function (pairs) {
-	return _Json_wrap(
-		A3(
-			elm$core$List$foldl,
-			F2(
-				function (_n0, obj) {
-					var k = _n0.a;
-					var v = _n0.b;
-					return A3(_Json_addField, k, v, obj);
-				}),
-			_Json_emptyObject(_Utils_Tuple0),
-			pairs));
-};
-var elm$json$Json$Encode$string = _Json_wrap;
-var joakin$elm_canvas$Canvas$Internal$fn = F2(
-	function (name, args) {
-		return elm$json$Json$Encode$object(
-			_List_fromArray(
-				[
-					_Utils_Tuple2(
-					'type',
-					elm$json$Json$Encode$string('function')),
-					_Utils_Tuple2(
-					'name',
-					elm$json$Json$Encode$string(name)),
-					_Utils_Tuple2(
-					'args',
-					A2(elm$json$Json$Encode$list, elm$core$Basics$identity, args))
-				]));
-	});
 var joakin$elm_canvas$Canvas$Internal$arcTo = F5(
 	function (x1, y1, x2, y2, radius) {
 		return A2(
@@ -4878,20 +5336,6 @@ var avh4$elm_color$Color$toCssString = function (_n0) {
 				')'
 			]));
 };
-var joakin$elm_canvas$Canvas$Internal$field = F2(
-	function (name, value) {
-		return elm$json$Json$Encode$object(
-			_List_fromArray(
-				[
-					_Utils_Tuple2(
-					'type',
-					elm$json$Json$Encode$string('field')),
-					_Utils_Tuple2(
-					'name',
-					elm$json$Json$Encode$string(name)),
-					_Utils_Tuple2('value', value)
-				]));
-	});
 var joakin$elm_canvas$Canvas$Internal$fillStyle = function (color) {
 	return A2(
 		joakin$elm_canvas$Canvas$Internal$field,
@@ -5134,7 +5578,9 @@ var joakin$elm_canvas$Canvas$toHtml = F3(
 	});
 var author$project$Game$view = function () {
 	var width = 800;
+	var spaceColor = A3(avh4$elm_color$Color$rgb255, 16, 16, 16);
 	var height = 510;
+	var asteroid = author$project$Asteroid$newAsteroid;
 	return A3(
 		joakin$elm_canvas$Canvas$toHtml,
 		_Utils_Tuple2(width, height),
@@ -5148,7 +5594,7 @@ var author$project$Game$view = function () {
 				joakin$elm_canvas$Canvas$shapes,
 				_List_fromArray(
 					[
-						joakin$elm_canvas$Canvas$fill(avh4$elm_color$Color$black)
+						joakin$elm_canvas$Canvas$fill(spaceColor)
 					]),
 				_List_fromArray(
 					[
@@ -5158,31 +5604,7 @@ var author$project$Game$view = function () {
 						width,
 						height)
 					])),
-				A2(
-				joakin$elm_canvas$Canvas$shapes,
-				_List_fromArray(
-					[
-						joakin$elm_canvas$Canvas$fill(avh4$elm_color$Color$darkCharcoal)
-					]),
-				_List_fromArray(
-					[
-						A3(
-						joakin$elm_canvas$Canvas$rect,
-						_Utils_Tuple2(100, 100),
-						width,
-						height)
-					])),
-				A2(
-				joakin$elm_canvas$Canvas$shapes,
-				_List_Nil,
-				_List_fromArray(
-					[
-						A2(
-						joakin$elm_canvas$Canvas$circle,
-						_Utils_Tuple2(0, 0),
-						100)
-					])),
-				author$project$Game$renderSquare
+				author$project$Game$renderAsteroid(asteroid)
 			]));
 }();
 var author$project$Game$main = author$project$Game$view;
