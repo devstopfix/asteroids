@@ -1,4 +1,4 @@
-module Game exposing (Game, viewGame, newGame)
+module Game exposing (Game, newGame, viewGame)
 
 import Asteroids exposing (Asteroid, newAsteroid)
 import Canvas exposing (..)
@@ -7,25 +7,39 @@ import Html exposing (Html)
 import Html.Attributes exposing (style)
 
 
-type alias Dimension = (Float, Float)
+type alias Dimension =
+    ( Float, Float )
 
-type alias Game = {dimension: Dimension, asteroids: List Asteroid, spaceColor: Color}
+
+type alias Game =
+    { dimension : Dimension, asteroids : List Asteroid, spaceColor : Color, transform : Transform }
 
 
-newGame : Game
-newGame =
-    {
-        dimension = (800, 510),
-        asteroids = [newAsteroid (0, 0) 60.0, newAsteroid (400, 205) 120.0, newAsteroid (720, 0) 60.0],
-        spaceColor = Color.rgb255 16 16 16
+gameDimensions =
+    ( 4000.0, 2250.0 )
+
+
+newGame : Dimension -> Game
+newGame dims =
+    let
+        ( canvas_x, canvas_y ) =
+            dims
+
+        ( game_x, game_y ) =
+            gameDimensions
+    in
+    { dimension = dims
+    , asteroids = [ newAsteroid ( 0, 0 ) 60.0, newAsteroid ( 2000, 1125 ) 120.0, newAsteroid ( 4000, 2250 ) 60.0 ]
+    , spaceColor = Color.black
+    , transform = scale (canvas_x / game_x) (canvas_y / game_y)
     }
 
 
 viewGame : Game -> Int -> Html msg
 viewGame game t =
     let
-        (width, height)
-            = game.dimension
+        ( width, height ) =
+            game.dimension
     in
     Canvas.toHtml ( round width, round height )
         [ style "border" "2px solid darkred" ]
@@ -34,14 +48,15 @@ viewGame game t =
                 [ fill game.spaceColor ]
                 [ rect ( 0, 0 ) width height ]
             ]
-            (List.map (\a -> renderAsteroid a t) game.asteroids))
+            (List.map (\a -> renderAsteroid a t game.transform) game.asteroids)
+        )
 
 
 cycle : Int -> Float
 cycle t =
     let
         framesPerRevolution =
-            240
+            480
 
         n =
             modBy framesPerRevolution t
@@ -52,14 +67,19 @@ cycle t =
     f * 2 * pi
 
 
-renderAsteroid asteroid t =
+
+-- [ translate x y, rotate theta ]
+
+
+renderAsteroid : Asteroid -> Int -> Transform -> Renderable
+renderAsteroid asteroid t tf =
     let
         ( x, y ) =
             asteroid.position
 
         theta =
-            cycle(t)
+            cycle t
     in
     shapes
-        [ stroke Color.white, fill Color.black, transform [ translate x y, rotate theta ], lineWidth 2.0 ]
+        [ stroke Color.white, fill asteroid.color, transform [ tf, translate x y, rotate theta ], lineWidth 2.0 ]
         [ asteroid.shape ]

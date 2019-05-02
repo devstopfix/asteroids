@@ -1,6 +1,7 @@
 module Asteroids exposing (Asteroid, newAsteroid)
 
 import Canvas exposing (Point, Shape)
+import Color exposing (Color)
 import Points exposing (convertPoints)
 import Polygon exposing (pointsToShape)
 import Shapes exposing (rockWithRadius)
@@ -11,7 +12,7 @@ type alias Theta = Float
 
 type alias Radius = Float
 
-type alias Asteroid = {id: Id, position: Point, theta: Theta, radius: Radius, shape: Shape}
+type alias Asteroid = {id: Id, position: Point, theta: Theta, radius: Radius, shape: Shape, color: Color}
 
 newAsteroid : Point -> Radius -> Asteroid
 
@@ -23,4 +24,5 @@ newAsteroid position radius =
         position = position,
         theta = 0.0,
         radius = radius,
-        shape = shape}
+        shape = shape,
+        color = Color.rgb255 4 4 4}

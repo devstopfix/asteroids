@@ -39,7 +39,7 @@ update msg model =
 main : Program () Model Msg
 main =
     Browser.element
-        { init = \() -> ( { count = 0, games = [ newGame, newGame ] }, Cmd.none )
+        { init = \() -> ( { count = 0, games = [ newGame ( 400, 225 ), newGame ( 400, 225 ), newGame ( 800, 450 )] }, Cmd.none )
         , view = view
         , update = update
         , subscriptions = \model -> onAnimationFrameDelta Frame

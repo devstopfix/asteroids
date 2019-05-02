@@ -4768,13 +4768,6 @@ var author$project$Shapes$rockWithRadius = function (radius) {
 		ianmackenzie$elm_geometry$Polygon2d$outerLoop(
 			A3(ianmackenzie$elm_geometry$Polygon2d$scaleAbout, ianmackenzie$elm_geometry$Point2d$origin, radius, author$project$Shapes$rock1)));
 };
-var author$project$Asteroids$newAsteroid = F2(
-	function (position, radius) {
-		var shape = author$project$Polygon$pointsToShape(
-			author$project$Points$convertPoints(
-				author$project$Shapes$rockWithRadius(radius)));
-		return {id: 0, position: position, radius: radius, shape: shape, theta: 0.0};
-	});
 var avh4$elm_color$Color$RgbaSpace = F4(
 	function (a, b, c, d) {
 		return {$: 'RgbaSpace', a: a, b: b, c: c, d: d};
@@ -4793,24 +4786,54 @@ var avh4$elm_color$Color$rgb255 = F3(
 			avh4$elm_color$Color$scaleFrom255(b),
 			1.0);
 	});
-var author$project$Game$newGame = {
-	asteroids: _List_fromArray(
-		[
-			A2(
-			author$project$Asteroids$newAsteroid,
-			_Utils_Tuple2(0, 0),
-			60.0),
-			A2(
-			author$project$Asteroids$newAsteroid,
-			_Utils_Tuple2(400, 205),
-			120.0),
-			A2(
-			author$project$Asteroids$newAsteroid,
-			_Utils_Tuple2(720, 0),
-			60.0)
-		]),
-	dimension: _Utils_Tuple2(800, 510),
-	spaceColor: A3(avh4$elm_color$Color$rgb255, 16, 16, 16)
+var author$project$Asteroids$newAsteroid = F2(
+	function (position, radius) {
+		var shape = author$project$Polygon$pointsToShape(
+			author$project$Points$convertPoints(
+				author$project$Shapes$rockWithRadius(radius)));
+		return {
+			color: A3(avh4$elm_color$Color$rgb255, 4, 4, 4),
+			id: 0,
+			position: position,
+			radius: radius,
+			shape: shape,
+			theta: 0.0
+		};
+	});
+var author$project$Game$gameDimensions = _Utils_Tuple2(4000.0, 2250.0);
+var avh4$elm_color$Color$black = A4(avh4$elm_color$Color$RgbaSpace, 0 / 255, 0 / 255, 0 / 255, 1.0);
+var joakin$elm_canvas$Canvas$Scale = F2(
+	function (a, b) {
+		return {$: 'Scale', a: a, b: b};
+	});
+var joakin$elm_canvas$Canvas$scale = joakin$elm_canvas$Canvas$Scale;
+var author$project$Game$newGame = function (dims) {
+	var _n0 = author$project$Game$gameDimensions;
+	var game_x = _n0.a;
+	var game_y = _n0.b;
+	var _n1 = dims;
+	var canvas_x = _n1.a;
+	var canvas_y = _n1.b;
+	return {
+		asteroids: _List_fromArray(
+			[
+				A2(
+				author$project$Asteroids$newAsteroid,
+				_Utils_Tuple2(0, 0),
+				60.0),
+				A2(
+				author$project$Asteroids$newAsteroid,
+				_Utils_Tuple2(2000, 1125),
+				120.0),
+				A2(
+				author$project$Asteroids$newAsteroid,
+				_Utils_Tuple2(4000, 2250),
+				60.0)
+			]),
+		dimension: dims,
+		spaceColor: avh4$elm_color$Color$black,
+		transform: A2(joakin$elm_canvas$Canvas$scale, canvas_x / game_x, canvas_y / game_y)
+	};
 };
 var author$project$Main$Frame = function (a) {
 	return {$: 'Frame', a: a};
@@ -5189,12 +5212,11 @@ var author$project$Main$update = F2(
 var elm$core$Basics$modBy = _Basics_modBy;
 var elm$core$Basics$pi = _Basics_pi;
 var author$project$Game$cycle = function (t) {
-	var framesPerRevolution = 240;
+	var framesPerRevolution = 480;
 	var n = A2(elm$core$Basics$modBy, framesPerRevolution, t);
 	var f = n / framesPerRevolution;
 	return (f * 2) * elm$core$Basics$pi;
 };
-var avh4$elm_color$Color$black = A4(avh4$elm_color$Color$RgbaSpace, 0 / 255, 0 / 255, 0 / 255, 1.0);
 var avh4$elm_color$Color$white = A4(avh4$elm_color$Color$RgbaSpace, 255 / 255, 255 / 255, 255 / 255, 1.0);
 var joakin$elm_canvas$Canvas$Fill = function (a) {
 	return {$: 'Fill', a: a};
@@ -5492,8 +5514,8 @@ var joakin$elm_canvas$Canvas$Translate = F2(
 		return {$: 'Translate', a: a, b: b};
 	});
 var joakin$elm_canvas$Canvas$translate = joakin$elm_canvas$Canvas$Translate;
-var author$project$Game$renderAsteroid = F2(
-	function (asteroid, t) {
+var author$project$Game$renderAsteroid = F3(
+	function (asteroid, t, tf) {
 		var theta = author$project$Game$cycle(t);
 		var _n0 = asteroid.position;
 		var x = _n0.a;
@@ -5503,10 +5525,11 @@ var author$project$Game$renderAsteroid = F2(
 			_List_fromArray(
 				[
 					joakin$elm_canvas$Canvas$stroke(avh4$elm_color$Color$white),
-					joakin$elm_canvas$Canvas$fill(avh4$elm_color$Color$black),
+					joakin$elm_canvas$Canvas$fill(asteroid.color),
 					joakin$elm_canvas$Canvas$transform(
 					_List_fromArray(
 						[
+							tf,
 							A2(joakin$elm_canvas$Canvas$translate, x, y),
 							joakin$elm_canvas$Canvas$rotate(theta)
 						])),
@@ -6104,7 +6127,7 @@ var author$project$Game$viewGame = F2(
 				A2(
 					elm$core$List$map,
 					function (a) {
-						return A2(author$project$Game$renderAsteroid, a, t);
+						return A3(author$project$Game$renderAsteroid, a, t, game.transform);
 					},
 					game.asteroids)));
 	});
@@ -6504,7 +6527,14 @@ var author$project$Main$main = elm$browser$Browser$element(
 				{
 					count: 0,
 					games: _List_fromArray(
-						[author$project$Game$newGame, author$project$Game$newGame])
+						[
+							author$project$Game$newGame(
+							_Utils_Tuple2(400, 225)),
+							author$project$Game$newGame(
+							_Utils_Tuple2(400, 225)),
+							author$project$Game$newGame(
+							_Utils_Tuple2(800, 450))
+						])
 				},
 				elm$core$Platform$Cmd$none);
 		},
