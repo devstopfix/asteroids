@@ -9,6 +9,7 @@ import Explosions exposing (updateExplosions)
 import Game exposing (Game, newGame, viewGame)
 import Html exposing (Html, div, p, text)
 import Html.Attributes exposing (style)
+import Json.Decode exposing (decodeString)
 import StateParser exposing (gameDecoder)
 
 
@@ -36,9 +37,16 @@ main =
                 )
         , view = view
         , update = update
-        , subscriptions = \model -> graphicsIn GraphicsIn
-        -- , subscriptions = \model -> onAnimationFrameDelta Frame
+        , subscriptions = subscriptions
         }
+
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    Sub.batch
+        [ graphicsIn GraphicsIn
+        , onAnimationFrameDelta Frame
+        ]
 
 
 initState =
@@ -81,9 +89,16 @@ update msg model =
             , Cmd.none
             )
 
-        GraphicsIn state ->
-            log state
-                ( model, Cmd.none )
+        GraphicsIn state_json ->
+            mergeGraphics model state_json
+
+
+mergeGraphics model state_json =
+    let
+        game_state =
+            Json.Decode.decodeString StateParser.gameDecoder state_json
+    in
+    ( model, Cmd.none )
 
 
 updateGames : Int -> List Game -> List Game

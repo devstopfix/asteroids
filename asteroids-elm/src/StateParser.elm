@@ -107,8 +107,6 @@ dimHelp fs =
 
 
 
--- Decode.decodeString StateParser.gameDecoder "{\"dim\":[1,2,3]}"
-
 
 explosionsDecoder : Decoder (List Point2d)
 explosionsDecoder =
