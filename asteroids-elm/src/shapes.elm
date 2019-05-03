@@ -1,7 +1,7 @@
 module Shapes exposing (rockWithRadius)
 
 import Point2d exposing (Point2d, fromCoordinates, origin)
-import Points exposing (closePolygon)
+import Points exposing (closePolygon, readPoints)
 import Polygon2d exposing (Polygon2d, outerLoop, scaleAbout, singleLoop)
 import Rocks exposing (..)
 
@@ -14,13 +14,6 @@ rockWithRadius rt radius =
     in
     scaleAbout origin radius rock |> outerLoop |> closePolygon
 
-
-points ps =
-    List.map (\( x, y ) -> fromCoordinates ( x, y )) ps
-
-
-polygon =
-    singleLoop << points
 
 
 classicRockPolygon1 =
@@ -52,3 +45,6 @@ lookup rockType =
 
         Classic4 ->
             classicRockPolygon4
+
+polygon =
+    singleLoop << readPoints

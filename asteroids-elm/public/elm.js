@@ -4604,7 +4604,7 @@ var ianmackenzie$elm_geometry$Geometry$Types$Point2d = function (a) {
 	return {$: 'Point2d', a: a};
 };
 var ianmackenzie$elm_geometry$Point2d$fromCoordinates = ianmackenzie$elm_geometry$Geometry$Types$Point2d;
-var author$project$Shapes$points = function (ps) {
+var author$project$Points$readPoints = function (ps) {
 	return A2(
 		elm$core$List$map,
 		function (_n0) {
@@ -4719,7 +4719,7 @@ var ianmackenzie$elm_geometry$Polygon2d$singleLoop = function (vertices_) {
 			outerLoop: ianmackenzie$elm_geometry$Polygon2d$makeOuterLoop(vertices_)
 		});
 };
-var author$project$Shapes$polygon = A2(elm$core$Basics$composeL, ianmackenzie$elm_geometry$Polygon2d$singleLoop, author$project$Shapes$points);
+var author$project$Shapes$polygon = A2(elm$core$Basics$composeL, ianmackenzie$elm_geometry$Polygon2d$singleLoop, author$project$Points$readPoints);
 var author$project$Shapes$classicRockPolygon1 = author$project$Shapes$polygon(author$project$Rocks$classicRock1);
 var author$project$Rocks$classicRock2 = _List_fromArray(
 	[
@@ -4925,21 +4925,40 @@ var author$project$Explosions$newExplosion = function (p) {
 	};
 };
 var author$project$Game$gameDimensions = _Utils_Tuple2(4000.0, 2250.0);
-var author$project$Ships$shipEast = author$project$Polygon$pointsToShape(
-	_List_fromArray(
-		[
-			_Utils_Tuple2(-5, 4),
-			_Utils_Tuple2(0, -12),
-			_Utils_Tuple2(5, 4),
-			_Utils_Tuple2(-5, 4)
-		]));
+var author$project$Ships$shipRadius = 20.0;
+var author$project$Polygon$polygonToShape = function (polygon) {
+	return author$project$Polygon$pointsToShape(
+		author$project$Points$convertPoints(
+			author$project$Points$closePolygon(
+				ianmackenzie$elm_geometry$Polygon2d$outerLoop(polygon))));
+};
+var author$project$SpaceShip$arcadeShipEast = A3(
+	ianmackenzie$elm_geometry$Polygon2d$scaleAbout,
+	ianmackenzie$elm_geometry$Point2d$origin,
+	1.0 / 24.0,
+	ianmackenzie$elm_geometry$Polygon2d$singleLoop(
+		author$project$Points$readPoints(
+			_List_fromArray(
+				[
+					_Utils_Tuple2(24, 0),
+					_Utils_Tuple2(-24, -16),
+					_Utils_Tuple2(-16, -8),
+					_Utils_Tuple2(-16, 8),
+					_Utils_Tuple2(-24, 16),
+					_Utils_Tuple2(24, -0)
+				]))));
+var author$project$SpaceShip$shipWithRadius = function (r) {
+	return author$project$Polygon$polygonToShape(
+		A3(ianmackenzie$elm_geometry$Polygon2d$scaleAbout, ianmackenzie$elm_geometry$Point2d$origin, r, author$project$SpaceShip$arcadeShipEast));
+};
 var author$project$Ships$newShip = F3(
 	function (id, position, theta) {
 		return {
 			color: A3(avh4$elm_color$Color$rgb255, 251, 255, 251),
 			id: id,
 			position: position,
-			shape: author$project$Ships$shipEast,
+			radius: author$project$Ships$shipRadius,
+			shape: author$project$SpaceShip$shipWithRadius(author$project$Ships$shipRadius),
 			tagColor: A4(avh4$elm_color$Color$rgba, 1, 1, 1, 0.8),
 			theta: theta
 		};
@@ -4999,7 +5018,27 @@ var author$project$Game$newGame = function (dims) {
 				author$project$Asteroids$newAsteroid,
 				7,
 				_Utils_Tuple2(((4000 - 120) - 60) - 30, (120 + 60) + 30),
-				120.0)
+				120.0),
+				A3(
+				author$project$Asteroids$newAsteroid,
+				20,
+				_Utils_Tuple2(1400, 1440),
+				20.0),
+				A3(
+				author$project$Asteroids$newAsteroid,
+				24,
+				_Utils_Tuple2(1480, 1440),
+				20.0),
+				A3(
+				author$project$Asteroids$newAsteroid,
+				28,
+				_Utils_Tuple2(1440, 1400),
+				20.0),
+				A3(
+				author$project$Asteroids$newAsteroid,
+				32,
+				_Utils_Tuple2(1440, 1480),
+				20.0)
 			]),
 		bullets: _List_fromArray(
 			[
@@ -5037,7 +5076,12 @@ var author$project$Game$newGame = function (dims) {
 				author$project$Ships$newShip,
 				'WST',
 				_Utils_Tuple2(3500, 500),
-				3.14)
+				3.14),
+				A3(
+				author$project$Ships$newShip,
+				'TWN',
+				_Utils_Tuple2(1440, 1440),
+				3.14 / 2.0)
 			]),
 		spaceColor: avh4$elm_color$Color$black,
 		transform: A2(joakin$elm_canvas$Canvas$scale, canvas_x / game_x, canvas_y / game_y)
@@ -5891,7 +5935,6 @@ var author$project$Game$renderShip = F2(
 						[
 							tf,
 							A2(joakin$elm_canvas$Canvas$translate, x, y),
-							A2(joakin$elm_canvas$Canvas$scale, 3.0, 3.0),
 							joakin$elm_canvas$Canvas$rotate(ship.theta)
 						])),
 					joakin$elm_canvas$Canvas$lineWidth(2.0)

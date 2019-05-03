@@ -1,16 +1,13 @@
-module Points exposing (convertPoints, closePolygon)
+module Points exposing (convertPoints, closePolygon, readPoints)
 
 import Canvas exposing (Point)
-import Point2d exposing (Point2d, coordinates)
+import Point2d exposing (Point2d, coordinates, fromCoordinates)
 
 
-p2p : Point2d -> Point
-p2p p =
-    let
-        ( x, y ) =
-            coordinates p
-    in
-    ( x, y )
+readPoints: List (Float, Float) -> List Point2d
+readPoints ps =
+    List.map (\( x, y ) -> fromCoordinates ( x, y )) ps
+
 
 -- Convert from Geometry points to Canvas points
 convertPoints : List Point2d -> List Point
@@ -25,3 +22,11 @@ closePolygon list =
             []
         p :: ps ->
             List.append (p :: ps) [p]
+
+p2p : Point2d -> Point
+p2p p =
+    let
+        ( x, y ) =
+            coordinates p
+    in
+    ( x, y )

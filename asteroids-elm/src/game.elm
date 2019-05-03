@@ -49,6 +49,10 @@ newGame dims =
         , newAsteroid 5 ( 4000 - 30, 30 ) 30.0
         , newAsteroid 6 ( 4000 - 60 - 30, 60 + 30 ) 60.0
         , newAsteroid 7 ( 4000 - 120 - 60 - 30, 120 + 60 + 30 ) 120.0
+        , newAsteroid 20 ( 1400, 1440 ) 20.0
+        , newAsteroid 24 ( 1480, 1440 ) 20.0
+        , newAsteroid 28 ( 1440, 1400 ) 20.0
+        , newAsteroid 32 ( 1440, 1480 ) 20.0
         ]
     , bullets =
         [ newBullet 0 ( 1000, 1000 )
@@ -60,6 +64,7 @@ newGame dims =
     , ships =
         [ newShip "EST" ( 500, 500 ) 0.0
         , newShip "WST" ( 3500, 500 ) 3.14
+        , newShip "TWN" ( 1440, 1440 ) (3.14 / 2.0)
         ]
     , spaceColor = Color.black
     , transform = scale (canvas_x / game_x) (canvas_y / game_y)
@@ -178,7 +183,7 @@ renderShip tf ship =
             ship.position
     in
     shapes
-        [ stroke ship.color, transform [ tf, translate x y, scale 3.0 3.0, rotate ship.theta ], lineWidth 2.0 ]
+        [ stroke ship.color, transform [ tf, translate x y, rotate ship.theta ], lineWidth 2.0 ]
         [ ship.shape ]
 
 
