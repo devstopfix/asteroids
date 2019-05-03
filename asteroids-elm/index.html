@@ -5174,13 +5174,10 @@ var author$project$Main$updateGame = F2(
 				explosions: A2(author$project$Explosions$updateExplosions, t, game.explosions)
 			});
 	});
-var author$project$Main$updateGames = F2(
-	function (games, t) {
-		return A2(
-			elm$core$List$map,
-			author$project$Main$updateGame(t),
-			games);
-	});
+var author$project$Main$updateGames = function (t) {
+	return elm$core$List$map(
+		author$project$Main$updateGame(t));
+};
 var elm$core$Basics$False = {$: 'False'};
 var elm$core$Basics$True = {$: 'True'};
 var elm$core$Result$isOk = function (result) {
@@ -5551,7 +5548,7 @@ var author$project$Main$update = F2(
 				model,
 				{
 					count: model.count + 1,
-					games: A2(author$project$Main$updateGames, model.games, model.count)
+					games: A2(author$project$Main$updateGames, model.count, model.games)
 				}),
 			elm$core$Platform$Cmd$none);
 	});

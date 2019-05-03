@@ -38,7 +38,7 @@ update msg model =
         Frame _ ->
             ( { model
                 | count = model.count + 1
-                , games = updateGames model.games model.count
+                , games = (updateGames model.count model.games)
               }
             , Cmd.none
             )
@@ -68,9 +68,9 @@ main =
         }
 
 
-updateGames : List Game -> Int -> List Game
-updateGames games t =
-    List.map (updateGame t) games
+updateGames : Int -> List Game -> List Game
+updateGames t =
+    List.map (updateGame t)
 
 
 updateGame : Int -> Game -> Game

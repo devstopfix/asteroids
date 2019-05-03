@@ -5066,42 +5066,42 @@ var author$project$Game$newGame = function (dims) {
 				author$project$Ships$newShip,
 				'NNW',
 				_Utils_Tuple2(400, 400),
-				(3 * 3.14) / 8.0),
+				(3 * 3.14) / 4.0),
 				A3(
 				author$project$Ships$newShip,
 				'NNN',
 				_Utils_Tuple2(600, 400),
-				(2 * 3.14) / 8.0),
+				(1 * 3.14) / 2.0),
 				A3(
 				author$project$Ships$newShip,
 				'NNE',
 				_Utils_Tuple2(800, 400),
-				(1 * 3.14) / 8.0),
+				(1 * 3.14) / 4.0),
 				A3(
 				author$project$Ships$newShip,
 				'WWW',
 				_Utils_Tuple2(400, 600),
-				(4 * 3.14) / 8.0),
+				(1 * 3.14) / 1.0),
 				A3(
 				author$project$Ships$newShip,
 				'EEE',
 				_Utils_Tuple2(800, 600),
-				(0 * 3.14) / 8.0),
+				0 * 3.14),
 				A3(
 				author$project$Ships$newShip,
 				'SWW',
 				_Utils_Tuple2(400, 800),
-				(5 * 3.14) / 8.0),
+				(5 * 3.14) / 4.0),
 				A3(
 				author$project$Ships$newShip,
 				'SSS',
 				_Utils_Tuple2(600, 800),
-				(6 * 3.14) / 8.0),
+				(3 * 3.14) / 2.0),
 				A3(
 				author$project$Ships$newShip,
 				'SSE',
 				_Utils_Tuple2(800, 800),
-				(7 * 3.14) / 8.0)
+				(7 * 3.14) / 4.0)
 			]),
 		spaceColor: avh4$elm_color$Color$black,
 		transform: A2(joakin$elm_canvas$Canvas$scale, canvas_x / game_x, canvas_y / game_y)
@@ -5164,13 +5164,10 @@ var author$project$Main$updateGame = F2(
 				explosions: A2(author$project$Explosions$updateExplosions, t, game.explosions)
 			});
 	});
-var author$project$Main$updateGames = F2(
-	function (games, t) {
-		return A2(
-			elm$core$List$map,
-			author$project$Main$updateGame(t),
-			games);
-	});
+var author$project$Main$updateGames = function (t) {
+	return elm$core$List$map(
+		author$project$Main$updateGame(t));
+};
 var elm$core$Basics$False = {$: 'False'};
 var elm$core$Basics$True = {$: 'True'};
 var elm$core$Result$isOk = function (result) {
@@ -5541,7 +5538,7 @@ var author$project$Main$update = F2(
 				model,
 				{
 					count: model.count + 1,
-					games: A2(author$project$Main$updateGames, model.games, model.count)
+					games: A2(author$project$Main$updateGames, model.count, model.games)
 				}),
 			elm$core$Platform$Cmd$none);
 	});
