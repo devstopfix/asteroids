@@ -2,7 +2,7 @@ module SpaceShip exposing (shipWithRadius)
 
 import Canvas exposing (Shape)
 import Point2d exposing (origin)
-import Points exposing (closePolygon, readPoints, convertPoints)
+import Points exposing (readPoints)
 import Polygon exposing (pointsToShape, polygonToShape)
 import Polygon2d exposing (scaleAbout, singleLoop, outerLoop)
 

@@ -4581,20 +4581,17 @@ var author$project$Points$closePolygon = function (list) {
 				[p]));
 	}
 };
-var elm$core$Basics$apR = F2(
-	function (x, f) {
-		return f(x);
-	});
 var ianmackenzie$elm_geometry$Polygon2d$outerLoop = function (_n0) {
 	var polygon = _n0.a;
 	return polygon.outerLoop;
 };
-var author$project$Polygon$polygonToShape = function (polygon) {
-	return author$project$Polygon$pointsToShape(
-		author$project$Points$convertPoints(
-			author$project$Points$closePolygon(
-				ianmackenzie$elm_geometry$Polygon2d$outerLoop(polygon))));
-};
+var author$project$Polygon$polygonToShape = A2(
+	elm$core$Basics$composeL,
+	A2(
+		elm$core$Basics$composeL,
+		A2(elm$core$Basics$composeL, author$project$Polygon$pointsToShape, author$project$Points$convertPoints),
+		author$project$Points$closePolygon),
+	ianmackenzie$elm_geometry$Polygon2d$outerLoop);
 var elm$core$Basics$negate = function (n) {
 	return -n;
 };
@@ -4794,6 +4791,10 @@ var author$project$Shapes$lookup = function (rockType) {
 			return author$project$Shapes$classicRockPolygon4;
 	}
 };
+var elm$core$Basics$apR = F2(
+	function (x, f) {
+		return f(x);
+	});
 var ianmackenzie$elm_geometry$Point2d$origin = ianmackenzie$elm_geometry$Point2d$fromCoordinates(
 	_Utils_Tuple2(0, 0));
 var elm$core$Basics$lt = _Utils_lt;
