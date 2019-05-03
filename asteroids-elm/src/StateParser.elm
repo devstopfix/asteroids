@@ -5,13 +5,14 @@ import BoundingBox2d exposing (BoundingBox2d, from)
 import Circle2d exposing (Circle2d, withRadius)
 import Point2d exposing (Point2d, fromCoordinates, origin)
 
-import Json.Decode as Decode exposing (Decoder,succeed, fail, andThen, at, list, map3, map4, field, index, int, maybe, float)
+import Json.Decode as Decode exposing (Decoder,succeed, fail, andThen, at, list, map3, map5, field, index, int, maybe, float, string)
 
 type alias GameState = {
       asteroids: Maybe (List AsteroidLocation)
     , bullets: Maybe (List BullletLocation)
     , dimensions : Maybe BoundingBox2d
-    , explosions : Maybe (List Point2d) }
+    , explosions : Maybe (List Point2d)
+    , ships : Maybe (List ShipLocation) }
 
 type alias Id = Int
 
@@ -19,16 +20,23 @@ type alias AsteroidLocation = {id: Id, location: Circle2d}
 
 type alias BullletLocation = {id: Id, location: Point2d}
 
+type alias Tag = String
+
+type alias Theta = Float
+
+type alias ShipLocation = {id: Tag, location: Circle2d, theta: Theta}
+
 -- dim : Maybe BoundingBox2d
 
 gameDecoder : Decoder GameState
 
 gameDecoder =
-    map4 GameState
+    map5 GameState
         (maybe (field "a" asteroidsDecoder) )
         (maybe (field "b" bulletsDecoder) )
         (maybe (field "dim" dimDecoder) )
         (maybe (field "x" explosionsDecoder) )
+        (maybe (field "s" shipsDecoder) )
 
 
 asteroidsDecoder : Decoder (List AsteroidLocation)
@@ -77,3 +85,16 @@ explosionDecoder =
     field "0" float
         |> andThen (\x -> field "1" float
         |> andThen (\y -> succeed (fromCoordinates (x, y) ) ))
+
+
+shipsDecoder : Decoder (List ShipLocation)
+shipsDecoder = list shipDecoder
+
+shipDecoder : Decoder ShipLocation
+shipDecoder =
+    field "0" string
+        |> andThen (\tag -> field "1" float
+        |> andThen (\x -> field "2" float
+        |> andThen (\y -> field "3" float
+        |> andThen (\r -> field "4" float
+        |> andThen (\theta -> succeed {location = (withRadius r (fromCoordinates (x, y) ) ), id = tag, theta = theta })))))
