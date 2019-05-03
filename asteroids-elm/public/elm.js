@@ -4581,6 +4581,20 @@ var author$project$Points$closePolygon = function (list) {
 				[p]));
 	}
 };
+var elm$core$Basics$apR = F2(
+	function (x, f) {
+		return f(x);
+	});
+var ianmackenzie$elm_geometry$Polygon2d$outerLoop = function (_n0) {
+	var polygon = _n0.a;
+	return polygon.outerLoop;
+};
+var author$project$Polygon$polygonToShape = function (polygon) {
+	return author$project$Polygon$pointsToShape(
+		author$project$Points$convertPoints(
+			author$project$Points$closePolygon(
+				ianmackenzie$elm_geometry$Polygon2d$outerLoop(polygon))));
+};
 var elm$core$Basics$negate = function (n) {
 	return -n;
 };
@@ -4780,16 +4794,8 @@ var author$project$Shapes$lookup = function (rockType) {
 			return author$project$Shapes$classicRockPolygon4;
 	}
 };
-var elm$core$Basics$apR = F2(
-	function (x, f) {
-		return f(x);
-	});
 var ianmackenzie$elm_geometry$Point2d$origin = ianmackenzie$elm_geometry$Point2d$fromCoordinates(
 	_Utils_Tuple2(0, 0));
-var ianmackenzie$elm_geometry$Polygon2d$outerLoop = function (_n0) {
-	var polygon = _n0.a;
-	return polygon.outerLoop;
-};
 var elm$core$Basics$lt = _Utils_lt;
 var ianmackenzie$elm_geometry$Point2d$translateBy = F2(
 	function (vector, point) {
@@ -4855,9 +4861,8 @@ var ianmackenzie$elm_geometry$Polygon2d$scaleAbout = F2(
 var author$project$Shapes$rockWithRadius = F2(
 	function (rt, radius) {
 		var rock = author$project$Shapes$lookup(rt);
-		return author$project$Points$closePolygon(
-			ianmackenzie$elm_geometry$Polygon2d$outerLoop(
-				A3(ianmackenzie$elm_geometry$Polygon2d$scaleAbout, ianmackenzie$elm_geometry$Point2d$origin, radius, rock)));
+		return author$project$Polygon$polygonToShape(
+			A3(ianmackenzie$elm_geometry$Polygon2d$scaleAbout, ianmackenzie$elm_geometry$Point2d$origin, radius, rock));
 	});
 var avh4$elm_color$Color$RgbaSpace = F4(
 	function (a, b, c, d) {
@@ -4926,12 +4931,6 @@ var author$project$Explosions$newExplosion = function (p) {
 };
 var author$project$Game$gameDimensions = _Utils_Tuple2(4000.0, 2250.0);
 var author$project$Ships$shipRadius = 20.0;
-var author$project$Polygon$polygonToShape = function (polygon) {
-	return author$project$Polygon$pointsToShape(
-		author$project$Points$convertPoints(
-			author$project$Points$closePolygon(
-				ianmackenzie$elm_geometry$Polygon2d$outerLoop(polygon))));
-};
 var author$project$SpaceShip$arcadeShipEast = A3(
 	ianmackenzie$elm_geometry$Polygon2d$scaleAbout,
 	ianmackenzie$elm_geometry$Point2d$origin,
