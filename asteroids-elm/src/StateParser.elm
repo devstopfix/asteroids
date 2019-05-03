@@ -7,14 +7,17 @@ import Point2d exposing (Point2d, fromCoordinates, origin)
 
 import Json.Decode as Decode exposing (Decoder,succeed, fail, andThen, at, list, map3, map4, field, index, int, maybe, float)
 
-type alias GameState = { asteroids: Maybe (List AsteroidLocation)
-    , bullets: Maybe (List Int)
+type alias GameState = {
+      asteroids: Maybe (List AsteroidLocation)
+    , bullets: Maybe (List BullletLocation)
     , dimensions : Maybe BoundingBox2d
     , explosions : Maybe (List Point2d) }
 
 type alias Id = Int
 
 type alias AsteroidLocation = {id: Id, location: Circle2d}
+
+type alias BullletLocation = {id: Id, location: Point2d}
 
 -- dim : Maybe BoundingBox2d
 
@@ -23,7 +26,7 @@ gameDecoder : Decoder GameState
 gameDecoder =
     map4 GameState
         (maybe (field "a" asteroidsDecoder) )
-        (maybe (field "b" bulletDecoder) )
+        (maybe (field "b" bulletsDecoder) )
         (maybe (field "dim" dimDecoder) )
         (maybe (field "x" explosionsDecoder) )
 
@@ -40,8 +43,15 @@ asteroidDecoder =
         |> andThen (\r -> succeed {location = (withRadius r (fromCoordinates (x, y) ) ), id = id }))))
 
 
-bulletDecoder : Decoder (List Int)
-bulletDecoder = list int
+bulletsDecoder : Decoder (List BullletLocation)
+bulletsDecoder = list bulletDecoder
+
+bulletDecoder : Decoder BullletLocation
+bulletDecoder =
+    field "0" int
+        |> andThen (\id -> field "1" float
+        |> andThen (\x -> field "2" float
+        |> andThen (\y -> succeed { id = id, location = (fromCoordinates (x, y) ) } )))
 
 
 
