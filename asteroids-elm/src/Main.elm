@@ -1,4 +1,4 @@
-module Main exposing (main)
+port module Main exposing (main)
 
 import Asteroids exposing (rotateAsteroids)
 import Browser
@@ -18,6 +18,34 @@ type alias Model =
 
 type Msg
     = Frame Float
+
+
+port websocketIn : (String -> msg) -> Sub msg
+
+
+main : Program () Model Msg
+main =
+    Browser.element
+        { init =
+            \() ->
+                ( { count = 0
+                  , games =
+                        [ newGame ( 800, 450 )
+                        , newGame ( 400, 225 )
+                        , newGame ( 400, 225 )
+                        , newGame ( 200, 112 )
+                        , newGame ( 200, 112 )
+                        , newGame ( 200, 112 )
+                        , newGame ( 200, 112 )
+                        ]
+                  }
+                , Cmd.none
+                )
+        , view = view
+        , update = update
+        , subscriptions = \model -> onAnimationFrameDelta Frame
+        }
+
 
 
 view : Model -> Html msg
@@ -43,29 +71,6 @@ update msg model =
             , Cmd.none
             )
 
-
-main : Program () Model Msg
-main =
-    Browser.element
-        { init =
-            \() ->
-                ( { count = 0
-                  , games =
-                        [ newGame ( 800, 450 )
-                        , newGame ( 400, 225 )
-                        , newGame ( 400, 225 )
-                        , newGame ( 200, 112 )
-                        , newGame ( 200, 112 )
-                        , newGame ( 200, 112 )
-                        , newGame ( 200, 112 )
-                        ]
-                  }
-                , Cmd.none
-                )
-        , view = view
-        , update = update
-        , subscriptions = \model -> onAnimationFrameDelta Frame
-        }
 
 
 updateGames : Int -> List Game -> List Game
