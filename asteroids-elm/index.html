@@ -4524,16 +4524,6 @@ var author$project$Points$closePolygon = function (list) {
 				[p]));
 	}
 };
-var ianmackenzie$elm_geometry$Point2d$coordinates = function (_n0) {
-	var coordinates_ = _n0.a;
-	return coordinates_;
-};
-var author$project$Points$p2p = function (p) {
-	var _n0 = ianmackenzie$elm_geometry$Point2d$coordinates(p);
-	var x = _n0.a;
-	var y = _n0.b;
-	return _Utils_Tuple2(x, y);
-};
 var elm$core$List$map = F2(
 	function (f, xs) {
 		return A3(
@@ -4548,9 +4538,11 @@ var elm$core$List$map = F2(
 			_List_Nil,
 			xs);
 	});
-var author$project$Points$convertPoints = function (ps) {
-	return A2(elm$core$List$map, author$project$Points$p2p, ps);
+var ianmackenzie$elm_geometry$Point2d$coordinates = function (_n0) {
+	var coordinates_ = _n0.a;
+	return coordinates_;
 };
+var author$project$Points$convertPoints = elm$core$List$map(ianmackenzie$elm_geometry$Point2d$coordinates);
 var joakin$elm_canvas$Canvas$LineTo = function (a) {
 	return {$: 'LineTo', a: a};
 };
@@ -4624,17 +4616,7 @@ var ianmackenzie$elm_geometry$Geometry$Types$Point2d = function (a) {
 	return {$: 'Point2d', a: a};
 };
 var ianmackenzie$elm_geometry$Point2d$fromCoordinates = ianmackenzie$elm_geometry$Geometry$Types$Point2d;
-var author$project$Points$readPoints = function (ps) {
-	return A2(
-		elm$core$List$map,
-		function (_n0) {
-			var x = _n0.a;
-			var y = _n0.b;
-			return ianmackenzie$elm_geometry$Point2d$fromCoordinates(
-				_Utils_Tuple2(x, y));
-		},
-		ps);
-};
+var author$project$Points$readPoints = elm$core$List$map(ianmackenzie$elm_geometry$Point2d$fromCoordinates);
 var ianmackenzie$elm_geometry$Geometry$Types$Polygon2d = function (a) {
 	return {$: 'Polygon2d', a: a};
 };
