@@ -16,5 +16,5 @@ pointsToShape points =
 
 
 polygonToShape : Polygon2d -> Shape
-polygonToShape polygon =
-    polygon |> outerLoop |> closePolygon |> convertPoints  |> pointsToShape
+polygonToShape =
+    pointsToShape << convertPoints << closePolygon << outerLoop
