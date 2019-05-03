@@ -8,6 +8,7 @@ import SpaceShip exposing (shipWithRadius)
 type alias Id =
     String
 
+
 type alias Radius =
     Float
 
@@ -17,11 +18,13 @@ type alias Theta =
 
 
 type alias Ship =
-    { id : Id, position : Point, theta : Theta, color : Color, tagColor : Color, shape : Shape, radius : Radius}
+    { id : Id, position : Point, theta : Theta, color : Color, tagColor : Color, shape : Shape, radius : Radius }
 
 
 shipRadius : Radius
-shipRadius = 20.0
+shipRadius =
+    20.0
+
 
 newShip : Id -> Point -> Theta -> Ship
 newShip id position theta =
@@ -33,5 +36,3 @@ newShip id position theta =
     , shape = shipWithRadius shipRadius
     , theta = theta
     }
-
-

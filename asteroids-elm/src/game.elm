@@ -57,22 +57,28 @@ newGame dims =
     , bullets =
         [ newBullet 0 ( 1000, 1000 )
         , newBullet 1 ( 2000, 2000 )
-        , newBullet 1 ( 3000, 1000 )
-        , newBullet 1 ( 2000, 1000 )
+        , newBullet 1 ( 400, 400 )
+        , newBullet 1 ( 600, 400 )
+        , newBullet 1 ( 800, 400 )
+        , newBullet 1 ( 400, 600 )
+        , newBullet 1 ( 800, 600 )
+        , newBullet 1 ( 400, 800 )
+        , newBullet 1 ( 600, 800 )
+        , newBullet 1 ( 800, 800 )
         ]
     , explosions = [ newExplosion ( 3000, 500 ) ]
     , ships =
         [ newShip "TAG" ( 100, 100 ) (3.14 / 4.0)
         , newShip "WST" ( 3500, 500 ) 3.14
         , newShip "TWN" ( 1440, 1440 ) (3.14 / 2.0)
-        , newShip "NNW" (  400,  400 ) (3 * 3.14 / 4.0)
-        , newShip "NNN" (  600,  400 ) (1 * 3.14 / 2.0)
-        , newShip "NNE" (  800,  400 ) (1 * 3.14 / 4.0)
-        , newShip "WWW" (  400,  600 ) (1 * 3.14 / 1.0)
-        , newShip "EEE" (  800,  600 ) (0 * 3.14)
-        , newShip "SWW" (  400,  800 ) (5 * 3.14 / 4.0)
-        , newShip "SSS" (  600,  800 ) (3 * 3.14 / 2.0)
-        , newShip "SSE" (  800,  800 ) (7 * 3.14 / 4.0)
+        , newShip "NNW" ( 400, 400 ) (3 * 3.14 / 4.0)
+        , newShip "NNN" ( 600, 400 ) (1 * 3.14 / 2.0)
+        , newShip "NNE" ( 800, 400 ) (1 * 3.14 / 4.0)
+        , newShip "WWW" ( 400, 600 ) (1 * 3.14 / 1.0)
+        , newShip "EEE" ( 800, 600 ) (0 * 3.14)
+        , newShip "SWW" ( 400, 800 ) (5 * 3.14 / 4.0)
+        , newShip "SSS" ( 600, 800 ) (3 * 3.14 / 2.0)
+        , newShip "SSE" ( 800, 800 ) (7 * 3.14 / 4.0)
         ]
     , spaceColor = Color.black
     , transform = scale (canvas_x / game_x) (canvas_y / game_y)
@@ -213,4 +219,4 @@ renderShipName tf ship =
         tagOffset =
             ship.radius * 3.0
     in
-    [ text [ stroke color, fill color, transform [ tf, translate x y, rotate tagTheta, translate -x -y, translate 0 tagOffset], font { size = 36, family = "Source Code Pro" }, align Center ] ( x, y ) tag ]
+    [ text [ stroke color, fill color, transform [ tf, translate x y, rotate tagTheta, translate -x -y, translate 0 tagOffset ], font { size = 36, family = "Source Code Pro" }, align Center ] ( x, y ) tag ]

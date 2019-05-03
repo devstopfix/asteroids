@@ -4912,21 +4912,90 @@ var author$project$Explosions$newExplosion = function (p) {
 };
 var author$project$Game$gameDimensions = _Utils_Tuple2(4000.0, 2250.0);
 var author$project$Ships$shipRadius = 20.0;
-var author$project$SpaceShip$arcadeShipEast = A3(
-	ianmackenzie$elm_geometry$Polygon2d$scaleAbout,
-	ianmackenzie$elm_geometry$Point2d$origin,
-	1.0 / 24.0,
-	ianmackenzie$elm_geometry$Polygon2d$singleLoop(
-		author$project$Points$readPoints(
-			_List_fromArray(
-				[
-					_Utils_Tuple2(24, 0),
-					_Utils_Tuple2(-24, -16),
-					_Utils_Tuple2(-16, -8),
-					_Utils_Tuple2(-16, 8),
-					_Utils_Tuple2(-24, 16),
-					_Utils_Tuple2(24, -0)
-				]))));
+var elm$core$Maybe$Just = function (a) {
+	return {$: 'Just', a: a};
+};
+var elm$core$Maybe$Nothing = {$: 'Nothing'};
+var ianmackenzie$elm_geometry$Point2d$centroidHelp = F6(
+	function (x0, y0, count, dx, dy, points) {
+		centroidHelp:
+		while (true) {
+			if (points.b) {
+				var point = points.a;
+				var remaining = points.b;
+				var _n1 = ianmackenzie$elm_geometry$Point2d$coordinates(point);
+				var x = _n1.a;
+				var y = _n1.b;
+				var newDx = dx + (x - x0);
+				var newDy = dy + (y - y0);
+				var $temp$x0 = x0,
+					$temp$y0 = y0,
+					$temp$count = count + 1,
+					$temp$dx = newDx,
+					$temp$dy = newDy,
+					$temp$points = remaining;
+				x0 = $temp$x0;
+				y0 = $temp$y0;
+				count = $temp$count;
+				dx = $temp$dx;
+				dy = $temp$dy;
+				points = $temp$points;
+				continue centroidHelp;
+			} else {
+				return ianmackenzie$elm_geometry$Point2d$fromCoordinates(
+					_Utils_Tuple2(x0 + (dx / count), y0 + (dy / count)));
+			}
+		}
+	});
+var ianmackenzie$elm_geometry$Point2d$centroid = function (points) {
+	if (!points.b) {
+		return elm$core$Maybe$Nothing;
+	} else {
+		var first = points.a;
+		var rest = points.b;
+		var _n1 = ianmackenzie$elm_geometry$Point2d$coordinates(first);
+		var x0 = _n1.a;
+		var y0 = _n1.b;
+		return elm$core$Maybe$Just(
+			A6(ianmackenzie$elm_geometry$Point2d$centroidHelp, x0, y0, 1, 0, 0, rest));
+	}
+};
+var author$project$Polygon$polygonCentroid = A2(elm$core$Basics$composeL, ianmackenzie$elm_geometry$Point2d$centroid, ianmackenzie$elm_geometry$Polygon2d$outerLoop);
+var elm$core$Basics$False = {$: 'False'};
+var ianmackenzie$elm_geometry$Polygon2d$translateBy = function (vector) {
+	return A2(
+		ianmackenzie$elm_geometry$Polygon2d$mapVertices,
+		ianmackenzie$elm_geometry$Point2d$translateBy(vector),
+		false);
+};
+var author$project$SpaceShip$centreAboutMass = function (ship) {
+	var _n0 = author$project$Polygon$polygonCentroid(ship);
+	if (_n0.$ === 'Nothing') {
+		return ship;
+	} else {
+		var c = _n0.a;
+		return A2(
+			ianmackenzie$elm_geometry$Polygon2d$translateBy,
+			A2(ianmackenzie$elm_geometry$Vector2d$from, c, ianmackenzie$elm_geometry$Point2d$origin),
+			ship);
+	}
+};
+var author$project$SpaceShip$arcadeShipEast = author$project$SpaceShip$centreAboutMass(
+	A3(
+		ianmackenzie$elm_geometry$Polygon2d$scaleAbout,
+		ianmackenzie$elm_geometry$Point2d$origin,
+		1.0 / 24.0,
+		ianmackenzie$elm_geometry$Polygon2d$singleLoop(
+			author$project$Points$readPoints(
+				_List_fromArray(
+					[
+						_Utils_Tuple2(24, 0),
+						_Utils_Tuple2(-24, -16),
+						_Utils_Tuple2(-16, -8),
+						_Utils_Tuple2(-16, 8),
+						_Utils_Tuple2(-24, 16),
+						_Utils_Tuple2(24, 0)
+					])))));
 var author$project$SpaceShip$shipWithRadius = function (r) {
 	return author$project$Polygon$polygonToShape(
 		A3(ianmackenzie$elm_geometry$Polygon2d$scaleAbout, ianmackenzie$elm_geometry$Point2d$origin, r, author$project$SpaceShip$arcadeShipEast));
@@ -5033,11 +5102,35 @@ var author$project$Game$newGame = function (dims) {
 				A2(
 				author$project$Bullets$newBullet,
 				1,
-				_Utils_Tuple2(3000, 1000)),
+				_Utils_Tuple2(400, 400)),
 				A2(
 				author$project$Bullets$newBullet,
 				1,
-				_Utils_Tuple2(2000, 1000))
+				_Utils_Tuple2(600, 400)),
+				A2(
+				author$project$Bullets$newBullet,
+				1,
+				_Utils_Tuple2(800, 400)),
+				A2(
+				author$project$Bullets$newBullet,
+				1,
+				_Utils_Tuple2(400, 600)),
+				A2(
+				author$project$Bullets$newBullet,
+				1,
+				_Utils_Tuple2(800, 600)),
+				A2(
+				author$project$Bullets$newBullet,
+				1,
+				_Utils_Tuple2(400, 800)),
+				A2(
+				author$project$Bullets$newBullet,
+				1,
+				_Utils_Tuple2(600, 800)),
+				A2(
+				author$project$Bullets$newBullet,
+				1,
+				_Utils_Tuple2(800, 800))
 			]),
 		dimension: dims,
 		explosions: _List_fromArray(
@@ -5168,7 +5261,6 @@ var author$project$Main$updateGames = function (t) {
 	return elm$core$List$map(
 		author$project$Main$updateGame(t));
 };
-var elm$core$Basics$False = {$: 'False'};
 var elm$core$Basics$True = {$: 'True'};
 var elm$core$Result$isOk = function (result) {
 	if (result.$ === 'Ok') {
@@ -5315,10 +5407,6 @@ var elm$core$Array$initialize = F2(
 			return A5(elm$core$Array$initializeHelp, fn, initialFromIndex, len, _List_Nil, tail);
 		}
 	});
-var elm$core$Maybe$Just = function (a) {
-	return {$: 'Just', a: a};
-};
-var elm$core$Maybe$Nothing = {$: 'Nothing'};
 var elm$core$Result$Err = function (a) {
 	return {$: 'Err', a: a};
 };

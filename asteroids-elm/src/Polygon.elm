@@ -1,7 +1,8 @@
-module Polygon exposing (pointsToShape, polygonToShape)
+module Polygon exposing (pointsToShape, polygonCentroid, polygonToShape)
 
 import Canvas exposing (Point, Shape, lineTo, path)
 import Points exposing (closePolygon, convertPoints)
+import Point2d exposing (centroid)
 import Polygon2d exposing (Polygon2d, outerLoop)
 
 
@@ -18,3 +19,5 @@ pointsToShape points =
 polygonToShape : Polygon2d -> Shape
 polygonToShape =
     pointsToShape << convertPoints << closePolygon << outerLoop
+
+polygonCentroid = centroid << outerLoop
