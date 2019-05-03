@@ -219,4 +219,7 @@ renderShipName tf ship =
         tagOffset =
             ship.radius * 3.0
     in
-    [ text [ stroke color, fill color, transform [ tf, translate x y, rotate tagTheta, translate -x -y, translate 0 tagOffset ], font { size = 36, family = "Source Code Pro" }, align Center ] ( x, y ) tag ]
+    [ text [ stroke color, fill color, transform [ tf, translate x y, rotate tagTheta, translate -x -y, translate 0 tagOffset ], font { size = 36, family = tagFont }, align Center ] ( x, y ) tag ]
+
+
+tagFont = "normal lighter Source Code Pro,Source Code Pro,monospace"

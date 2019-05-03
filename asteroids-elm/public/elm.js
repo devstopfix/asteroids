@@ -6041,6 +6041,7 @@ var author$project$Game$renderShip = F2(
 			_List_fromArray(
 				[ship.shape]));
 	});
+var author$project$Game$tagFont = 'normal lighter Source Code Pro,Source Code Pro,monospace';
 var joakin$elm_canvas$Canvas$Center = {$: 'Center'};
 var joakin$elm_canvas$Canvas$textAlignToString = function (alignment) {
 	switch (alignment.$) {
@@ -6123,7 +6124,7 @@ var author$project$Game$renderShipName = F2(
 								A2(joakin$elm_canvas$Canvas$translate, 0, tagOffset)
 							])),
 						joakin$elm_canvas$Canvas$font(
-						{family: 'Source Code Pro', size: 36}),
+						{family: author$project$Game$tagFont, size: 36}),
 						joakin$elm_canvas$Canvas$align(joakin$elm_canvas$Canvas$Center)
 					]),
 				_Utils_Tuple2(x, y),
