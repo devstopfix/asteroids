@@ -8,6 +8,7 @@ readPoints: List (Float, Float) -> List Point2d
 readPoints ps =
     List.map (\( x, y ) -> fromCoordinates ( x, y )) ps
 
+-- List.map fromCoordinates ps
 
 -- Convert from Geometry points to Canvas points
 convertPoints : List Point2d -> List Point

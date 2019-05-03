@@ -31,7 +31,7 @@ newAsteroid id position radius =
             chooseShape id
 
         shape =
-            rockWithRadius rock radius |> convertToShape
+            rockWithRadius rock radius
     in
     { id = id
     , position = position
@@ -41,10 +41,6 @@ newAsteroid id position radius =
     , shape = shape
     , color = Color.rgb255 4 4 4
     }
-
-
-convertToShape =
-    pointsToShape << convertPoints
 
 
 chooseShape : Int -> RockType
