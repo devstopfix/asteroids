@@ -4986,7 +4986,7 @@ var author$project$SpaceShip$centreAboutMass = function (ship) {
 		var c = _n0.a;
 		return A2(
 			ianmackenzie$elm_geometry$Polygon2d$translateBy,
-			A2(ianmackenzie$elm_geometry$Vector2d$from, ianmackenzie$elm_geometry$Point2d$origin, c),
+			A2(ianmackenzie$elm_geometry$Vector2d$from, c, ianmackenzie$elm_geometry$Point2d$origin),
 			ship);
 	}
 };
@@ -5004,7 +5004,7 @@ var author$project$SpaceShip$arcadeShipEast = author$project$SpaceShip$centreAbo
 						_Utils_Tuple2(-16, -8),
 						_Utils_Tuple2(-16, 8),
 						_Utils_Tuple2(-24, 16),
-						_Utils_Tuple2(24, -0)
+						_Utils_Tuple2(24, 0)
 					])))));
 var author$project$SpaceShip$shipWithRadius = function (r) {
 	return author$project$Polygon$polygonToShape(
@@ -6051,6 +6051,7 @@ var author$project$Game$renderShip = F2(
 			_List_fromArray(
 				[ship.shape]));
 	});
+var author$project$Game$tagFont = 'normal lighter Source Code Pro,Source Code Pro,monospace';
 var joakin$elm_canvas$Canvas$Center = {$: 'Center'};
 var joakin$elm_canvas$Canvas$textAlignToString = function (alignment) {
 	switch (alignment.$) {
@@ -6133,7 +6134,7 @@ var author$project$Game$renderShipName = F2(
 								A2(joakin$elm_canvas$Canvas$translate, 0, tagOffset)
 							])),
 						joakin$elm_canvas$Canvas$font(
-						{family: 'Source Code Pro', size: 36}),
+						{family: author$project$Game$tagFont, size: 36}),
 						joakin$elm_canvas$Canvas$align(joakin$elm_canvas$Canvas$Center)
 					]),
 				_Utils_Tuple2(x, y),
