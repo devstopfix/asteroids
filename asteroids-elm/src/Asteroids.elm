@@ -60,12 +60,12 @@ chooseShape i =
 
 
 rotateAsteroids : Int -> List Asteroid -> List Asteroid
-rotateAsteroids t asteroids =
+rotateAsteroids t =
     let
         theta =
             cycle t
     in
-    List.map (rotateAsteroid theta) asteroids
+    List.map (rotateAsteroid theta)
 
 
 rotateAsteroid : Theta -> Asteroid -> Asteroid

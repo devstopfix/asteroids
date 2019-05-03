@@ -3,14 +3,22 @@ module Explosions exposing (Explosion, newExplosion, updateExplosions)
 import Canvas exposing (Point)
 import Color exposing (Color)
 
-type alias Radius = Float
 
-type alias Opacity = Float
+type alias Radius =
+    Float
+
+
+type alias Opacity =
+    Float
+
 
 type alias Explosion =
-    { position : Point, color : Color, framesRemaining : Int, radius: Radius, opacity: Opacity }
+    { position : Point, color : Color, framesRemaining : Int, radius : Radius, opacity : Opacity }
 
-explosionDuration = 20
+
+explosionDuration =
+    20
+
 
 newExplosion : Point -> Explosion
 newExplosion p =
@@ -21,15 +29,20 @@ newExplosion p =
     , opacity = 0.98
     }
 
-updateExplosions: Int -> List Explosion -> List Explosion
-updateExplosions t explosions =
-    List.map (updateExplosion t) explosions
-    |> List.filter isActive
+
+updateExplosions : Int -> List Explosion -> List Explosion
+updateExplosions t =
+    List.filter isActive << List.map (updateExplosion t)
+
 
 updateExplosion : Int -> Explosion -> Explosion
 updateExplosion t explosion =
-    {explosion | radius = explosion.radius * 1.05
-    , framesRemaining = (explosion.framesRemaining - 1)
-    , opacity = (explosion.opacity * 0.99 ) }
+    { explosion
+        | radius = explosion.radius * 1.05
+        , framesRemaining = explosion.framesRemaining - 1
+        , opacity = explosion.opacity * 0.99
+    }
 
-isActive e = e.framesRemaining > 0
+
+isActive e =
+    e.framesRemaining > 0

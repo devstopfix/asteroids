@@ -5133,14 +5133,11 @@ var author$project$Asteroids$rotateAsteroid = F2(
 			asteroid,
 			{theta: theta + asteroid.theta0});
 	});
-var author$project$Asteroids$rotateAsteroids = F2(
-	function (t, asteroids) {
-		var theta = author$project$Asteroids$cycle(t);
-		return A2(
-			elm$core$List$map,
-			author$project$Asteroids$rotateAsteroid(theta),
-			asteroids);
-	});
+var author$project$Asteroids$rotateAsteroids = function (t) {
+	var theta = author$project$Asteroids$cycle(t);
+	return elm$core$List$map(
+		author$project$Asteroids$rotateAsteroid(theta));
+};
 var author$project$Explosions$isActive = function (e) {
 	return e.framesRemaining > 0;
 };
@@ -5161,16 +5158,13 @@ var elm$core$List$filter = F2(
 			_List_Nil,
 			list);
 	});
-var author$project$Explosions$updateExplosions = F2(
-	function (t, explosions) {
-		return A2(
-			elm$core$List$filter,
-			author$project$Explosions$isActive,
-			A2(
-				elm$core$List$map,
-				author$project$Explosions$updateExplosion(t),
-				explosions));
-	});
+var author$project$Explosions$updateExplosions = function (t) {
+	return A2(
+		elm$core$Basics$composeL,
+		elm$core$List$filter(author$project$Explosions$isActive),
+		elm$core$List$map(
+			author$project$Explosions$updateExplosion(t)));
+};
 var author$project$Main$updateGame = F2(
 	function (t, game) {
 		return _Utils_update(
