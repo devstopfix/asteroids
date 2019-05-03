@@ -5068,9 +5068,9 @@ var author$project$Game$newGame = function (dims) {
 			[
 				A3(
 				author$project$Ships$newShip,
-				'EST',
-				_Utils_Tuple2(500, 500),
-				0.0),
+				'TAG',
+				_Utils_Tuple2(100, 100),
+				3.14 / 4.0),
 				A3(
 				author$project$Ships$newShip,
 				'WST',
@@ -5080,7 +5080,47 @@ var author$project$Game$newGame = function (dims) {
 				author$project$Ships$newShip,
 				'TWN',
 				_Utils_Tuple2(1440, 1440),
-				3.14 / 2.0)
+				3.14 / 2.0),
+				A3(
+				author$project$Ships$newShip,
+				'NNW',
+				_Utils_Tuple2(400, 400),
+				(3 * 3.14) / 8.0),
+				A3(
+				author$project$Ships$newShip,
+				'NNN',
+				_Utils_Tuple2(600, 400),
+				(2 * 3.14) / 8.0),
+				A3(
+				author$project$Ships$newShip,
+				'NNE',
+				_Utils_Tuple2(800, 400),
+				(1 * 3.14) / 8.0),
+				A3(
+				author$project$Ships$newShip,
+				'WWW',
+				_Utils_Tuple2(400, 600),
+				(4 * 3.14) / 8.0),
+				A3(
+				author$project$Ships$newShip,
+				'EEE',
+				_Utils_Tuple2(800, 600),
+				(0 * 3.14) / 8.0),
+				A3(
+				author$project$Ships$newShip,
+				'SWW',
+				_Utils_Tuple2(400, 800),
+				(5 * 3.14) / 8.0),
+				A3(
+				author$project$Ships$newShip,
+				'SSS',
+				_Utils_Tuple2(600, 800),
+				(6 * 3.14) / 8.0),
+				A3(
+				author$project$Ships$newShip,
+				'SSE',
+				_Utils_Tuple2(800, 800),
+				(7 * 3.14) / 8.0)
 			]),
 		spaceColor: avh4$elm_color$Color$black,
 		transform: A2(joakin$elm_canvas$Canvas$scale, canvas_x / game_x, canvas_y / game_y)
@@ -5998,6 +6038,8 @@ var joakin$elm_canvas$Canvas$text = F3(
 	});
 var author$project$Game$renderShipName = F2(
 	function (tf, ship) {
+		var tagTheta = ship.theta + (elm$core$Basics$pi / 2);
+		var tagOffset = ship.radius * 3.0;
 		var tag = ship.id;
 		var color = ship.tagColor;
 		var _n0 = ship.position;
@@ -6015,10 +6057,13 @@ var author$project$Game$renderShipName = F2(
 						_List_fromArray(
 							[
 								tf,
-								A2(joakin$elm_canvas$Canvas$translate, 0, 60)
+								A2(joakin$elm_canvas$Canvas$translate, x, y),
+								joakin$elm_canvas$Canvas$rotate(tagTheta),
+								A2(joakin$elm_canvas$Canvas$translate, -x, -y),
+								A2(joakin$elm_canvas$Canvas$translate, 0, tagOffset)
 							])),
 						joakin$elm_canvas$Canvas$font(
-						{family: 'Source Code Pro', size: 48}),
+						{family: 'Source Code Pro', size: 36}),
 						joakin$elm_canvas$Canvas$align(joakin$elm_canvas$Canvas$Center)
 					]),
 				_Utils_Tuple2(x, y),

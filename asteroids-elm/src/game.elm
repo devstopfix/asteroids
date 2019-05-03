@@ -62,9 +62,17 @@ newGame dims =
         ]
     , explosions = [ newExplosion ( 3000, 500 ) ]
     , ships =
-        [ newShip "EST" ( 500, 500 ) 0.0
+        [ newShip "TAG" ( 100, 100 ) (3.14 / 4.0)
         , newShip "WST" ( 3500, 500 ) 3.14
         , newShip "TWN" ( 1440, 1440 ) (3.14 / 2.0)
+        , newShip "NNW" (  400,  400 ) (3 * 3.14 / 8.0)
+        , newShip "NNN" (  600,  400 ) (2 * 3.14 / 8.0)
+        , newShip "NNE" (  800,  400 ) (1 * 3.14 / 8.0)
+        , newShip "WWW" (  400,  600 ) (4 * 3.14 / 8.0)
+        , newShip "EEE" (  800,  600 ) (0 * 3.14 / 8.0)
+        , newShip "SWW" (  400,  800 ) (5 * 3.14 / 8.0)
+        , newShip "SSS" (  600,  800 ) (6 * 3.14 / 8.0)
+        , newShip "SSE" (  800,  800 ) (7 * 3.14 / 8.0)
         ]
     , spaceColor = Color.black
     , transform = scale (canvas_x / game_x) (canvas_y / game_y)
@@ -198,5 +206,11 @@ renderShipName tf ship =
 
         color =
             ship.tagColor
+
+        tagTheta =
+            ship.theta + (pi / 2)
+
+        tagOffset =
+            ship.radius * 3.0
     in
-    [ text [ stroke color, fill color, transform [ tf, translate 0 60 ], font { size = 48, family = "Source Code Pro" }, align Center ] ( x, y ) tag ]
+    [ text [ stroke color, fill color, transform [ tf, translate x y, rotate tagTheta, translate -x -y, translate 0 tagOffset], font { size = 36, family = "Source Code Pro" }, align Center ] ( x, y ) tag ]
