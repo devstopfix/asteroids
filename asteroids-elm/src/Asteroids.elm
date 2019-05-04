@@ -1,9 +1,11 @@
 module Asteroids exposing (Asteroid, newAsteroid, rotateAsteroids, renderAsteroid)
 
 import Canvas exposing (..)
+import Circle2d exposing (Circle2d, centerPoint, radius)
 import Color exposing (Color)
 import Dict exposing (Dict)
 import Points exposing (convertPoints)
+import Point2d exposing (coordinates)
 import Polygon exposing (pointsToShape)
 import Rocks exposing (..)
 import Shapes exposing (rockWithRadius)
@@ -22,23 +24,22 @@ type alias Radius =
 
 
 type alias Asteroid =
-    { id : Id, position : Point, theta : Theta, theta0 : Theta, radius : Radius, shape : Shape, color : Color }
+    { id : Id, position : Circle2d, theta : Theta, theta0 : Theta, shape : Shape, color : Color }
 
 
-newAsteroid : Id -> Point -> Radius -> Asteroid
-newAsteroid id position radius =
+newAsteroid : Id -> Circle2d -> Asteroid
+newAsteroid id position =
     let
         rock =
             chooseShape id
 
         shape =
-            rockWithRadius rock radius
+            rockWithRadius rock (radius position)
     in
     { id = id
     , position = position
     , theta = 0.0
     , theta0 = thetaOffset id
-    , radius = radius
     , shape = shape
     , color = Color.rgb255 4 4 4
     }
@@ -101,7 +102,7 @@ renderAsteroid : Transform -> Asteroid -> Renderable
 renderAsteroid tf asteroid =
     let
         ( x, y ) =
-            asteroid.position
+            coordinates (centerPoint asteroid.position)
     in
     shapes
         [ stroke Color.white, fill asteroid.color, transform [ tf, translate x y, rotate asteroid.theta ], lineWidth 4.0 ]
