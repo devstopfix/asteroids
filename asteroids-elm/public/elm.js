@@ -5286,13 +5286,13 @@ var author$project$Main$subscriptions = function (model) {
 			]));
 };
 var author$project$Explosions$explosionDuration = 20;
-var avh4$elm_color$Color$rgba = F4(
-	function (r, g, b, a) {
-		return A4(avh4$elm_color$Color$RgbaSpace, r, g, b, a);
+var avh4$elm_color$Color$rgb = F3(
+	function (r, g, b) {
+		return A4(avh4$elm_color$Color$RgbaSpace, r, g, b, 1.0);
 	});
 var author$project$Explosions$newExplosion = function (p) {
 	return {
-		color: A4(avh4$elm_color$Color$rgba, 1, 1, 0.8, 0.8),
+		color: A3(avh4$elm_color$Color$rgb, 0.8, 0.8, 1.0),
 		framesRemaining: author$project$Explosions$explosionDuration,
 		opacity: 0.98,
 		position: p,
@@ -5675,7 +5675,7 @@ var author$project$Asteroids$newAsteroid = F2(
 			rock,
 			ianmackenzie$elm_geometry$Circle2d$radius(position));
 		return {
-			color: A3(avh4$elm_color$Color$rgb255, 4, 4, 4),
+			color: A3(avh4$elm_color$Color$rgb255, 1, 1, 1),
 			id: id,
 			position: position,
 			shape: shape,
@@ -6255,7 +6255,7 @@ var author$project$Explosions$updateExplosion = F2(
 	function (t, explosion) {
 		return _Utils_update(
 			explosion,
-			{framesRemaining: explosion.framesRemaining - 1, opacity: explosion.opacity * 0.99, radius: explosion.radius * 1.05});
+			{framesRemaining: explosion.framesRemaining - 1, opacity: explosion.opacity * 0.95, radius: explosion.radius * 1.05});
 	});
 var elm$core$List$filter = F2(
 	function (isGood, list) {
@@ -6325,7 +6325,7 @@ var author$project$Main$update = F2(
 			}
 		}
 	});
-var avh4$elm_color$Color$white = A4(avh4$elm_color$Color$RgbaSpace, 255 / 255, 255 / 255, 255 / 255, 1.0);
+var avh4$elm_color$Color$gray = A4(avh4$elm_color$Color$RgbaSpace, 211 / 255, 215 / 255, 207 / 255, 1.0);
 var ianmackenzie$elm_geometry$Circle2d$centerPoint = function (_n0) {
 	var properties = _n0.a;
 	return properties.centerPoint;
@@ -6636,7 +6636,7 @@ var author$project$Asteroids$renderAsteroid = F2(
 			joakin$elm_canvas$Canvas$shapes,
 			_List_fromArray(
 				[
-					joakin$elm_canvas$Canvas$stroke(avh4$elm_color$Color$white),
+					joakin$elm_canvas$Canvas$stroke(avh4$elm_color$Color$gray),
 					joakin$elm_canvas$Canvas$fill(asteroid.color),
 					joakin$elm_canvas$Canvas$transform(
 					_List_fromArray(

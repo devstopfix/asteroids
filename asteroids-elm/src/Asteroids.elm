@@ -41,7 +41,7 @@ newAsteroid id position =
     , theta = 0.0
     , theta0 = thetaOffset id
     , shape = shape
-    , color = Color.rgb255 4 4 4
+    , color = Color.rgb255 1 1 1
     }
 
 
@@ -105,5 +105,5 @@ renderAsteroid tf asteroid =
             coordinates (centerPoint asteroid.position)
     in
     shapes
-        [ stroke Color.white, fill asteroid.color, transform [ tf, translate x y, rotate asteroid.theta ], lineWidth 4.0 ]
+        [ stroke Color.gray, fill asteroid.color, transform [ tf, translate x y, rotate asteroid.theta ], lineWidth 4.0 ]
         [ asteroid.shape ]

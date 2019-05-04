@@ -25,7 +25,7 @@ newExplosion : Point2d -> Explosion
 newExplosion p =
     { position = p
     , framesRemaining = explosionDuration
-    , color = Color.rgba 1 1 0.8 0.8
+    , color = Color.rgb 0.86 1.0 1.0
     , radius = 60.0
     , opacity = 0.98
     }
@@ -41,7 +41,7 @@ updateExplosion t explosion =
     { explosion
         | radius = explosion.radius * 1.05
         , framesRemaining = explosion.framesRemaining - 1
-        , opacity = explosion.opacity * 0.99
+        , opacity = explosion.opacity * 0.90
     }
 
 
