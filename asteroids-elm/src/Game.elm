@@ -1,11 +1,11 @@
-module Game exposing (Game, newGame, viewGame, mergeGame)
+module Game exposing (Game, mergeGame, newGame, viewGame)
 
-import Asteroids exposing (Asteroid, newAsteroid)
-import Bullets exposing (Bullet, newBullet)
+import Asteroids exposing (..)
+import Bullets exposing (Bullet, newBullet, renderBullet)
 import Canvas exposing (..)
 import Color exposing (Color)
 import Dict exposing (Dict)
-import Explosions exposing (Explosion, newExplosion)
+import Explosions exposing (Explosion, newExplosion, renderExplosion)
 import Html exposing (Html)
 import Html.Attributes exposing (style)
 import List.FlatMap exposing (flatMap)
@@ -113,108 +113,29 @@ renderSpace game =
 
 
 
--- [ translate x y, rotate theta ]
+renderAsteroids tf =
+    List.map (renderAsteroid tf)
 
 
-renderAsteroids : Transform -> List Asteroid -> List Renderable
-renderAsteroids tf asteroids =
-    List.map (renderAsteroid tf) asteroids
+renderBullets tf =
+    List.map (renderBullet tf)
 
 
-renderAsteroid : Transform -> Asteroid -> Renderable
-renderAsteroid tf asteroid =
-    let
-        ( x, y ) =
-            asteroid.position
-    in
-    shapes
-        [ stroke Color.white, fill asteroid.color, transform [ tf, translate x y, rotate asteroid.theta ], lineWidth 4.0 ]
-        [ asteroid.shape ]
+renderExplosions tf =
+    List.map (renderExplosion tf)
 
 
-renderBullets : Transform -> List Bullet -> List Renderable
-renderBullets tf bullets =
-    List.map (renderBullet tf) bullets
-
-
-renderBullet : Transform -> Bullet -> Renderable
-renderBullet tf bullet =
-    let
-        ( x, y ) =
-            bullet.position
-    in
-    shapes
-        [ stroke bullet.color, fill bullet.color, transform [ tf, translate x y ] ]
-        [ bullet.shape ]
-
-
-renderExplosions : Transform -> List Explosion -> List Renderable
-renderExplosions tf explosions =
-    List.map (renderExplosion tf) explosions
-
-
-renderExplosion : Transform -> Explosion -> Renderable
-renderExplosion tf explosion =
-    let
-        ( x, y ) =
-            explosion.position
-
-        color =
-            explosion.color
-    in
-    shapes
-        [ stroke color, fill color, transform [ tf, translate x y ] ]
-        [ circle ( 0, 0 ) explosion.radius ]
-
-
-renderShips : Transform -> List Ship -> List Renderable
-renderShips tf ships =
-    List.FlatMap.flatMap (renderSpaceShip tf) ships
+renderShips tf =
+    List.FlatMap.flatMap (renderSpaceShip tf)
 
 
 renderSpaceShip : Transform -> Ship -> List Renderable
 renderSpaceShip tf ship =
     List.append
         [ renderShip tf ship ]
-        (renderShipName tf ship)
-
-
-renderShip : Transform -> Ship -> Renderable
-renderShip tf ship =
-    let
-        ( x, y ) =
-            ship.position
-    in
-    shapes
-        [ stroke ship.color, transform [ tf, translate x y, rotate ship.theta ], lineWidth 2.0 ]
-        [ ship.shape ]
-
-
-renderShipName : Transform -> Ship -> List Renderable
-renderShipName tf ship =
-    let
-        ( x, y ) =
-            ship.position
-
-        tag =
-            ship.id
-
-        color =
-            ship.tagColor
-
-        tagTheta =
-            ship.theta + (pi / 2)
-
-        tagOffset =
-            ship.radius * 3.0
-    in
-    [ text [ stroke color, fill color, transform [ tf, translate x y, rotate tagTheta, translate -x -y, translate 0 tagOffset ], font { size = 36, family = tagFont }, align Center ] ( x, y ) tag ]
-
-
-tagFont = "normal lighter Source Code Pro,Source Code Pro,monospace"
+        (renderTag tf ship)
 
 
 mergeGame : Game -> Graphics -> Game
-
 mergeGame game graphics =
     game

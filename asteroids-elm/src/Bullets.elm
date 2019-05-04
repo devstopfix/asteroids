@@ -1,6 +1,6 @@
-module Bullets exposing (Bullet, newBullet)
+module Bullets exposing (Bullet, newBullet, renderBullet)
 
-import Canvas exposing (Point, Shape, circle)
+import Canvas exposing (..)
 import Color exposing (Color)
 
 
@@ -19,3 +19,14 @@ newBullet id position =
     , position = position
     , shape = circle ( 0, 0 ) 4
     }
+
+
+renderBullet : Transform -> Bullet -> Renderable
+renderBullet tf bullet =
+    let
+        ( x, y ) =
+            bullet.position
+    in
+    shapes
+        [ stroke bullet.color, fill bullet.color, transform [ tf, translate x y ] ]
+        [ bullet.shape ]

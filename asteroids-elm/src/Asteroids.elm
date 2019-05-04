@@ -1,6 +1,6 @@
-module Asteroids exposing (Asteroid, newAsteroid, rotateAsteroids)
+module Asteroids exposing (Asteroid, newAsteroid, rotateAsteroids, renderAsteroid)
 
-import Canvas exposing (Point, Shape)
+import Canvas exposing (..)
 import Color exposing (Color)
 import Dict exposing (Dict)
 import Points exposing (convertPoints)
@@ -95,3 +95,14 @@ thetaOffset n =
         two_pi = 314
     in
         toFloat (modBy two_pi n) / two_pi
+
+
+renderAsteroid : Transform -> Asteroid -> Renderable
+renderAsteroid tf asteroid =
+    let
+        ( x, y ) =
+            asteroid.position
+    in
+    shapes
+        [ stroke Color.white, fill asteroid.color, transform [ tf, translate x y, rotate asteroid.theta ], lineWidth 4.0 ]
+        [ asteroid.shape ]

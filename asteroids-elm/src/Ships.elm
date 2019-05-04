@@ -1,6 +1,6 @@
-module Ships exposing (Ship, newShip)
+module Ships exposing (Ship, newShip, renderShip, renderTag)
 
-import Canvas exposing (Point, Shape)
+import Canvas exposing (..)
 import Color exposing (Color)
 import SpaceShip exposing (shipWithRadius)
 
@@ -36,3 +36,47 @@ newShip id position theta =
     , shape = shipWithRadius shipRadius
     , theta = theta
     }
+
+
+renderShip : Transform -> Ship -> Renderable
+renderShip tf ship =
+    let
+        ( x, y ) =
+            ship.position
+    in
+    shapes
+        [ stroke ship.color, transform [ tf, translate x y, rotate ship.theta ], lineWidth 2.0 ]
+        [ ship.shape ]
+
+
+renderTag : Transform -> Ship -> List Renderable
+renderTag tf ship =
+    let
+        ( x, y ) =
+            ship.position
+
+        tag =
+            ship.id
+
+        color =
+            ship.tagColor
+
+        tagTheta =
+            offset90deg ship.theta
+
+        tagDY =
+            tagOffset ship.radius
+    in
+    [ text [ stroke color, fill color, transform [ tf, translate x y, rotate tagTheta, translate -x -y, translate 0 tagDY ], font { size = 36, family = tagFont }, align Center ] ( x, y ) tag ]
+
+
+offset90deg =
+    (+) (pi / 2)
+
+
+tagOffset =
+    (*) 3.0
+
+
+tagFont =
+    "normal lighter Source Code Pro,Source Code Pro,monospace"

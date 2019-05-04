@@ -1,6 +1,6 @@
-module Explosions exposing (Explosion, newExplosion, updateExplosions)
+module Explosions exposing (Explosion, newExplosion, renderExplosion, updateExplosions)
 
-import Canvas exposing (Point)
+import Canvas exposing (..)
 import Color exposing (Color)
 
 
@@ -46,3 +46,17 @@ updateExplosion t explosion =
 
 isActive e =
     e.framesRemaining > 0
+
+
+renderExplosion : Transform -> Explosion -> Renderable
+renderExplosion tf explosion =
+    let
+        ( x, y ) =
+            explosion.position
+
+        color =
+            explosion.color
+    in
+    shapes
+        [ stroke color, fill color, transform [ tf, translate x y ] ]
+        [ circle ( 0, 0 ) explosion.radius ]

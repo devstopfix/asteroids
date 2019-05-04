@@ -6182,7 +6182,7 @@ var joakin$elm_canvas$Canvas$Translate = F2(
 		return {$: 'Translate', a: a, b: b};
 	});
 var joakin$elm_canvas$Canvas$translate = joakin$elm_canvas$Canvas$Translate;
-var author$project$Game$renderAsteroid = F2(
+var author$project$Asteroids$renderAsteroid = F2(
 	function (tf, asteroid) {
 		var _n0 = asteroid.position;
 		var x = _n0.a;
@@ -6205,14 +6205,11 @@ var author$project$Game$renderAsteroid = F2(
 			_List_fromArray(
 				[asteroid.shape]));
 	});
-var author$project$Game$renderAsteroids = F2(
-	function (tf, asteroids) {
-		return A2(
-			elm$core$List$map,
-			author$project$Game$renderAsteroid(tf),
-			asteroids);
-	});
-var author$project$Game$renderBullet = F2(
+var author$project$Game$renderAsteroids = function (tf) {
+	return elm$core$List$map(
+		author$project$Asteroids$renderAsteroid(tf));
+};
+var author$project$Bullets$renderBullet = F2(
 	function (tf, bullet) {
 		var _n0 = bullet.position;
 		var x = _n0.a;
@@ -6233,14 +6230,11 @@ var author$project$Game$renderBullet = F2(
 			_List_fromArray(
 				[bullet.shape]));
 	});
-var author$project$Game$renderBullets = F2(
-	function (tf, bullets) {
-		return A2(
-			elm$core$List$map,
-			author$project$Game$renderBullet(tf),
-			bullets);
-	});
-var author$project$Game$renderExplosion = F2(
+var author$project$Game$renderBullets = function (tf) {
+	return elm$core$List$map(
+		author$project$Bullets$renderBullet(tf));
+};
+var author$project$Explosions$renderExplosion = F2(
 	function (tf, explosion) {
 		var color = explosion.color;
 		var _n0 = explosion.position;
@@ -6267,14 +6261,11 @@ var author$project$Game$renderExplosion = F2(
 					explosion.radius)
 				]));
 	});
-var author$project$Game$renderExplosions = F2(
-	function (tf, explosions) {
-		return A2(
-			elm$core$List$map,
-			author$project$Game$renderExplosion(tf),
-			explosions);
-	});
-var author$project$Game$renderShip = F2(
+var author$project$Game$renderExplosions = function (tf) {
+	return elm$core$List$map(
+		author$project$Explosions$renderExplosion(tf));
+};
+var author$project$Ships$renderShip = F2(
 	function (tf, ship) {
 		var _n0 = ship.position;
 		var x = _n0.a;
@@ -6296,7 +6287,9 @@ var author$project$Game$renderShip = F2(
 			_List_fromArray(
 				[ship.shape]));
 	});
-var author$project$Game$tagFont = 'normal lighter Source Code Pro,Source Code Pro,monospace';
+var author$project$Ships$offset90deg = elm$core$Basics$add(elm$core$Basics$pi / 2);
+var author$project$Ships$tagFont = 'normal lighter Source Code Pro,Source Code Pro,monospace';
+var author$project$Ships$tagOffset = elm$core$Basics$mul(3.0);
 var joakin$elm_canvas$Canvas$Center = {$: 'Center'};
 var joakin$elm_canvas$Canvas$textAlignToString = function (alignment) {
 	switch (alignment.$) {
@@ -6352,10 +6345,10 @@ var joakin$elm_canvas$Canvas$text = F3(
 						{maxWidth: elm$core$Maybe$Nothing, point: point, text: str})
 				}));
 	});
-var author$project$Game$renderShipName = F2(
+var author$project$Ships$renderTag = F2(
 	function (tf, ship) {
-		var tagTheta = ship.theta + (elm$core$Basics$pi / 2);
-		var tagOffset = ship.radius * 3.0;
+		var tagTheta = author$project$Ships$offset90deg(ship.theta);
+		var tagDY = author$project$Ships$tagOffset(ship.radius);
 		var tag = ship.id;
 		var color = ship.tagColor;
 		var _n0 = ship.position;
@@ -6376,10 +6369,10 @@ var author$project$Game$renderShipName = F2(
 								A2(joakin$elm_canvas$Canvas$translate, x, y),
 								joakin$elm_canvas$Canvas$rotate(tagTheta),
 								A2(joakin$elm_canvas$Canvas$translate, -x, -y),
-								A2(joakin$elm_canvas$Canvas$translate, 0, tagOffset)
+								A2(joakin$elm_canvas$Canvas$translate, 0, tagDY)
 							])),
 						joakin$elm_canvas$Canvas$font(
-						{family: author$project$Game$tagFont, size: 36}),
+						{family: author$project$Ships$tagFont, size: 36}),
 						joakin$elm_canvas$Canvas$align(joakin$elm_canvas$Canvas$Center)
 					]),
 				_Utils_Tuple2(x, y),
@@ -6392,9 +6385,9 @@ var author$project$Game$renderSpaceShip = F2(
 			elm$core$List$append,
 			_List_fromArray(
 				[
-					A2(author$project$Game$renderShip, tf, ship)
+					A2(author$project$Ships$renderShip, tf, ship)
 				]),
-			A2(author$project$Game$renderShipName, tf, ship));
+			A2(author$project$Ships$renderTag, tf, ship));
 	});
 var ccapndave$elm_flat_map$List$FlatMap$join = A2(elm$core$List$foldr, elm$core$Basics$append, _List_Nil);
 var ccapndave$elm_flat_map$List$FlatMap$flatMap = F2(
@@ -6402,13 +6395,10 @@ var ccapndave$elm_flat_map$List$FlatMap$flatMap = F2(
 		return ccapndave$elm_flat_map$List$FlatMap$join(
 			A2(elm$core$List$map, f, list));
 	});
-var author$project$Game$renderShips = F2(
-	function (tf, ships) {
-		return A2(
-			ccapndave$elm_flat_map$List$FlatMap$flatMap,
-			author$project$Game$renderSpaceShip(tf),
-			ships);
-	});
+var author$project$Game$renderShips = function (tf) {
+	return ccapndave$elm_flat_map$List$FlatMap$flatMap(
+		author$project$Game$renderSpaceShip(tf));
+};
 var joakin$elm_canvas$Canvas$Rect = F3(
 	function (a, b, c) {
 		return {$: 'Rect', a: a, b: b, c: c};
