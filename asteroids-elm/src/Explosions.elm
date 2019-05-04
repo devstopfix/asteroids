@@ -2,6 +2,7 @@ module Explosions exposing (Explosion, newExplosion, renderExplosion, updateExpl
 
 import Canvas exposing (..)
 import Color exposing (Color)
+import Point2d exposing (Point2d, coordinates)
 
 
 type alias Radius =
@@ -13,14 +14,14 @@ type alias Opacity =
 
 
 type alias Explosion =
-    { position : Point, color : Color, framesRemaining : Int, radius : Radius, opacity : Opacity }
+    { position : Point2d, color : Color, framesRemaining : Int, radius : Radius, opacity : Opacity }
 
 
 explosionDuration =
     20
 
 
-newExplosion : Point -> Explosion
+newExplosion : Point2d -> Explosion
 newExplosion p =
     { position = p
     , framesRemaining = explosionDuration
@@ -52,7 +53,7 @@ renderExplosion : Transform -> Explosion -> Renderable
 renderExplosion tf explosion =
     let
         ( x, y ) =
-            explosion.position
+            coordinates explosion.position
 
         color =
             explosion.color

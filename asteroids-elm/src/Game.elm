@@ -46,7 +46,7 @@ newGame dims =
     { dimension = dims
     , asteroids = Dict.empty
     , bullets = Dict.empty
-    , explosions = [ newExplosion ( 3000, 500 ) ]
+    , explosions = []
     , ships = []
     , spaceColor = Color.black
     , transform = scale (canvas_x / game_x) (canvas_y / game_y)
@@ -116,12 +116,21 @@ renderShips tf =
 
 mergeGame : Game -> Graphics -> Game
 mergeGame game graphics =
-    { game | asteroids = updateAsteroids graphics.asteroids game.asteroids
-    , bullets = updateBullets graphics.bullets game.bullets }
+    { game
+        | asteroids = updateAsteroids graphics.asteroids game.asteroids
+        , bullets = updateBullets graphics.bullets game.bullets
+        , explosions = appendExplosions graphics.explosions game.explosions
+    }
+
+
+appendExplosions new_explosions explosions =
+    List.append
+        explosions
+        (List.map newExplosion new_explosions)
 
 
 updateAsteroids asteroids game_asteroids =
-            mergeAsteroids (toAsteroidMap asteroids) game_asteroids
+    mergeAsteroids (toAsteroidMap asteroids) game_asteroids
 
 
 toAsteroidMap : List AsteroidLocation -> Dict Id AsteroidLocation
@@ -134,14 +143,16 @@ mergeAsteroids graphics_asteroids game_asteroids =
     Dict.merge
         (\id a -> Dict.insert id (newAsteroid id a.location))
         (\id a b -> Dict.insert id { b | position = a.location })
-        (\id _ -> identity) -- Remove
+        (\id _ -> identity)
+        -- Remove
         graphics_asteroids
         game_asteroids
         Dict.empty
 
 
 updateBullets bullets game_bullets =
-            mergeBullets (toBulletMap bullets) game_bullets
+    mergeBullets (toBulletMap bullets) game_bullets
+
 
 toBulletMap : List BulletLocation -> Dict Id BulletLocation
 toBulletMap =

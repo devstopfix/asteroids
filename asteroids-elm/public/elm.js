@@ -4310,24 +4310,6 @@ function _Browser_load(url)
 		}
 	}));
 }
-var author$project$Explosions$explosionDuration = 20;
-var avh4$elm_color$Color$RgbaSpace = F4(
-	function (a, b, c, d) {
-		return {$: 'RgbaSpace', a: a, b: b, c: c, d: d};
-	});
-var avh4$elm_color$Color$rgba = F4(
-	function (r, g, b, a) {
-		return A4(avh4$elm_color$Color$RgbaSpace, r, g, b, a);
-	});
-var author$project$Explosions$newExplosion = function (p) {
-	return {
-		color: A4(avh4$elm_color$Color$rgba, 1, 1, 0.8, 0.8),
-		framesRemaining: author$project$Explosions$explosionDuration,
-		opacity: 0.98,
-		position: p,
-		radius: 60.0
-	};
-};
 var elm$core$Elm$JsArray$foldr = _JsArray_foldr;
 var elm$core$Array$foldr = F3(
 	function (func, baseCase, _n0) {
@@ -4409,6 +4391,10 @@ var elm$core$Set$toList = function (_n0) {
 	return elm$core$Dict$keys(dict);
 };
 var author$project$Game$gameDimensions = _Utils_Tuple2(4000.0, 2250.0);
+var avh4$elm_color$Color$RgbaSpace = F4(
+	function (a, b, c, d) {
+		return {$: 'RgbaSpace', a: a, b: b, c: c, d: d};
+	});
 var elm$core$Basics$fdiv = _Basics_fdiv;
 var avh4$elm_color$Color$black = A4(avh4$elm_color$Color$RgbaSpace, 0 / 255, 0 / 255, 0 / 255, 1.0);
 var elm$core$Dict$RBEmpty_elm_builtin = {$: 'RBEmpty_elm_builtin'};
@@ -4429,11 +4415,7 @@ var author$project$Game$newGame = function (dims) {
 		asteroids: elm$core$Dict$empty,
 		bullets: elm$core$Dict$empty,
 		dimension: dims,
-		explosions: _List_fromArray(
-			[
-				author$project$Explosions$newExplosion(
-				_Utils_Tuple2(3000, 500))
-			]),
+		explosions: _List_Nil,
 		ships: _List_Nil,
 		spaceColor: avh4$elm_color$Color$black,
 		transform: A2(joakin$elm_canvas$Canvas$scale, canvas_x / game_x, canvas_y / game_y)
@@ -5303,6 +5285,35 @@ var author$project$Main$subscriptions = function (model) {
 				elm$browser$Browser$Events$onAnimationFrameDelta(author$project$Main$Frame)
 			]));
 };
+var author$project$Explosions$explosionDuration = 20;
+var avh4$elm_color$Color$rgba = F4(
+	function (r, g, b, a) {
+		return A4(avh4$elm_color$Color$RgbaSpace, r, g, b, a);
+	});
+var author$project$Explosions$newExplosion = function (p) {
+	return {
+		color: A4(avh4$elm_color$Color$rgba, 1, 1, 0.8, 0.8),
+		framesRemaining: author$project$Explosions$explosionDuration,
+		opacity: 0.98,
+		position: p,
+		radius: 60.0
+	};
+};
+var elm$core$List$append = F2(
+	function (xs, ys) {
+		if (!ys.b) {
+			return xs;
+		} else {
+			return A3(elm$core$List$foldr, elm$core$List$cons, ys, xs);
+		}
+	});
+var author$project$Game$appendExplosions = F2(
+	function (new_explosions, explosions) {
+		return A2(
+			elm$core$List$append,
+			explosions,
+			A2(elm$core$List$map, author$project$Explosions$newExplosion, new_explosions));
+	});
 var author$project$Rocks$Classic1 = {$: 'Classic1'};
 var author$project$Rocks$Classic2 = {$: 'Classic2'};
 var author$project$Rocks$Classic3 = {$: 'Classic3'};
@@ -5325,14 +5336,6 @@ var author$project$Asteroids$thetaOffset = function (n) {
 	var two_pi = 314;
 	return A2(elm$core$Basics$modBy, two_pi, n) / two_pi;
 };
-var elm$core$List$append = F2(
-	function (xs, ys) {
-		if (!ys.b) {
-			return xs;
-		} else {
-			return A3(elm$core$List$foldr, elm$core$List$cons, ys, xs);
-		}
-	});
 var author$project$Points$closePolygon = function (list) {
 	if (!list.b) {
 		return _List_Nil;
@@ -5997,7 +6000,8 @@ var author$project$Game$mergeGame = F2(
 			game,
 			{
 				asteroids: A2(author$project$Game$updateAsteroids, graphics.asteroids, game.asteroids),
-				bullets: A2(author$project$Game$updateBullets, graphics.bullets, game.bullets)
+				bullets: A2(author$project$Game$updateBullets, graphics.bullets, game.bullets),
+				explosions: A2(author$project$Game$appendExplosions, graphics.explosions, game.explosions)
 			});
 	});
 var author$project$StateParser$Graphics = F5(
@@ -6678,7 +6682,7 @@ var author$project$Game$renderBullets = function (tf) {
 var author$project$Explosions$renderExplosion = F2(
 	function (tf, explosion) {
 		var color = explosion.color;
-		var _n0 = explosion.position;
+		var _n0 = ianmackenzie$elm_geometry$Point2d$coordinates(explosion.position);
 		var x = _n0.a;
 		var y = _n0.b;
 		return A2(
