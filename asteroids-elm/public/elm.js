@@ -4427,7 +4427,7 @@ var author$project$Game$newGame = function (dims) {
 	var canvas_y = _n1.b;
 	return {
 		asteroids: elm$core$Dict$empty,
-		bullets: _List_Nil,
+		bullets: elm$core$Dict$empty,
 		dimension: dims,
 		explosions: _List_fromArray(
 			[
@@ -5929,12 +5929,75 @@ var author$project$Game$updateAsteroids = F2(
 			author$project$Game$toAsteroidMap(asteroids),
 			game_asteroids);
 	});
+var joakin$elm_canvas$Canvas$Circle = F2(
+	function (a, b) {
+		return {$: 'Circle', a: a, b: b};
+	});
+var joakin$elm_canvas$Canvas$circle = F2(
+	function (pos, radius) {
+		return A2(joakin$elm_canvas$Canvas$Circle, pos, radius);
+	});
+var author$project$Bullets$newBullet = F2(
+	function (id, position) {
+		return {
+			color: A3(avh4$elm_color$Color$rgb255, 251, 251, 255),
+			id: id,
+			position: position,
+			shape: A2(
+				joakin$elm_canvas$Canvas$circle,
+				_Utils_Tuple2(0, 0),
+				4)
+		};
+	});
+var author$project$Game$mergeBullets = F2(
+	function (graphics_bullets, game_bullets) {
+		return A6(
+			elm$core$Dict$merge,
+			F2(
+				function (id, a) {
+					return A2(
+						elm$core$Dict$insert,
+						id,
+						A2(author$project$Bullets$newBullet, id, a.location));
+				}),
+			F3(
+				function (id, a, b) {
+					return A2(
+						elm$core$Dict$insert,
+						id,
+						_Utils_update(
+							b,
+							{position: a.location}));
+				}),
+			F2(
+				function (id, _n0) {
+					return elm$core$Basics$identity;
+				}),
+			graphics_bullets,
+			game_bullets,
+			elm$core$Dict$empty);
+	});
+var author$project$Game$toBulletMap = A2(
+	elm$core$Basics$composeL,
+	elm$core$Dict$fromList,
+	elm$core$List$map(
+		function (a) {
+			return _Utils_Tuple2(a.id, a);
+		}));
+var author$project$Game$updateBullets = F2(
+	function (bullets, game_bullets) {
+		return A2(
+			author$project$Game$mergeBullets,
+			author$project$Game$toBulletMap(bullets),
+			game_bullets);
+	});
 var author$project$Game$mergeGame = F2(
 	function (game, graphics) {
 		return _Utils_update(
 			game,
 			{
-				asteroids: A2(author$project$Game$updateAsteroids, graphics.asteroids, game.asteroids)
+				asteroids: A2(author$project$Game$updateAsteroids, graphics.asteroids, game.asteroids),
+				bullets: A2(author$project$Game$updateBullets, graphics.bullets, game.bullets)
 			});
 	});
 var author$project$StateParser$Graphics = F5(
@@ -6589,7 +6652,7 @@ var author$project$Game$renderAsteroids = function (tf) {
 };
 var author$project$Bullets$renderBullet = F2(
 	function (tf, bullet) {
-		var _n0 = bullet.position;
+		var _n0 = ianmackenzie$elm_geometry$Point2d$coordinates(bullet.position);
 		var x = _n0.a;
 		var y = _n0.b;
 		return A2(
@@ -6612,14 +6675,6 @@ var author$project$Game$renderBullets = function (tf) {
 	return elm$core$List$map(
 		author$project$Bullets$renderBullet(tf));
 };
-var joakin$elm_canvas$Canvas$Circle = F2(
-	function (a, b) {
-		return {$: 'Circle', a: a, b: b};
-	});
-var joakin$elm_canvas$Canvas$circle = F2(
-	function (pos, radius) {
-		return A2(joakin$elm_canvas$Canvas$Circle, pos, radius);
-	});
 var author$project$Explosions$renderExplosion = F2(
 	function (tf, explosion) {
 		var color = explosion.color;
@@ -7359,7 +7414,10 @@ var author$project$Game$viewGame = function (game) {
 	var space = author$project$Game$renderSpace(game);
 	var ships = A2(author$project$Game$renderShips, game.transform, game.ships);
 	var explosions = A2(author$project$Game$renderExplosions, game.transform, game.explosions);
-	var bullets = A2(author$project$Game$renderBullets, game.transform, game.bullets);
+	var bullets = A2(
+		author$project$Game$renderBullets,
+		game.transform,
+		elm$core$Dict$values(game.bullets));
 	var asteroids = A2(
 		author$project$Game$renderAsteroids,
 		game.transform,

@@ -2,6 +2,7 @@ module Bullets exposing (Bullet, newBullet, renderBullet)
 
 import Canvas exposing (..)
 import Color exposing (Color)
+import Point2d exposing (Point2d, coordinates)
 
 
 type alias Id =
@@ -9,10 +10,10 @@ type alias Id =
 
 
 type alias Bullet =
-    { id : Id, position : Point, color : Color, shape : Shape }
+    { id : Id, position : Point2d, color : Color, shape : Shape }
 
 
-newBullet : Id -> Point -> Bullet
+newBullet : Id -> Point2d -> Bullet
 newBullet id position =
     { id = id
     , color = Color.rgb255 251 251 255
@@ -25,7 +26,7 @@ renderBullet : Transform -> Bullet -> Renderable
 renderBullet tf bullet =
     let
         ( x, y ) =
-            bullet.position
+            coordinates bullet.position
     in
     shapes
         [ stroke bullet.color, fill bullet.color, transform [ tf, translate x y ] ]

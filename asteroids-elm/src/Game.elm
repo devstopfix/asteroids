@@ -12,7 +12,7 @@ import Html.Attributes exposing (style)
 import List.FlatMap exposing (flatMap)
 import Point2d exposing (origin)
 import Ships exposing (..)
-import StateParser exposing (AsteroidLocation, Graphics, Id)
+import StateParser exposing (AsteroidLocation, BulletLocation, Graphics, Id)
 
 
 type alias Dimension =
@@ -22,7 +22,7 @@ type alias Dimension =
 type alias Game =
     { dimension : Dimension
     , asteroids : Dict Int Asteroid
-    , bullets : List Bullet
+    , bullets : Dict Int Bullet
     , explosions : List Explosion
     , ships : List Ship
     , spaceColor : Color
@@ -45,7 +45,7 @@ newGame dims =
     in
     { dimension = dims
     , asteroids = Dict.empty
-    , bullets = []
+    , bullets = Dict.empty
     , explosions = [ newExplosion ( 3000, 500 ) ]
     , ships = []
     , spaceColor = Color.black
@@ -63,7 +63,7 @@ viewGame game =
             renderAsteroids game.transform (Dict.values game.asteroids)
 
         bullets =
-            renderBullets game.transform game.bullets
+            renderBullets game.transform (Dict.values game.bullets)
 
         explosions =
             renderExplosions game.transform game.explosions
@@ -116,16 +116,12 @@ renderShips tf =
 
 mergeGame : Game -> Graphics -> Game
 mergeGame game graphics =
-    { game | asteroids = updateAsteroids graphics.asteroids game.asteroids }
+    { game | asteroids = updateAsteroids graphics.asteroids game.asteroids
+    , bullets = updateBullets graphics.bullets game.bullets }
 
 
 updateAsteroids asteroids game_asteroids =
-    -- case maybe_asteroids of
-    --     Just asteroids ->
             mergeAsteroids (toAsteroidMap asteroids) game_asteroids
-
-        -- Nothing ->
-        --     game_asteroids
 
 
 toAsteroidMap : List AsteroidLocation -> Dict Id AsteroidLocation
@@ -141,4 +137,23 @@ mergeAsteroids graphics_asteroids game_asteroids =
         (\id _ -> identity) -- Remove
         graphics_asteroids
         game_asteroids
+        Dict.empty
+
+
+updateBullets bullets game_bullets =
+            mergeBullets (toBulletMap bullets) game_bullets
+
+toBulletMap : List BulletLocation -> Dict Id BulletLocation
+toBulletMap =
+    Dict.fromList << List.map (\a -> ( a.id, a ))
+
+
+mergeBullets : Dict Int BulletLocation -> Dict Int Bullet -> Dict Int Bullet
+mergeBullets graphics_bullets game_bullets =
+    Dict.merge
+        (\id a -> Dict.insert id (newBullet id a.location))
+        (\id a b -> Dict.insert id { b | position = a.location })
+        (\id _ -> identity)
+        graphics_bullets
+        game_bullets
         Dict.empty

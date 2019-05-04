@@ -1,4 +1,4 @@
-module StateParser exposing (AsteroidLocation, Graphics, Id, gameDecoder)
+module StateParser exposing (AsteroidLocation, BulletLocation, Graphics, Id, gameDecoder)
 
 import BoundingBox2d exposing (BoundingBox2d, from)
 import Circle2d exposing (Circle2d, withRadius)
@@ -8,7 +8,7 @@ import Point2d exposing (Point2d, fromCoordinates, origin)
 
 type alias Graphics =
     { asteroids : List AsteroidLocation
-    , bullets : List BullletLocation
+    , bullets : List BulletLocation
     , dimensions : Maybe BoundingBox2d
     , explosions : List Point2d
     , ships : List ShipLocation
@@ -23,7 +23,7 @@ type alias AsteroidLocation =
     { id : Id, location : Circle2d }
 
 
-type alias BullletLocation =
+type alias BulletLocation =
     { id : Id, location : Point2d }
 
 
@@ -72,12 +72,12 @@ asteroidDecoder =
             )
 
 
-bulletsDecoder : Decoder (List BullletLocation)
+bulletsDecoder : Decoder (List BulletLocation)
 bulletsDecoder =
     list bulletDecoder
 
 
-bulletDecoder : Decoder BullletLocation
+bulletDecoder : Decoder BulletLocation
 bulletDecoder =
     field "0" int
         |> andThen
