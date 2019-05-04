@@ -1,14 +1,16 @@
-module Game exposing (Game, newGame, viewGame)
+module Game exposing (Game, newGame, viewGame, mergeGame)
 
 import Asteroids exposing (Asteroid, newAsteroid)
 import Bullets exposing (Bullet, newBullet)
 import Canvas exposing (..)
 import Color exposing (Color)
+import Dict exposing (Dict)
 import Explosions exposing (Explosion, newExplosion)
 import Html exposing (Html)
 import Html.Attributes exposing (style)
 import List.FlatMap exposing (flatMap)
 import Ships exposing (..)
+import StateParser exposing (Graphics)
 
 
 type alias Dimension =
@@ -17,7 +19,7 @@ type alias Dimension =
 
 type alias Game =
     { dimension : Dimension
-    , asteroids : List Asteroid
+    , asteroids : Dict Int Asteroid
     , bullets : List Bullet
     , explosions : List Explosion
     , ships : List Ship
@@ -40,20 +42,7 @@ newGame dims =
             gameDimensions
     in
     { dimension = dims
-    , asteroids =
-        [ newAsteroid 0 ( 0, 0 ) 60.0
-        , newAsteroid 1 ( 2000, 1125 ) 120.0
-        , newAsteroid 2 ( 4000, 2250 ) 60.0
-        , newAsteroid 3 ( 0, 2250 ) 30.0
-        , newAsteroid 4 ( 4000, 0 ) 15.0
-        , newAsteroid 5 ( 4000 - 30, 30 ) 30.0
-        , newAsteroid 6 ( 4000 - 60 - 30, 60 + 30 ) 60.0
-        , newAsteroid 7 ( 4000 - 120 - 60 - 30, 120 + 60 + 30 ) 120.0
-        , newAsteroid 20 ( 1400, 1440 ) 20.0
-        , newAsteroid 24 ( 1480, 1440 ) 20.0
-        , newAsteroid 28 ( 1440, 1400 ) 20.0
-        , newAsteroid 32 ( 1440, 1480 ) 20.0
-        ]
+    , asteroids = Dict.empty
     , bullets =
         [ newBullet 0 ( 1000, 1000 )
         , newBullet 1 ( 2000, 2000 )
@@ -92,7 +81,7 @@ viewGame game =
             game.dimension
 
         asteroids =
-            renderAsteroids game.transform game.asteroids
+            renderAsteroids game.transform (Dict.values game.asteroids)
 
         bullets =
             renderBullets game.transform game.bullets
@@ -223,3 +212,9 @@ renderShipName tf ship =
 
 
 tagFont = "normal lighter Source Code Pro,Source Code Pro,monospace"
+
+
+mergeGame : Game -> Graphics -> Game
+
+mergeGame game graphics =
+    game

@@ -20,11 +20,12 @@
     <script src="https://unpkg.com/elm-canvas@2.2/elm-canvas.js"></script>
     <script src="./elm.js"></script>
     <script>
+      var localURL = new URL("ws://localhost:8065/0/graphics");
+      var serverURL = new URL("ws://g0.elixoids.devstopfix.net/0/graphics");
       var app = Elm.Main.init({ node: document.querySelector("main") });
 
       if (app && app.ports) {
-        // you can use ports and stuff here
-        var ws = new WebSocket("ws://localhost:8065/0/graphics");
+        var ws = new WebSocket(serverURL);
         ws.onmessage = function(message)
         {
             app.ports.graphicsIn.send(message.data);

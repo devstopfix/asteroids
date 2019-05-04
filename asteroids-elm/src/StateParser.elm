@@ -1,4 +1,4 @@
-module StateParser exposing (gameDecoder)
+module StateParser exposing (gameDecoder, Graphics)
 
 import BoundingBox2d exposing (BoundingBox2d, from)
 import Circle2d exposing (Circle2d, withRadius)
@@ -6,7 +6,7 @@ import Json.Decode as Decode exposing (Decoder, andThen, at, fail, field, float,
 import Point2d exposing (Point2d, fromCoordinates, origin)
 
 
-type alias GameState =
+type alias Graphics =
     { asteroids : Maybe (List AsteroidLocation)
     , bullets : Maybe (List BullletLocation)
     , dimensions : Maybe BoundingBox2d
@@ -39,9 +39,9 @@ type alias ShipLocation =
     { id : Tag, location : Circle2d, theta : Theta }
 
 
-gameDecoder : Decoder GameState
+gameDecoder : Decoder Graphics
 gameDecoder =
-    map5 GameState
+    map5 Graphics
         (maybe (field "a" asteroidsDecoder))
         (maybe (field "b" bulletsDecoder))
         (maybe (field "dim" dimDecoder))

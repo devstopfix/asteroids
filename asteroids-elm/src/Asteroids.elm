@@ -2,6 +2,7 @@ module Asteroids exposing (Asteroid, newAsteroid, rotateAsteroids)
 
 import Canvas exposing (Point, Shape)
 import Color exposing (Color)
+import Dict exposing (Dict)
 import Points exposing (convertPoints)
 import Polygon exposing (pointsToShape)
 import Rocks exposing (..)
@@ -59,17 +60,17 @@ chooseShape i =
             Classic4
 
 
-rotateAsteroids : Int -> List Asteroid -> List Asteroid
+rotateAsteroids : Int -> Dict Int Asteroid -> Dict Int Asteroid
 rotateAsteroids t =
     let
         theta =
             cycle t
     in
-    List.map (rotateAsteroid theta)
+    Dict.map (rotateAsteroid theta)
 
 
-rotateAsteroid : Theta -> Asteroid -> Asteroid
-rotateAsteroid theta asteroid =
+rotateAsteroid : Theta -> Int -> Asteroid -> Asteroid
+rotateAsteroid theta _ asteroid =
     { asteroid | theta = theta + asteroid.theta0 }
 
 

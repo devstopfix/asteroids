@@ -6,10 +6,10 @@ import Browser.Events exposing (onAnimationFrameDelta)
 import Canvas exposing (..)
 import Debug exposing (log)
 import Explosions exposing (updateExplosions)
-import Game exposing (Game, newGame, viewGame)
+import Game exposing (Game, newGame, viewGame, mergeGame)
 import Html exposing (Html, div, p, text)
 import Html.Attributes exposing (style)
-import Json.Decode exposing (decodeString)
+import Json.Decode exposing (decodeString, Error)
 import StateParser exposing (gameDecoder)
 
 
@@ -90,15 +90,16 @@ update msg model =
             )
 
         GraphicsIn state_json ->
-            mergeGraphics model state_json
+            ( model, Cmd.none )
+            -- mergeGraphics model state_json
 
 
 mergeGraphics model state_json =
-    let
-        game_state =
-            Json.Decode.decodeString StateParser.gameDecoder state_json
-    in
-    ( model, Cmd.none )
+    case Json.Decode.decodeString StateParser.gameDecoder state_json of
+        Ok graphics ->
+            ( mergeGame model graphics, Cmd.none )
+        Err _ ->
+            ( model, Cmd.none )
 
 
 updateGames : Int -> List Game -> List Game

@@ -4310,10 +4310,10 @@ function _Browser_load(url)
 		}
 	}));
 }
-var author$project$Rocks$Classic1 = {$: 'Classic1'};
-var author$project$Rocks$Classic2 = {$: 'Classic2'};
-var author$project$Rocks$Classic3 = {$: 'Classic3'};
-var author$project$Rocks$Classic4 = {$: 'Classic4'};
+var avh4$elm_color$Color$RgbaSpace = F4(
+	function (a, b, c, d) {
+		return {$: 'RgbaSpace', a: a, b: b, c: c, d: d};
+	});
 var elm$core$Basics$EQ = {$: 'EQ'};
 var elm$core$Basics$GT = {$: 'GT'};
 var elm$core$Basics$LT = {$: 'LT'};
@@ -4394,26 +4394,56 @@ var elm$core$Array$foldr = F3(
 var elm$core$Array$toList = function (array) {
 	return A3(elm$core$Array$foldr, elm$core$List$cons, _List_Nil, array);
 };
-var elm$core$Basics$modBy = _Basics_modBy;
-var author$project$Asteroids$chooseShape = function (i) {
-	var _n0 = A2(elm$core$Basics$modBy, 4, i);
-	switch (_n0) {
-		case 0:
-			return author$project$Rocks$Classic1;
-		case 1:
-			return author$project$Rocks$Classic2;
-		case 2:
-			return author$project$Rocks$Classic3;
-		default:
-			return author$project$Rocks$Classic4;
-	}
-};
 var elm$core$Basics$fdiv = _Basics_fdiv;
 var elm$core$Basics$toFloat = _Basics_toFloat;
-var author$project$Asteroids$thetaOffset = function (n) {
-	var two_pi = 314;
-	return A2(elm$core$Basics$modBy, two_pi, n) / two_pi;
+var avh4$elm_color$Color$scaleFrom255 = function (c) {
+	return c / 255;
 };
+var avh4$elm_color$Color$rgb255 = F3(
+	function (r, g, b) {
+		return A4(
+			avh4$elm_color$Color$RgbaSpace,
+			avh4$elm_color$Color$scaleFrom255(r),
+			avh4$elm_color$Color$scaleFrom255(g),
+			avh4$elm_color$Color$scaleFrom255(b),
+			1.0);
+	});
+var joakin$elm_canvas$Canvas$Circle = F2(
+	function (a, b) {
+		return {$: 'Circle', a: a, b: b};
+	});
+var joakin$elm_canvas$Canvas$circle = F2(
+	function (pos, radius) {
+		return A2(joakin$elm_canvas$Canvas$Circle, pos, radius);
+	});
+var author$project$Bullets$newBullet = F2(
+	function (id, position) {
+		return {
+			color: A3(avh4$elm_color$Color$rgb255, 251, 251, 255),
+			id: id,
+			position: position,
+			shape: A2(
+				joakin$elm_canvas$Canvas$circle,
+				_Utils_Tuple2(0, 0),
+				4)
+		};
+	});
+var author$project$Explosions$explosionDuration = 20;
+var avh4$elm_color$Color$rgba = F4(
+	function (r, g, b, a) {
+		return A4(avh4$elm_color$Color$RgbaSpace, r, g, b, a);
+	});
+var author$project$Explosions$newExplosion = function (p) {
+	return {
+		color: A4(avh4$elm_color$Color$rgba, 1, 1, 0.8, 0.8),
+		framesRemaining: author$project$Explosions$explosionDuration,
+		opacity: 0.98,
+		position: p,
+		radius: 60.0
+	};
+};
+var author$project$Game$gameDimensions = _Utils_Tuple2(4000.0, 2250.0);
+var author$project$Ships$shipRadius = 20.0;
 var elm$core$Basics$add = _Basics_add;
 var elm$core$Basics$gt = _Utils_gt;
 var elm$core$List$foldl = F3(
@@ -4583,22 +4613,6 @@ var author$project$Polygon$polygonToShape = A2(
 		A2(elm$core$Basics$composeL, author$project$Polygon$pointsToShape, author$project$Points$convertPoints),
 		author$project$Points$closePolygon),
 	ianmackenzie$elm_geometry$Polygon2d$outerLoop);
-var elm$core$Basics$negate = function (n) {
-	return -n;
-};
-var author$project$Rocks$classicRock1 = _List_fromArray(
-	[
-		_Utils_Tuple2(0.5, 1.0),
-		_Utils_Tuple2(1.0, 0.5),
-		_Utils_Tuple2(0.75, 0.0),
-		_Utils_Tuple2(1.0, -0.5),
-		_Utils_Tuple2(0.25, -1.0),
-		_Utils_Tuple2(-0.5, -1.0),
-		_Utils_Tuple2(-1.0, -0.5),
-		_Utils_Tuple2(-1.0, 0.5),
-		_Utils_Tuple2(-0.5, 1.0),
-		_Utils_Tuple2(0.0, 0.5)
-	]);
 var elm$core$Basics$identity = function (x) {
 	return x;
 };
@@ -4607,34 +4621,104 @@ var ianmackenzie$elm_geometry$Geometry$Types$Point2d = function (a) {
 };
 var ianmackenzie$elm_geometry$Point2d$fromCoordinates = ianmackenzie$elm_geometry$Geometry$Types$Point2d;
 var author$project$Points$readPoints = elm$core$List$map(ianmackenzie$elm_geometry$Point2d$fromCoordinates);
-var ianmackenzie$elm_geometry$Geometry$Types$Polygon2d = function (a) {
-	return {$: 'Polygon2d', a: a};
+var elm$core$Maybe$Just = function (a) {
+	return {$: 'Just', a: a};
 };
-var elm$core$Basics$ge = _Utils_ge;
-var elm$core$List$map2 = _List_map2;
-var elm$core$List$sum = function (numbers) {
-	return A3(elm$core$List$foldl, elm$core$Basics$add, 0, numbers);
-};
-var elm$core$Basics$mul = _Basics_mul;
-var ianmackenzie$elm_geometry$Triangle2d$vertices = function (_n0) {
-	var vertices_ = _n0.a;
-	return vertices_;
-};
+var elm$core$Maybe$Nothing = {$: 'Nothing'};
 var elm$core$Basics$sub = _Basics_sub;
+var ianmackenzie$elm_geometry$Point2d$centroidHelp = F6(
+	function (x0, y0, count, dx, dy, points) {
+		centroidHelp:
+		while (true) {
+			if (points.b) {
+				var point = points.a;
+				var remaining = points.b;
+				var _n1 = ianmackenzie$elm_geometry$Point2d$coordinates(point);
+				var x = _n1.a;
+				var y = _n1.b;
+				var newDx = dx + (x - x0);
+				var newDy = dy + (y - y0);
+				var $temp$x0 = x0,
+					$temp$y0 = y0,
+					$temp$count = count + 1,
+					$temp$dx = newDx,
+					$temp$dy = newDy,
+					$temp$points = remaining;
+				x0 = $temp$x0;
+				y0 = $temp$y0;
+				count = $temp$count;
+				dx = $temp$dx;
+				dy = $temp$dy;
+				points = $temp$points;
+				continue centroidHelp;
+			} else {
+				return ianmackenzie$elm_geometry$Point2d$fromCoordinates(
+					_Utils_Tuple2(x0 + (dx / count), y0 + (dy / count)));
+			}
+		}
+	});
+var ianmackenzie$elm_geometry$Point2d$centroid = function (points) {
+	if (!points.b) {
+		return elm$core$Maybe$Nothing;
+	} else {
+		var first = points.a;
+		var rest = points.b;
+		var _n1 = ianmackenzie$elm_geometry$Point2d$coordinates(first);
+		var x0 = _n1.a;
+		var y0 = _n1.b;
+		return elm$core$Maybe$Just(
+			A6(ianmackenzie$elm_geometry$Point2d$centroidHelp, x0, y0, 1, 0, 0, rest));
+	}
+};
+var author$project$Polygon$polygonCentroid = A2(elm$core$Basics$composeL, ianmackenzie$elm_geometry$Point2d$centroid, ianmackenzie$elm_geometry$Polygon2d$outerLoop);
+var ianmackenzie$elm_geometry$Point2d$origin = ianmackenzie$elm_geometry$Point2d$fromCoordinates(
+	_Utils_Tuple2(0, 0));
+var elm$core$Basics$False = {$: 'False'};
 var ianmackenzie$elm_geometry$Vector2d$components = function (_n0) {
 	var components_ = _n0.a;
 	return components_;
 };
-var ianmackenzie$elm_geometry$Vector2d$crossProduct = F2(
-	function (firstVector, secondVector) {
-		var _n0 = ianmackenzie$elm_geometry$Vector2d$components(secondVector);
-		var x2 = _n0.a;
-		var y2 = _n0.b;
-		var _n1 = ianmackenzie$elm_geometry$Vector2d$components(firstVector);
-		var x1 = _n1.a;
-		var y1 = _n1.b;
-		return (x1 * y2) - (y1 * x2);
+var ianmackenzie$elm_geometry$Point2d$translateBy = F2(
+	function (vector, point) {
+		var _n0 = ianmackenzie$elm_geometry$Vector2d$components(vector);
+		var vx = _n0.a;
+		var vy = _n0.b;
+		var _n1 = ianmackenzie$elm_geometry$Point2d$coordinates(point);
+		var px = _n1.a;
+		var py = _n1.b;
+		return ianmackenzie$elm_geometry$Point2d$fromCoordinates(
+			_Utils_Tuple2(px + vx, py + vy));
 	});
+var ianmackenzie$elm_geometry$Geometry$Types$Polygon2d = function (a) {
+	return {$: 'Polygon2d', a: a};
+};
+var ianmackenzie$elm_geometry$Polygon2d$innerLoops = function (_n0) {
+	var polygon = _n0.a;
+	return polygon.innerLoops;
+};
+var ianmackenzie$elm_geometry$Polygon2d$mapVertices = F3(
+	function (_function, invert, polygon) {
+		var mappedOuterLoop = A2(
+			elm$core$List$map,
+			_function,
+			ianmackenzie$elm_geometry$Polygon2d$outerLoop(polygon));
+		var mappedInnerLoops = A2(
+			elm$core$List$map,
+			elm$core$List$map(_function),
+			ianmackenzie$elm_geometry$Polygon2d$innerLoops(polygon));
+		return invert ? ianmackenzie$elm_geometry$Geometry$Types$Polygon2d(
+			{
+				innerLoops: A2(elm$core$List$map, elm$core$List$reverse, mappedInnerLoops),
+				outerLoop: elm$core$List$reverse(mappedOuterLoop)
+			}) : ianmackenzie$elm_geometry$Geometry$Types$Polygon2d(
+			{innerLoops: mappedInnerLoops, outerLoop: mappedOuterLoop});
+	});
+var ianmackenzie$elm_geometry$Polygon2d$translateBy = function (vector) {
+	return A2(
+		ianmackenzie$elm_geometry$Polygon2d$mapVertices,
+		ianmackenzie$elm_geometry$Point2d$translateBy(vector),
+		false);
+};
 var ianmackenzie$elm_geometry$Bootstrap$Point2d$coordinates = function (_n0) {
 	var coordinates_ = _n0.a;
 	return coordinates_;
@@ -4653,6 +4737,75 @@ var ianmackenzie$elm_geometry$Vector2d$from = F2(
 		var y1 = _n1.b;
 		return ianmackenzie$elm_geometry$Vector2d$fromComponents(
 			_Utils_Tuple2(x2 - x1, y2 - y1));
+	});
+var author$project$SpaceShip$centreAboutMass = function (ship) {
+	var _n0 = author$project$Polygon$polygonCentroid(ship);
+	if (_n0.$ === 'Nothing') {
+		return ship;
+	} else {
+		var c = _n0.a;
+		return A2(
+			ianmackenzie$elm_geometry$Polygon2d$translateBy,
+			A2(ianmackenzie$elm_geometry$Vector2d$from, c, ianmackenzie$elm_geometry$Point2d$origin),
+			ship);
+	}
+};
+var elm$core$Basics$apR = F2(
+	function (x, f) {
+		return f(x);
+	});
+var elm$core$Basics$negate = function (n) {
+	return -n;
+};
+var elm$core$Basics$lt = _Utils_lt;
+var ianmackenzie$elm_geometry$Point2d$addTo = F2(
+	function (point, vector) {
+		return A2(ianmackenzie$elm_geometry$Point2d$translateBy, vector, point);
+	});
+var elm$core$Basics$mul = _Basics_mul;
+var ianmackenzie$elm_geometry$Vector2d$scaleBy = F2(
+	function (scale, vector) {
+		var _n0 = ianmackenzie$elm_geometry$Vector2d$components(vector);
+		var x = _n0.a;
+		var y = _n0.b;
+		return ianmackenzie$elm_geometry$Vector2d$fromComponents(
+			_Utils_Tuple2(x * scale, y * scale));
+	});
+var ianmackenzie$elm_geometry$Point2d$scaleAbout = F3(
+	function (centerPoint, scale, point) {
+		return A2(
+			ianmackenzie$elm_geometry$Point2d$addTo,
+			centerPoint,
+			A2(
+				ianmackenzie$elm_geometry$Vector2d$scaleBy,
+				scale,
+				A2(ianmackenzie$elm_geometry$Vector2d$from, centerPoint, point)));
+	});
+var ianmackenzie$elm_geometry$Polygon2d$scaleAbout = F2(
+	function (point, scale) {
+		return A2(
+			ianmackenzie$elm_geometry$Polygon2d$mapVertices,
+			A2(ianmackenzie$elm_geometry$Point2d$scaleAbout, point, scale),
+			scale < 0);
+	});
+var elm$core$Basics$ge = _Utils_ge;
+var elm$core$List$map2 = _List_map2;
+var elm$core$List$sum = function (numbers) {
+	return A3(elm$core$List$foldl, elm$core$Basics$add, 0, numbers);
+};
+var ianmackenzie$elm_geometry$Triangle2d$vertices = function (_n0) {
+	var vertices_ = _n0.a;
+	return vertices_;
+};
+var ianmackenzie$elm_geometry$Vector2d$crossProduct = F2(
+	function (firstVector, secondVector) {
+		var _n0 = ianmackenzie$elm_geometry$Vector2d$components(secondVector);
+		var x2 = _n0.a;
+		var y2 = _n0.b;
+		var _n1 = ianmackenzie$elm_geometry$Vector2d$components(firstVector);
+		var x1 = _n1.a;
+		var y1 = _n1.b;
+		return (x1 * y2) - (y1 * x2);
 	});
 var ianmackenzie$elm_geometry$Triangle2d$counterclockwiseArea = function (triangle) {
 	var _n0 = ianmackenzie$elm_geometry$Triangle2d$vertices(triangle);
@@ -4711,275 +4864,6 @@ var ianmackenzie$elm_geometry$Polygon2d$singleLoop = function (vertices_) {
 			outerLoop: ianmackenzie$elm_geometry$Polygon2d$makeOuterLoop(vertices_)
 		});
 };
-var author$project$Shapes$polygon = A2(elm$core$Basics$composeL, ianmackenzie$elm_geometry$Polygon2d$singleLoop, author$project$Points$readPoints);
-var author$project$Shapes$classicRockPolygon1 = author$project$Shapes$polygon(author$project$Rocks$classicRock1);
-var author$project$Rocks$classicRock2 = _List_fromArray(
-	[
-		_Utils_Tuple2(1.0, 0.5),
-		_Utils_Tuple2(0.5, 1.0),
-		_Utils_Tuple2(0.0, 0.75),
-		_Utils_Tuple2(-0.5, 1.0),
-		_Utils_Tuple2(-1.0, 0.5),
-		_Utils_Tuple2(-0.75, 0.0),
-		_Utils_Tuple2(-1.0, -0.5),
-		_Utils_Tuple2(-0.5, -1.0),
-		_Utils_Tuple2(-0.25, -0.75),
-		_Utils_Tuple2(0.5, -1.0),
-		_Utils_Tuple2(1.0, -0.25),
-		_Utils_Tuple2(0.5, 0.25)
-	]);
-var author$project$Shapes$classicRockPolygon2 = author$project$Shapes$polygon(author$project$Rocks$classicRock2);
-var author$project$Rocks$classicRock3 = _List_fromArray(
-	[
-		_Utils_Tuple2(-1.0, -0.25),
-		_Utils_Tuple2(-0.5, -1.0),
-		_Utils_Tuple2(0.0, -0.25),
-		_Utils_Tuple2(0.0, -1.0),
-		_Utils_Tuple2(0.5, -1.0),
-		_Utils_Tuple2(1.0, -0.25),
-		_Utils_Tuple2(1.0, 0.25),
-		_Utils_Tuple2(0.5, 1.0),
-		_Utils_Tuple2(-0.25, 1.0),
-		_Utils_Tuple2(-1.0, 0.25),
-		_Utils_Tuple2(-0.5, 0.0)
-	]);
-var author$project$Shapes$classicRockPolygon3 = author$project$Shapes$polygon(author$project$Rocks$classicRock3);
-var author$project$Rocks$classicRock4 = _List_fromArray(
-	[
-		_Utils_Tuple2(1.0, 0.25),
-		_Utils_Tuple2(1.0, 0.5),
-		_Utils_Tuple2(0.25, 1.0),
-		_Utils_Tuple2(-0.5, 1.0),
-		_Utils_Tuple2(-0.25, 0.5),
-		_Utils_Tuple2(-1.0, 0.5),
-		_Utils_Tuple2(-1.0, -0.25),
-		_Utils_Tuple2(-0.5, -1.0),
-		_Utils_Tuple2(0.25, -0.75),
-		_Utils_Tuple2(0.5, -1.0),
-		_Utils_Tuple2(1.0, -0.5),
-		_Utils_Tuple2(0.25, 0.0)
-	]);
-var author$project$Shapes$classicRockPolygon4 = author$project$Shapes$polygon(author$project$Rocks$classicRock4);
-var author$project$Shapes$lookup = function (rockType) {
-	switch (rockType.$) {
-		case 'Classic1':
-			return author$project$Shapes$classicRockPolygon1;
-		case 'Classic2':
-			return author$project$Shapes$classicRockPolygon2;
-		case 'Classic3':
-			return author$project$Shapes$classicRockPolygon3;
-		default:
-			return author$project$Shapes$classicRockPolygon4;
-	}
-};
-var elm$core$Basics$apR = F2(
-	function (x, f) {
-		return f(x);
-	});
-var ianmackenzie$elm_geometry$Point2d$origin = ianmackenzie$elm_geometry$Point2d$fromCoordinates(
-	_Utils_Tuple2(0, 0));
-var elm$core$Basics$lt = _Utils_lt;
-var ianmackenzie$elm_geometry$Point2d$translateBy = F2(
-	function (vector, point) {
-		var _n0 = ianmackenzie$elm_geometry$Vector2d$components(vector);
-		var vx = _n0.a;
-		var vy = _n0.b;
-		var _n1 = ianmackenzie$elm_geometry$Point2d$coordinates(point);
-		var px = _n1.a;
-		var py = _n1.b;
-		return ianmackenzie$elm_geometry$Point2d$fromCoordinates(
-			_Utils_Tuple2(px + vx, py + vy));
-	});
-var ianmackenzie$elm_geometry$Point2d$addTo = F2(
-	function (point, vector) {
-		return A2(ianmackenzie$elm_geometry$Point2d$translateBy, vector, point);
-	});
-var ianmackenzie$elm_geometry$Vector2d$scaleBy = F2(
-	function (scale, vector) {
-		var _n0 = ianmackenzie$elm_geometry$Vector2d$components(vector);
-		var x = _n0.a;
-		var y = _n0.b;
-		return ianmackenzie$elm_geometry$Vector2d$fromComponents(
-			_Utils_Tuple2(x * scale, y * scale));
-	});
-var ianmackenzie$elm_geometry$Point2d$scaleAbout = F3(
-	function (centerPoint, scale, point) {
-		return A2(
-			ianmackenzie$elm_geometry$Point2d$addTo,
-			centerPoint,
-			A2(
-				ianmackenzie$elm_geometry$Vector2d$scaleBy,
-				scale,
-				A2(ianmackenzie$elm_geometry$Vector2d$from, centerPoint, point)));
-	});
-var ianmackenzie$elm_geometry$Polygon2d$innerLoops = function (_n0) {
-	var polygon = _n0.a;
-	return polygon.innerLoops;
-};
-var ianmackenzie$elm_geometry$Polygon2d$mapVertices = F3(
-	function (_function, invert, polygon) {
-		var mappedOuterLoop = A2(
-			elm$core$List$map,
-			_function,
-			ianmackenzie$elm_geometry$Polygon2d$outerLoop(polygon));
-		var mappedInnerLoops = A2(
-			elm$core$List$map,
-			elm$core$List$map(_function),
-			ianmackenzie$elm_geometry$Polygon2d$innerLoops(polygon));
-		return invert ? ianmackenzie$elm_geometry$Geometry$Types$Polygon2d(
-			{
-				innerLoops: A2(elm$core$List$map, elm$core$List$reverse, mappedInnerLoops),
-				outerLoop: elm$core$List$reverse(mappedOuterLoop)
-			}) : ianmackenzie$elm_geometry$Geometry$Types$Polygon2d(
-			{innerLoops: mappedInnerLoops, outerLoop: mappedOuterLoop});
-	});
-var ianmackenzie$elm_geometry$Polygon2d$scaleAbout = F2(
-	function (point, scale) {
-		return A2(
-			ianmackenzie$elm_geometry$Polygon2d$mapVertices,
-			A2(ianmackenzie$elm_geometry$Point2d$scaleAbout, point, scale),
-			scale < 0);
-	});
-var author$project$Shapes$rockWithRadius = F2(
-	function (rt, radius) {
-		var rock = author$project$Shapes$lookup(rt);
-		return author$project$Polygon$polygonToShape(
-			A3(ianmackenzie$elm_geometry$Polygon2d$scaleAbout, ianmackenzie$elm_geometry$Point2d$origin, radius, rock));
-	});
-var avh4$elm_color$Color$RgbaSpace = F4(
-	function (a, b, c, d) {
-		return {$: 'RgbaSpace', a: a, b: b, c: c, d: d};
-	});
-var avh4$elm_color$Color$scaleFrom255 = function (c) {
-	return c / 255;
-};
-var avh4$elm_color$Color$rgb255 = F3(
-	function (r, g, b) {
-		return A4(
-			avh4$elm_color$Color$RgbaSpace,
-			avh4$elm_color$Color$scaleFrom255(r),
-			avh4$elm_color$Color$scaleFrom255(g),
-			avh4$elm_color$Color$scaleFrom255(b),
-			1.0);
-	});
-var author$project$Asteroids$newAsteroid = F3(
-	function (id, position, radius) {
-		var rock = author$project$Asteroids$chooseShape(id);
-		var shape = A2(author$project$Shapes$rockWithRadius, rock, radius);
-		return {
-			color: A3(avh4$elm_color$Color$rgb255, 4, 4, 4),
-			id: id,
-			position: position,
-			radius: radius,
-			shape: shape,
-			theta: 0.0,
-			theta0: author$project$Asteroids$thetaOffset(id)
-		};
-	});
-var joakin$elm_canvas$Canvas$Circle = F2(
-	function (a, b) {
-		return {$: 'Circle', a: a, b: b};
-	});
-var joakin$elm_canvas$Canvas$circle = F2(
-	function (pos, radius) {
-		return A2(joakin$elm_canvas$Canvas$Circle, pos, radius);
-	});
-var author$project$Bullets$newBullet = F2(
-	function (id, position) {
-		return {
-			color: A3(avh4$elm_color$Color$rgb255, 251, 251, 255),
-			id: id,
-			position: position,
-			shape: A2(
-				joakin$elm_canvas$Canvas$circle,
-				_Utils_Tuple2(0, 0),
-				4)
-		};
-	});
-var author$project$Explosions$explosionDuration = 20;
-var avh4$elm_color$Color$rgba = F4(
-	function (r, g, b, a) {
-		return A4(avh4$elm_color$Color$RgbaSpace, r, g, b, a);
-	});
-var author$project$Explosions$newExplosion = function (p) {
-	return {
-		color: A4(avh4$elm_color$Color$rgba, 1, 1, 0.8, 0.8),
-		framesRemaining: author$project$Explosions$explosionDuration,
-		opacity: 0.98,
-		position: p,
-		radius: 60.0
-	};
-};
-var author$project$Game$gameDimensions = _Utils_Tuple2(4000.0, 2250.0);
-var author$project$Ships$shipRadius = 20.0;
-var elm$core$Maybe$Just = function (a) {
-	return {$: 'Just', a: a};
-};
-var elm$core$Maybe$Nothing = {$: 'Nothing'};
-var ianmackenzie$elm_geometry$Point2d$centroidHelp = F6(
-	function (x0, y0, count, dx, dy, points) {
-		centroidHelp:
-		while (true) {
-			if (points.b) {
-				var point = points.a;
-				var remaining = points.b;
-				var _n1 = ianmackenzie$elm_geometry$Point2d$coordinates(point);
-				var x = _n1.a;
-				var y = _n1.b;
-				var newDx = dx + (x - x0);
-				var newDy = dy + (y - y0);
-				var $temp$x0 = x0,
-					$temp$y0 = y0,
-					$temp$count = count + 1,
-					$temp$dx = newDx,
-					$temp$dy = newDy,
-					$temp$points = remaining;
-				x0 = $temp$x0;
-				y0 = $temp$y0;
-				count = $temp$count;
-				dx = $temp$dx;
-				dy = $temp$dy;
-				points = $temp$points;
-				continue centroidHelp;
-			} else {
-				return ianmackenzie$elm_geometry$Point2d$fromCoordinates(
-					_Utils_Tuple2(x0 + (dx / count), y0 + (dy / count)));
-			}
-		}
-	});
-var ianmackenzie$elm_geometry$Point2d$centroid = function (points) {
-	if (!points.b) {
-		return elm$core$Maybe$Nothing;
-	} else {
-		var first = points.a;
-		var rest = points.b;
-		var _n1 = ianmackenzie$elm_geometry$Point2d$coordinates(first);
-		var x0 = _n1.a;
-		var y0 = _n1.b;
-		return elm$core$Maybe$Just(
-			A6(ianmackenzie$elm_geometry$Point2d$centroidHelp, x0, y0, 1, 0, 0, rest));
-	}
-};
-var author$project$Polygon$polygonCentroid = A2(elm$core$Basics$composeL, ianmackenzie$elm_geometry$Point2d$centroid, ianmackenzie$elm_geometry$Polygon2d$outerLoop);
-var elm$core$Basics$False = {$: 'False'};
-var ianmackenzie$elm_geometry$Polygon2d$translateBy = function (vector) {
-	return A2(
-		ianmackenzie$elm_geometry$Polygon2d$mapVertices,
-		ianmackenzie$elm_geometry$Point2d$translateBy(vector),
-		false);
-};
-var author$project$SpaceShip$centreAboutMass = function (ship) {
-	var _n0 = author$project$Polygon$polygonCentroid(ship);
-	if (_n0.$ === 'Nothing') {
-		return ship;
-	} else {
-		var c = _n0.a;
-		return A2(
-			ianmackenzie$elm_geometry$Polygon2d$translateBy,
-			A2(ianmackenzie$elm_geometry$Vector2d$from, c, ianmackenzie$elm_geometry$Point2d$origin),
-			ship);
-	}
-};
 var author$project$SpaceShip$arcadeShipEast = author$project$SpaceShip$centreAboutMass(
 	A3(
 		ianmackenzie$elm_geometry$Polygon2d$scaleAbout,
@@ -5013,6 +4897,8 @@ var author$project$Ships$newShip = F3(
 		};
 	});
 var avh4$elm_color$Color$black = A4(avh4$elm_color$Color$RgbaSpace, 0 / 255, 0 / 255, 0 / 255, 1.0);
+var elm$core$Dict$RBEmpty_elm_builtin = {$: 'RBEmpty_elm_builtin'};
+var elm$core$Dict$empty = elm$core$Dict$RBEmpty_elm_builtin;
 var joakin$elm_canvas$Canvas$Scale = F2(
 	function (a, b) {
 		return {$: 'Scale', a: a, b: b};
@@ -5026,69 +4912,7 @@ var author$project$Game$newGame = function (dims) {
 	var canvas_x = _n1.a;
 	var canvas_y = _n1.b;
 	return {
-		asteroids: _List_fromArray(
-			[
-				A3(
-				author$project$Asteroids$newAsteroid,
-				0,
-				_Utils_Tuple2(0, 0),
-				60.0),
-				A3(
-				author$project$Asteroids$newAsteroid,
-				1,
-				_Utils_Tuple2(2000, 1125),
-				120.0),
-				A3(
-				author$project$Asteroids$newAsteroid,
-				2,
-				_Utils_Tuple2(4000, 2250),
-				60.0),
-				A3(
-				author$project$Asteroids$newAsteroid,
-				3,
-				_Utils_Tuple2(0, 2250),
-				30.0),
-				A3(
-				author$project$Asteroids$newAsteroid,
-				4,
-				_Utils_Tuple2(4000, 0),
-				15.0),
-				A3(
-				author$project$Asteroids$newAsteroid,
-				5,
-				_Utils_Tuple2(4000 - 30, 30),
-				30.0),
-				A3(
-				author$project$Asteroids$newAsteroid,
-				6,
-				_Utils_Tuple2((4000 - 60) - 30, 60 + 30),
-				60.0),
-				A3(
-				author$project$Asteroids$newAsteroid,
-				7,
-				_Utils_Tuple2(((4000 - 120) - 60) - 30, (120 + 60) + 30),
-				120.0),
-				A3(
-				author$project$Asteroids$newAsteroid,
-				20,
-				_Utils_Tuple2(1400, 1440),
-				20.0),
-				A3(
-				author$project$Asteroids$newAsteroid,
-				24,
-				_Utils_Tuple2(1480, 1440),
-				20.0),
-				A3(
-				author$project$Asteroids$newAsteroid,
-				28,
-				_Utils_Tuple2(1440, 1400),
-				20.0),
-				A3(
-				author$project$Asteroids$newAsteroid,
-				32,
-				_Utils_Tuple2(1440, 1480),
-				20.0)
-			]),
+		asteroids: elm$core$Dict$empty,
 		bullets: _List_fromArray(
 			[
 				A2(
@@ -5961,214 +5785,7 @@ var author$project$Main$subscriptions = function (model) {
 				elm$browser$Browser$Events$onAnimationFrameDelta(author$project$Main$Frame)
 			]));
 };
-var author$project$StateParser$GameState = F5(
-	function (asteroids, bullets, dimensions, explosions, ships) {
-		return {asteroids: asteroids, bullets: bullets, dimensions: dimensions, explosions: explosions, ships: ships};
-	});
-var elm$json$Json$Decode$andThen = _Json_andThen;
-var elm$json$Json$Decode$field = _Json_decodeField;
-var elm$json$Json$Decode$float = _Json_decodeFloat;
-var elm$json$Json$Decode$int = _Json_decodeInt;
-var elm$core$Basics$abs = function (n) {
-	return (n < 0) ? (-n) : n;
-};
-var ianmackenzie$elm_geometry$Geometry$Types$Circle2d = function (a) {
-	return {$: 'Circle2d', a: a};
-};
-var ianmackenzie$elm_geometry$Circle2d$withRadius = F2(
-	function (radius_, centerPoint_) {
-		return ianmackenzie$elm_geometry$Geometry$Types$Circle2d(
-			{
-				centerPoint: centerPoint_,
-				radius: elm$core$Basics$abs(radius_)
-			});
-	});
-var author$project$StateParser$asteroidDecoder = A2(
-	elm$json$Json$Decode$andThen,
-	function (id) {
-		return A2(
-			elm$json$Json$Decode$andThen,
-			function (x) {
-				return A2(
-					elm$json$Json$Decode$andThen,
-					function (y) {
-						return A2(
-							elm$json$Json$Decode$andThen,
-							function (r) {
-								return elm$json$Json$Decode$succeed(
-									{
-										id: id,
-										location: A2(
-											ianmackenzie$elm_geometry$Circle2d$withRadius,
-											r,
-											ianmackenzie$elm_geometry$Point2d$fromCoordinates(
-												_Utils_Tuple2(x, y)))
-									});
-							},
-							A2(elm$json$Json$Decode$field, '3', elm$json$Json$Decode$float));
-					},
-					A2(elm$json$Json$Decode$field, '2', elm$json$Json$Decode$float));
-			},
-			A2(elm$json$Json$Decode$field, '1', elm$json$Json$Decode$float));
-	},
-	A2(elm$json$Json$Decode$field, '0', elm$json$Json$Decode$int));
-var elm$json$Json$Decode$list = _Json_decodeList;
-var author$project$StateParser$asteroidsDecoder = elm$json$Json$Decode$list(author$project$StateParser$asteroidDecoder);
-var author$project$StateParser$bulletDecoder = A2(
-	elm$json$Json$Decode$andThen,
-	function (id) {
-		return A2(
-			elm$json$Json$Decode$andThen,
-			function (x) {
-				return A2(
-					elm$json$Json$Decode$andThen,
-					function (y) {
-						return elm$json$Json$Decode$succeed(
-							{
-								id: id,
-								location: ianmackenzie$elm_geometry$Point2d$fromCoordinates(
-									_Utils_Tuple2(x, y))
-							});
-					},
-					A2(elm$json$Json$Decode$field, '2', elm$json$Json$Decode$float));
-			},
-			A2(elm$json$Json$Decode$field, '1', elm$json$Json$Decode$float));
-	},
-	A2(elm$json$Json$Decode$field, '0', elm$json$Json$Decode$int));
-var author$project$StateParser$bulletsDecoder = elm$json$Json$Decode$list(author$project$StateParser$bulletDecoder);
-var elm$json$Json$Decode$fail = _Json_fail;
-var elm$core$Basics$min = F2(
-	function (x, y) {
-		return (_Utils_cmp(x, y) < 0) ? x : y;
-	});
-var ianmackenzie$elm_geometry$Geometry$Types$BoundingBox2d = function (a) {
-	return {$: 'BoundingBox2d', a: a};
-};
-var ianmackenzie$elm_geometry$BoundingBox2d$fromExtrema = function (extrema_) {
-	return ((_Utils_cmp(extrema_.minX, extrema_.maxX) < 1) && (_Utils_cmp(extrema_.minY, extrema_.maxY) < 1)) ? ianmackenzie$elm_geometry$Geometry$Types$BoundingBox2d(extrema_) : ianmackenzie$elm_geometry$Geometry$Types$BoundingBox2d(
-		{
-			maxX: A2(elm$core$Basics$max, extrema_.minX, extrema_.maxX),
-			maxY: A2(elm$core$Basics$max, extrema_.minY, extrema_.maxY),
-			minX: A2(elm$core$Basics$min, extrema_.minX, extrema_.maxX),
-			minY: A2(elm$core$Basics$min, extrema_.minY, extrema_.maxY)
-		});
-};
-var ianmackenzie$elm_geometry$BoundingBox2d$from = F2(
-	function (firstPoint, secondPoint) {
-		var _n0 = ianmackenzie$elm_geometry$Point2d$coordinates(secondPoint);
-		var x2 = _n0.a;
-		var y2 = _n0.b;
-		var _n1 = ianmackenzie$elm_geometry$Point2d$coordinates(firstPoint);
-		var x1 = _n1.a;
-		var y1 = _n1.b;
-		return ianmackenzie$elm_geometry$BoundingBox2d$fromExtrema(
-			{
-				maxX: A2(elm$core$Basics$max, x1, x2),
-				maxY: A2(elm$core$Basics$max, y1, y2),
-				minX: A2(elm$core$Basics$min, x1, x2),
-				minY: A2(elm$core$Basics$min, y1, y2)
-			});
-	});
-var author$project$StateParser$dimHelp = function (fs) {
-	if ((fs.b && fs.b.b) && (!fs.b.b.b)) {
-		var x = fs.a;
-		var _n1 = fs.b;
-		var y = _n1.a;
-		return elm$json$Json$Decode$succeed(
-			A2(
-				ianmackenzie$elm_geometry$BoundingBox2d$from,
-				ianmackenzie$elm_geometry$Point2d$origin,
-				ianmackenzie$elm_geometry$Point2d$fromCoordinates(
-					_Utils_Tuple2(x, y))));
-	} else {
-		return elm$json$Json$Decode$fail('Expecting 2 floats');
-	}
-};
-var author$project$StateParser$dimDecoder = A2(
-	elm$json$Json$Decode$andThen,
-	author$project$StateParser$dimHelp,
-	elm$json$Json$Decode$list(elm$json$Json$Decode$float));
-var author$project$StateParser$explosionDecoder = A2(
-	elm$json$Json$Decode$andThen,
-	function (x) {
-		return A2(
-			elm$json$Json$Decode$andThen,
-			function (y) {
-				return elm$json$Json$Decode$succeed(
-					ianmackenzie$elm_geometry$Point2d$fromCoordinates(
-						_Utils_Tuple2(x, y)));
-			},
-			A2(elm$json$Json$Decode$field, '1', elm$json$Json$Decode$float));
-	},
-	A2(elm$json$Json$Decode$field, '0', elm$json$Json$Decode$float));
-var author$project$StateParser$explosionsDecoder = elm$json$Json$Decode$list(author$project$StateParser$explosionDecoder);
-var author$project$StateParser$shipDecoder = A2(
-	elm$json$Json$Decode$andThen,
-	function (tag) {
-		return A2(
-			elm$json$Json$Decode$andThen,
-			function (x) {
-				return A2(
-					elm$json$Json$Decode$andThen,
-					function (y) {
-						return A2(
-							elm$json$Json$Decode$andThen,
-							function (r) {
-								return A2(
-									elm$json$Json$Decode$andThen,
-									function (theta) {
-										return elm$json$Json$Decode$succeed(
-											{
-												id: tag,
-												location: A2(
-													ianmackenzie$elm_geometry$Circle2d$withRadius,
-													r,
-													ianmackenzie$elm_geometry$Point2d$fromCoordinates(
-														_Utils_Tuple2(x, y))),
-												theta: theta
-											});
-									},
-									A2(elm$json$Json$Decode$field, '4', elm$json$Json$Decode$float));
-							},
-							A2(elm$json$Json$Decode$field, '3', elm$json$Json$Decode$float));
-					},
-					A2(elm$json$Json$Decode$field, '2', elm$json$Json$Decode$float));
-			},
-			A2(elm$json$Json$Decode$field, '1', elm$json$Json$Decode$float));
-	},
-	A2(elm$json$Json$Decode$field, '0', elm$json$Json$Decode$string));
-var author$project$StateParser$shipsDecoder = elm$json$Json$Decode$list(author$project$StateParser$shipDecoder);
-var elm$json$Json$Decode$map5 = _Json_map5;
-var elm$json$Json$Decode$oneOf = _Json_oneOf;
-var elm$json$Json$Decode$maybe = function (decoder) {
-	return elm$json$Json$Decode$oneOf(
-		_List_fromArray(
-			[
-				A2(elm$json$Json$Decode$map, elm$core$Maybe$Just, decoder),
-				elm$json$Json$Decode$succeed(elm$core$Maybe$Nothing)
-			]));
-};
-var author$project$StateParser$gameDecoder = A6(
-	elm$json$Json$Decode$map5,
-	author$project$StateParser$GameState,
-	elm$json$Json$Decode$maybe(
-		A2(elm$json$Json$Decode$field, 'a', author$project$StateParser$asteroidsDecoder)),
-	elm$json$Json$Decode$maybe(
-		A2(elm$json$Json$Decode$field, 'b', author$project$StateParser$bulletsDecoder)),
-	elm$json$Json$Decode$maybe(
-		A2(elm$json$Json$Decode$field, 'dim', author$project$StateParser$dimDecoder)),
-	elm$json$Json$Decode$maybe(
-		A2(elm$json$Json$Decode$field, 'x', author$project$StateParser$explosionsDecoder)),
-	elm$json$Json$Decode$maybe(
-		A2(elm$json$Json$Decode$field, 's', author$project$StateParser$shipsDecoder)));
-var elm$core$Platform$Cmd$batch = _Platform_batch;
-var elm$core$Platform$Cmd$none = elm$core$Platform$Cmd$batch(_List_Nil);
-var elm$json$Json$Decode$decodeString = _Json_runOnString;
-var author$project$Main$mergeGraphics = F2(
-	function (model, state_json) {
-		var game_state = A2(elm$json$Json$Decode$decodeString, author$project$StateParser$gameDecoder, state_json);
-		return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
-	});
+var elm$core$Basics$modBy = _Basics_modBy;
 var elm$core$Basics$pi = _Basics_pi;
 var author$project$Asteroids$cycle = function (t) {
 	var framesPerRevolution = 960;
@@ -6176,15 +5793,38 @@ var author$project$Asteroids$cycle = function (t) {
 	var f = n / framesPerRevolution;
 	return (f * 2) * elm$core$Basics$pi;
 };
-var author$project$Asteroids$rotateAsteroid = F2(
-	function (theta, asteroid) {
+var author$project$Asteroids$rotateAsteroid = F3(
+	function (theta, _n0, asteroid) {
 		return _Utils_update(
 			asteroid,
 			{theta: theta + asteroid.theta0});
 	});
+var elm$core$Dict$RBNode_elm_builtin = F5(
+	function (a, b, c, d, e) {
+		return {$: 'RBNode_elm_builtin', a: a, b: b, c: c, d: d, e: e};
+	});
+var elm$core$Dict$map = F2(
+	function (func, dict) {
+		if (dict.$ === 'RBEmpty_elm_builtin') {
+			return elm$core$Dict$RBEmpty_elm_builtin;
+		} else {
+			var color = dict.a;
+			var key = dict.b;
+			var value = dict.c;
+			var left = dict.d;
+			var right = dict.e;
+			return A5(
+				elm$core$Dict$RBNode_elm_builtin,
+				color,
+				key,
+				A2(func, key, value),
+				A2(elm$core$Dict$map, func, left),
+				A2(elm$core$Dict$map, func, right));
+		}
+	});
 var author$project$Asteroids$rotateAsteroids = function (t) {
 	var theta = author$project$Asteroids$cycle(t);
-	return elm$core$List$map(
+	return elm$core$Dict$map(
 		author$project$Asteroids$rotateAsteroid(theta));
 };
 var author$project$Explosions$isActive = function (e) {
@@ -6227,6 +5867,8 @@ var author$project$Main$updateGames = function (t) {
 	return elm$core$List$map(
 		author$project$Main$updateGame(t));
 };
+var elm$core$Platform$Cmd$batch = _Platform_batch;
+var elm$core$Platform$Cmd$none = elm$core$Platform$Cmd$batch(_List_Nil);
 var author$project$Main$update = F2(
 	function (msg, model) {
 		if (msg.$ === 'Frame') {
@@ -6240,7 +5882,7 @@ var author$project$Main$update = F2(
 				elm$core$Platform$Cmd$none);
 		} else {
 			var state_json = msg.a;
-			return A2(author$project$Main$mergeGraphics, model, state_json);
+			return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 		}
 	});
 var avh4$elm_color$Color$white = A4(avh4$elm_color$Color$RgbaSpace, 255 / 255, 255 / 255, 255 / 255, 1.0);
@@ -6798,6 +6440,16 @@ var author$project$Game$renderSpace = function (game) {
 		]);
 };
 var elm$core$Basics$round = _Basics_round;
+var elm$core$Dict$values = function (dict) {
+	return A3(
+		elm$core$Dict$foldr,
+		F3(
+			function (key, value, valueList) {
+				return A2(elm$core$List$cons, value, valueList);
+			}),
+		_List_Nil,
+		dict);
+};
 var elm$virtual_dom$VirtualDom$style = _VirtualDom_style;
 var elm$html$Html$Attributes$style = elm$virtual_dom$VirtualDom$style;
 var elm$html$Html$canvas = _VirtualDom_node('canvas');
@@ -7332,7 +6984,10 @@ var author$project$Game$viewGame = function (game) {
 	var ships = A2(author$project$Game$renderShips, game.transform, game.ships);
 	var explosions = A2(author$project$Game$renderExplosions, game.transform, game.explosions);
 	var bullets = A2(author$project$Game$renderBullets, game.transform, game.bullets);
-	var asteroids = A2(author$project$Game$renderAsteroids, game.transform, game.asteroids);
+	var asteroids = A2(
+		author$project$Game$renderAsteroids,
+		game.transform,
+		elm$core$Dict$values(game.asteroids));
 	var _n0 = game.dimension;
 	var width = _n0.a;
 	var height = _n0.b;
