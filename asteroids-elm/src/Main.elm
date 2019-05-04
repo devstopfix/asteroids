@@ -59,10 +59,10 @@ sampleGames =
     [ newGame ( 800, 450 )
     , newGame ( 400, 225 )
     , newGame ( 400, 225 )
-    , newGame ( 200, 112 )
-    , newGame ( 200, 112 )
-    , newGame ( 200, 112 )
-    , newGame ( 200, 112 )
+    -- , newGame ( 200, 112 )
+    -- , newGame ( 200, 112 )
+    -- , newGame ( 200, 112 )
+    -- , newGame ( 200, 112 )
     ]
 
 

@@ -92,12 +92,15 @@ viewGame game =
         ships =
             renderShips game.transform game.ships
 
+        tags =
+            renderTags game.transform game.ships
+
         space =
             renderSpace game
     in
     Canvas.toHtml ( round width, round height )
         [ style "border" "2px solid darkred" ]
-        (List.foldl List.append [] [ explosions, asteroids, ships, bullets, space ])
+        (List.foldl List.append [] [ explosions, asteroids, ships, bullets, tags, space ])
 
 
 renderSpace : Game -> List Renderable
@@ -112,7 +115,6 @@ renderSpace game =
     ]
 
 
-
 renderAsteroids tf =
     List.map (renderAsteroid tf)
 
@@ -125,15 +127,12 @@ renderExplosions tf =
     List.map (renderExplosion tf)
 
 
+renderTags tf =
+    flatMap (renderTag tf)
+
+
 renderShips tf =
-    List.FlatMap.flatMap (renderSpaceShip tf)
-
-
-renderSpaceShip : Transform -> Ship -> List Renderable
-renderSpaceShip tf ship =
-    List.append
-        [ renderShip tf ship ]
-        (renderTag tf ship)
+    List.map (renderShip tf)
 
 
 mergeGame : Game -> Graphics -> Game

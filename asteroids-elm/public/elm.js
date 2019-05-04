@@ -6287,6 +6287,40 @@ var author$project$Ships$renderShip = F2(
 			_List_fromArray(
 				[ship.shape]));
 	});
+var author$project$Game$renderShips = function (tf) {
+	return elm$core$List$map(
+		author$project$Ships$renderShip(tf));
+};
+var joakin$elm_canvas$Canvas$Rect = F3(
+	function (a, b, c) {
+		return {$: 'Rect', a: a, b: b, c: c};
+	});
+var joakin$elm_canvas$Canvas$rect = F3(
+	function (pos, width, height) {
+		return A3(joakin$elm_canvas$Canvas$Rect, pos, width, height);
+	});
+var author$project$Game$renderSpace = function (game) {
+	var _n0 = game.dimension;
+	var width = _n0.a;
+	var height = _n0.b;
+	return _List_fromArray(
+		[
+			A2(
+			joakin$elm_canvas$Canvas$shapes,
+			_List_fromArray(
+				[
+					joakin$elm_canvas$Canvas$fill(game.spaceColor)
+				]),
+			_List_fromArray(
+				[
+					A3(
+					joakin$elm_canvas$Canvas$rect,
+					_Utils_Tuple2(0, 0),
+					width,
+					height)
+				]))
+		]);
+};
 var author$project$Ships$offset90deg = elm$core$Basics$add(elm$core$Basics$pi / 2);
 var author$project$Ships$tagFont = 'normal lighter Source Code Pro,Source Code Pro,monospace';
 var author$project$Ships$tagOffset = elm$core$Basics$mul(3.0);
@@ -6379,55 +6413,15 @@ var author$project$Ships$renderTag = F2(
 				tag)
 			]);
 	});
-var author$project$Game$renderSpaceShip = F2(
-	function (tf, ship) {
-		return A2(
-			elm$core$List$append,
-			_List_fromArray(
-				[
-					A2(author$project$Ships$renderShip, tf, ship)
-				]),
-			A2(author$project$Ships$renderTag, tf, ship));
-	});
 var ccapndave$elm_flat_map$List$FlatMap$join = A2(elm$core$List$foldr, elm$core$Basics$append, _List_Nil);
 var ccapndave$elm_flat_map$List$FlatMap$flatMap = F2(
 	function (f, list) {
 		return ccapndave$elm_flat_map$List$FlatMap$join(
 			A2(elm$core$List$map, f, list));
 	});
-var author$project$Game$renderShips = function (tf) {
+var author$project$Game$renderTags = function (tf) {
 	return ccapndave$elm_flat_map$List$FlatMap$flatMap(
-		author$project$Game$renderSpaceShip(tf));
-};
-var joakin$elm_canvas$Canvas$Rect = F3(
-	function (a, b, c) {
-		return {$: 'Rect', a: a, b: b, c: c};
-	});
-var joakin$elm_canvas$Canvas$rect = F3(
-	function (pos, width, height) {
-		return A3(joakin$elm_canvas$Canvas$Rect, pos, width, height);
-	});
-var author$project$Game$renderSpace = function (game) {
-	var _n0 = game.dimension;
-	var width = _n0.a;
-	var height = _n0.b;
-	return _List_fromArray(
-		[
-			A2(
-			joakin$elm_canvas$Canvas$shapes,
-			_List_fromArray(
-				[
-					joakin$elm_canvas$Canvas$fill(game.spaceColor)
-				]),
-			_List_fromArray(
-				[
-					A3(
-					joakin$elm_canvas$Canvas$rect,
-					_Utils_Tuple2(0, 0),
-					width,
-					height)
-				]))
-		]);
+		author$project$Ships$renderTag(tf));
 };
 var elm$core$Basics$round = _Basics_round;
 var elm$core$Dict$values = function (dict) {
@@ -6970,6 +6964,7 @@ var joakin$elm_canvas$Canvas$toHtml = F3(
 				]));
 	});
 var author$project$Game$viewGame = function (game) {
+	var tags = A2(author$project$Game$renderTags, game.transform, game.ships);
 	var space = author$project$Game$renderSpace(game);
 	var ships = A2(author$project$Game$renderShips, game.transform, game.ships);
 	var explosions = A2(author$project$Game$renderExplosions, game.transform, game.explosions);
@@ -6995,7 +6990,7 @@ var author$project$Game$viewGame = function (game) {
 			elm$core$List$append,
 			_List_Nil,
 			_List_fromArray(
-				[explosions, asteroids, ships, bullets, space])));
+				[explosions, asteroids, ships, bullets, tags, space])));
 };
 var elm$html$Html$div = _VirtualDom_node('div');
 var elm$html$Html$p = _VirtualDom_node('p');
