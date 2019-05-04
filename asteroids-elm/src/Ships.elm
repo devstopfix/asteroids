@@ -56,7 +56,7 @@ renderTag tf ship =
             ship.position
 
         tag =
-            ship.id
+            trimTag ship.id
 
         color =
             ship.tagColor
@@ -80,3 +80,6 @@ tagOffset =
 
 tagFont =
     "normal lighter Source Code Pro,Source Code Pro,monospace"
+
+trimTag =
+    (String.left 3) << String.trim
