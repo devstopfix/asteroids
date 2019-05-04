@@ -26,7 +26,7 @@
       var app = Elm.Main.init({ node: document.querySelector("main") });
 
       if (app && app.ports) {
-        var ws = new WebSocket(localURL);
+        var ws = new WebSocket(localTestCardURL);
         ws.onmessage = function(message)
         {
             app.ports.graphicsIn.send(message.data);

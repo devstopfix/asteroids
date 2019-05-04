@@ -80,271 +80,6 @@ function A9(fun, a, b, c, d, e, f, g, h, i) {
 console.warn('Compiled in DEV mode. Follow the advice at https://elm-lang.org/0.19.0/optimize for better performance and smaller assets.');
 
 
-var _List_Nil_UNUSED = { $: 0 };
-var _List_Nil = { $: '[]' };
-
-function _List_Cons_UNUSED(hd, tl) { return { $: 1, a: hd, b: tl }; }
-function _List_Cons(hd, tl) { return { $: '::', a: hd, b: tl }; }
-
-
-var _List_cons = F2(_List_Cons);
-
-function _List_fromArray(arr)
-{
-	var out = _List_Nil;
-	for (var i = arr.length; i--; )
-	{
-		out = _List_Cons(arr[i], out);
-	}
-	return out;
-}
-
-function _List_toArray(xs)
-{
-	for (var out = []; xs.b; xs = xs.b) // WHILE_CONS
-	{
-		out.push(xs.a);
-	}
-	return out;
-}
-
-var _List_map2 = F3(function(f, xs, ys)
-{
-	for (var arr = []; xs.b && ys.b; xs = xs.b, ys = ys.b) // WHILE_CONSES
-	{
-		arr.push(A2(f, xs.a, ys.a));
-	}
-	return _List_fromArray(arr);
-});
-
-var _List_map3 = F4(function(f, xs, ys, zs)
-{
-	for (var arr = []; xs.b && ys.b && zs.b; xs = xs.b, ys = ys.b, zs = zs.b) // WHILE_CONSES
-	{
-		arr.push(A3(f, xs.a, ys.a, zs.a));
-	}
-	return _List_fromArray(arr);
-});
-
-var _List_map4 = F5(function(f, ws, xs, ys, zs)
-{
-	for (var arr = []; ws.b && xs.b && ys.b && zs.b; ws = ws.b, xs = xs.b, ys = ys.b, zs = zs.b) // WHILE_CONSES
-	{
-		arr.push(A4(f, ws.a, xs.a, ys.a, zs.a));
-	}
-	return _List_fromArray(arr);
-});
-
-var _List_map5 = F6(function(f, vs, ws, xs, ys, zs)
-{
-	for (var arr = []; vs.b && ws.b && xs.b && ys.b && zs.b; vs = vs.b, ws = ws.b, xs = xs.b, ys = ys.b, zs = zs.b) // WHILE_CONSES
-	{
-		arr.push(A5(f, vs.a, ws.a, xs.a, ys.a, zs.a));
-	}
-	return _List_fromArray(arr);
-});
-
-var _List_sortBy = F2(function(f, xs)
-{
-	return _List_fromArray(_List_toArray(xs).sort(function(a, b) {
-		return _Utils_cmp(f(a), f(b));
-	}));
-});
-
-var _List_sortWith = F2(function(f, xs)
-{
-	return _List_fromArray(_List_toArray(xs).sort(function(a, b) {
-		var ord = A2(f, a, b);
-		return ord === elm$core$Basics$EQ ? 0 : ord === elm$core$Basics$LT ? -1 : 1;
-	}));
-});
-
-
-
-// EQUALITY
-
-function _Utils_eq(x, y)
-{
-	for (
-		var pair, stack = [], isEqual = _Utils_eqHelp(x, y, 0, stack);
-		isEqual && (pair = stack.pop());
-		isEqual = _Utils_eqHelp(pair.a, pair.b, 0, stack)
-		)
-	{}
-
-	return isEqual;
-}
-
-function _Utils_eqHelp(x, y, depth, stack)
-{
-	if (depth > 100)
-	{
-		stack.push(_Utils_Tuple2(x,y));
-		return true;
-	}
-
-	if (x === y)
-	{
-		return true;
-	}
-
-	if (typeof x !== 'object' || x === null || y === null)
-	{
-		typeof x === 'function' && _Debug_crash(5);
-		return false;
-	}
-
-	/**/
-	if (x.$ === 'Set_elm_builtin')
-	{
-		x = elm$core$Set$toList(x);
-		y = elm$core$Set$toList(y);
-	}
-	if (x.$ === 'RBNode_elm_builtin' || x.$ === 'RBEmpty_elm_builtin')
-	{
-		x = elm$core$Dict$toList(x);
-		y = elm$core$Dict$toList(y);
-	}
-	//*/
-
-	/**_UNUSED/
-	if (x.$ < 0)
-	{
-		x = elm$core$Dict$toList(x);
-		y = elm$core$Dict$toList(y);
-	}
-	//*/
-
-	for (var key in x)
-	{
-		if (!_Utils_eqHelp(x[key], y[key], depth + 1, stack))
-		{
-			return false;
-		}
-	}
-	return true;
-}
-
-var _Utils_equal = F2(_Utils_eq);
-var _Utils_notEqual = F2(function(a, b) { return !_Utils_eq(a,b); });
-
-
-
-// COMPARISONS
-
-// Code in Generate/JavaScript.hs, Basics.js, and List.js depends on
-// the particular integer values assigned to LT, EQ, and GT.
-
-function _Utils_cmp(x, y, ord)
-{
-	if (typeof x !== 'object')
-	{
-		return x === y ? /*EQ*/ 0 : x < y ? /*LT*/ -1 : /*GT*/ 1;
-	}
-
-	/**/
-	if (x instanceof String)
-	{
-		var a = x.valueOf();
-		var b = y.valueOf();
-		return a === b ? 0 : a < b ? -1 : 1;
-	}
-	//*/
-
-	/**_UNUSED/
-	if (typeof x.$ === 'undefined')
-	//*/
-	/**/
-	if (x.$[0] === '#')
-	//*/
-	{
-		return (ord = _Utils_cmp(x.a, y.a))
-			? ord
-			: (ord = _Utils_cmp(x.b, y.b))
-				? ord
-				: _Utils_cmp(x.c, y.c);
-	}
-
-	// traverse conses until end of a list or a mismatch
-	for (; x.b && y.b && !(ord = _Utils_cmp(x.a, y.a)); x = x.b, y = y.b) {} // WHILE_CONSES
-	return ord || (x.b ? /*GT*/ 1 : y.b ? /*LT*/ -1 : /*EQ*/ 0);
-}
-
-var _Utils_lt = F2(function(a, b) { return _Utils_cmp(a, b) < 0; });
-var _Utils_le = F2(function(a, b) { return _Utils_cmp(a, b) < 1; });
-var _Utils_gt = F2(function(a, b) { return _Utils_cmp(a, b) > 0; });
-var _Utils_ge = F2(function(a, b) { return _Utils_cmp(a, b) >= 0; });
-
-var _Utils_compare = F2(function(x, y)
-{
-	var n = _Utils_cmp(x, y);
-	return n < 0 ? elm$core$Basics$LT : n ? elm$core$Basics$GT : elm$core$Basics$EQ;
-});
-
-
-// COMMON VALUES
-
-var _Utils_Tuple0_UNUSED = 0;
-var _Utils_Tuple0 = { $: '#0' };
-
-function _Utils_Tuple2_UNUSED(a, b) { return { a: a, b: b }; }
-function _Utils_Tuple2(a, b) { return { $: '#2', a: a, b: b }; }
-
-function _Utils_Tuple3_UNUSED(a, b, c) { return { a: a, b: b, c: c }; }
-function _Utils_Tuple3(a, b, c) { return { $: '#3', a: a, b: b, c: c }; }
-
-function _Utils_chr_UNUSED(c) { return c; }
-function _Utils_chr(c) { return new String(c); }
-
-
-// RECORDS
-
-function _Utils_update(oldRecord, updatedFields)
-{
-	var newRecord = {};
-
-	for (var key in oldRecord)
-	{
-		newRecord[key] = oldRecord[key];
-	}
-
-	for (var key in updatedFields)
-	{
-		newRecord[key] = updatedFields[key];
-	}
-
-	return newRecord;
-}
-
-
-// APPEND
-
-var _Utils_append = F2(_Utils_ap);
-
-function _Utils_ap(xs, ys)
-{
-	// append Strings
-	if (typeof xs === 'string')
-	{
-		return xs + ys;
-	}
-
-	// append Lists
-	if (!xs.b)
-	{
-		return ys;
-	}
-	var root = _List_Cons(xs.a, ys);
-	xs = xs.b
-	for (var curr = root; xs.b; xs = xs.b) // WHILE_CONS
-	{
-		curr = curr.b = _List_Cons(xs.a, ys);
-	}
-	return root;
-}
-
-
-
 var _JsArray_empty = [];
 
 function _JsArray_singleton(value)
@@ -493,6 +228,87 @@ var _JsArray_appendN = F3(function(n, dest, source)
     }
 
     return result;
+});
+
+
+
+var _List_Nil_UNUSED = { $: 0 };
+var _List_Nil = { $: '[]' };
+
+function _List_Cons_UNUSED(hd, tl) { return { $: 1, a: hd, b: tl }; }
+function _List_Cons(hd, tl) { return { $: '::', a: hd, b: tl }; }
+
+
+var _List_cons = F2(_List_Cons);
+
+function _List_fromArray(arr)
+{
+	var out = _List_Nil;
+	for (var i = arr.length; i--; )
+	{
+		out = _List_Cons(arr[i], out);
+	}
+	return out;
+}
+
+function _List_toArray(xs)
+{
+	for (var out = []; xs.b; xs = xs.b) // WHILE_CONS
+	{
+		out.push(xs.a);
+	}
+	return out;
+}
+
+var _List_map2 = F3(function(f, xs, ys)
+{
+	for (var arr = []; xs.b && ys.b; xs = xs.b, ys = ys.b) // WHILE_CONSES
+	{
+		arr.push(A2(f, xs.a, ys.a));
+	}
+	return _List_fromArray(arr);
+});
+
+var _List_map3 = F4(function(f, xs, ys, zs)
+{
+	for (var arr = []; xs.b && ys.b && zs.b; xs = xs.b, ys = ys.b, zs = zs.b) // WHILE_CONSES
+	{
+		arr.push(A3(f, xs.a, ys.a, zs.a));
+	}
+	return _List_fromArray(arr);
+});
+
+var _List_map4 = F5(function(f, ws, xs, ys, zs)
+{
+	for (var arr = []; ws.b && xs.b && ys.b && zs.b; ws = ws.b, xs = xs.b, ys = ys.b, zs = zs.b) // WHILE_CONSES
+	{
+		arr.push(A4(f, ws.a, xs.a, ys.a, zs.a));
+	}
+	return _List_fromArray(arr);
+});
+
+var _List_map5 = F6(function(f, vs, ws, xs, ys, zs)
+{
+	for (var arr = []; vs.b && ws.b && xs.b && ys.b && zs.b; vs = vs.b, ws = ws.b, xs = xs.b, ys = ys.b, zs = zs.b) // WHILE_CONSES
+	{
+		arr.push(A5(f, vs.a, ws.a, xs.a, ys.a, zs.a));
+	}
+	return _List_fromArray(arr);
+});
+
+var _List_sortBy = F2(function(f, xs)
+{
+	return _List_fromArray(_List_toArray(xs).sort(function(a, b) {
+		return _Utils_cmp(f(a), f(b));
+	}));
+});
+
+var _List_sortWith = F2(function(f, xs)
+{
+	return _List_fromArray(_List_toArray(xs).sort(function(a, b) {
+		var ord = A2(f, a, b);
+		return ord === elm$core$Basics$EQ ? 0 : ord === elm$core$Basics$LT ? -1 : 1;
+	}));
 });
 
 
@@ -789,6 +605,190 @@ function _Debug_regionToString(region)
 		return 'on line ' + region.start.line;
 	}
 	return 'on lines ' + region.start.line + ' through ' + region.end.line;
+}
+
+
+
+// EQUALITY
+
+function _Utils_eq(x, y)
+{
+	for (
+		var pair, stack = [], isEqual = _Utils_eqHelp(x, y, 0, stack);
+		isEqual && (pair = stack.pop());
+		isEqual = _Utils_eqHelp(pair.a, pair.b, 0, stack)
+		)
+	{}
+
+	return isEqual;
+}
+
+function _Utils_eqHelp(x, y, depth, stack)
+{
+	if (depth > 100)
+	{
+		stack.push(_Utils_Tuple2(x,y));
+		return true;
+	}
+
+	if (x === y)
+	{
+		return true;
+	}
+
+	if (typeof x !== 'object' || x === null || y === null)
+	{
+		typeof x === 'function' && _Debug_crash(5);
+		return false;
+	}
+
+	/**/
+	if (x.$ === 'Set_elm_builtin')
+	{
+		x = elm$core$Set$toList(x);
+		y = elm$core$Set$toList(y);
+	}
+	if (x.$ === 'RBNode_elm_builtin' || x.$ === 'RBEmpty_elm_builtin')
+	{
+		x = elm$core$Dict$toList(x);
+		y = elm$core$Dict$toList(y);
+	}
+	//*/
+
+	/**_UNUSED/
+	if (x.$ < 0)
+	{
+		x = elm$core$Dict$toList(x);
+		y = elm$core$Dict$toList(y);
+	}
+	//*/
+
+	for (var key in x)
+	{
+		if (!_Utils_eqHelp(x[key], y[key], depth + 1, stack))
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
+var _Utils_equal = F2(_Utils_eq);
+var _Utils_notEqual = F2(function(a, b) { return !_Utils_eq(a,b); });
+
+
+
+// COMPARISONS
+
+// Code in Generate/JavaScript.hs, Basics.js, and List.js depends on
+// the particular integer values assigned to LT, EQ, and GT.
+
+function _Utils_cmp(x, y, ord)
+{
+	if (typeof x !== 'object')
+	{
+		return x === y ? /*EQ*/ 0 : x < y ? /*LT*/ -1 : /*GT*/ 1;
+	}
+
+	/**/
+	if (x instanceof String)
+	{
+		var a = x.valueOf();
+		var b = y.valueOf();
+		return a === b ? 0 : a < b ? -1 : 1;
+	}
+	//*/
+
+	/**_UNUSED/
+	if (typeof x.$ === 'undefined')
+	//*/
+	/**/
+	if (x.$[0] === '#')
+	//*/
+	{
+		return (ord = _Utils_cmp(x.a, y.a))
+			? ord
+			: (ord = _Utils_cmp(x.b, y.b))
+				? ord
+				: _Utils_cmp(x.c, y.c);
+	}
+
+	// traverse conses until end of a list or a mismatch
+	for (; x.b && y.b && !(ord = _Utils_cmp(x.a, y.a)); x = x.b, y = y.b) {} // WHILE_CONSES
+	return ord || (x.b ? /*GT*/ 1 : y.b ? /*LT*/ -1 : /*EQ*/ 0);
+}
+
+var _Utils_lt = F2(function(a, b) { return _Utils_cmp(a, b) < 0; });
+var _Utils_le = F2(function(a, b) { return _Utils_cmp(a, b) < 1; });
+var _Utils_gt = F2(function(a, b) { return _Utils_cmp(a, b) > 0; });
+var _Utils_ge = F2(function(a, b) { return _Utils_cmp(a, b) >= 0; });
+
+var _Utils_compare = F2(function(x, y)
+{
+	var n = _Utils_cmp(x, y);
+	return n < 0 ? elm$core$Basics$LT : n ? elm$core$Basics$GT : elm$core$Basics$EQ;
+});
+
+
+// COMMON VALUES
+
+var _Utils_Tuple0_UNUSED = 0;
+var _Utils_Tuple0 = { $: '#0' };
+
+function _Utils_Tuple2_UNUSED(a, b) { return { a: a, b: b }; }
+function _Utils_Tuple2(a, b) { return { $: '#2', a: a, b: b }; }
+
+function _Utils_Tuple3_UNUSED(a, b, c) { return { a: a, b: b, c: c }; }
+function _Utils_Tuple3(a, b, c) { return { $: '#3', a: a, b: b, c: c }; }
+
+function _Utils_chr_UNUSED(c) { return c; }
+function _Utils_chr(c) { return new String(c); }
+
+
+// RECORDS
+
+function _Utils_update(oldRecord, updatedFields)
+{
+	var newRecord = {};
+
+	for (var key in oldRecord)
+	{
+		newRecord[key] = oldRecord[key];
+	}
+
+	for (var key in updatedFields)
+	{
+		newRecord[key] = updatedFields[key];
+	}
+
+	return newRecord;
+}
+
+
+// APPEND
+
+var _Utils_append = F2(_Utils_ap);
+
+function _Utils_ap(xs, ys)
+{
+	// append Strings
+	if (typeof xs === 'string')
+	{
+		return xs + ys;
+	}
+
+	// append Lists
+	if (!xs.b)
+	{
+		return ys;
+	}
+	var root = _List_Cons(xs.a, ys);
+	xs = xs.b
+	for (var curr = root; xs.b; xs = xs.b) // WHILE_CONS
+	{
+		curr = curr.b = _List_Cons(xs.a, ys);
+	}
+	return root;
 }
 
 
@@ -4310,13 +4310,52 @@ function _Browser_load(url)
 		}
 	}));
 }
-var author$project$Rocks$Classic1 = {$: 'Classic1'};
-var author$project$Rocks$Classic2 = {$: 'Classic2'};
-var author$project$Rocks$Classic3 = {$: 'Classic3'};
-var author$project$Rocks$Classic4 = {$: 'Classic4'};
+var author$project$Explosions$explosionDuration = 20;
+var avh4$elm_color$Color$RgbaSpace = F4(
+	function (a, b, c, d) {
+		return {$: 'RgbaSpace', a: a, b: b, c: c, d: d};
+	});
+var avh4$elm_color$Color$rgba = F4(
+	function (r, g, b, a) {
+		return A4(avh4$elm_color$Color$RgbaSpace, r, g, b, a);
+	});
+var author$project$Explosions$newExplosion = function (p) {
+	return {
+		color: A4(avh4$elm_color$Color$rgba, 1, 1, 0.8, 0.8),
+		framesRemaining: author$project$Explosions$explosionDuration,
+		opacity: 0.98,
+		position: p,
+		radius: 60.0
+	};
+};
+var elm$core$Elm$JsArray$foldr = _JsArray_foldr;
+var elm$core$Array$foldr = F3(
+	function (func, baseCase, _n0) {
+		var tree = _n0.c;
+		var tail = _n0.d;
+		var helper = F2(
+			function (node, acc) {
+				if (node.$ === 'SubTree') {
+					var subTree = node.a;
+					return A3(elm$core$Elm$JsArray$foldr, helper, acc, subTree);
+				} else {
+					var values = node.a;
+					return A3(elm$core$Elm$JsArray$foldr, func, acc, values);
+				}
+			});
+		return A3(
+			elm$core$Elm$JsArray$foldr,
+			helper,
+			A3(elm$core$Elm$JsArray$foldr, func, baseCase, tail),
+			tree);
+	});
 var elm$core$Basics$EQ = {$: 'EQ'};
-var elm$core$Basics$GT = {$: 'GT'};
 var elm$core$Basics$LT = {$: 'LT'};
+var elm$core$List$cons = _List_cons;
+var elm$core$Array$toList = function (array) {
+	return A3(elm$core$Array$foldr, elm$core$List$cons, _List_Nil, array);
+};
+var elm$core$Basics$GT = {$: 'GT'};
 var elm$core$Dict$foldr = F3(
 	function (func, acc, t) {
 		foldr:
@@ -4342,7 +4381,6 @@ var elm$core$Dict$foldr = F3(
 			}
 		}
 	});
-var elm$core$List$cons = _List_cons;
 var elm$core$Dict$toList = function (dict) {
 	return A3(
 		elm$core$Dict$foldr,
@@ -4370,780 +4408,11 @@ var elm$core$Set$toList = function (_n0) {
 	var dict = _n0.a;
 	return elm$core$Dict$keys(dict);
 };
-var elm$core$Elm$JsArray$foldr = _JsArray_foldr;
-var elm$core$Array$foldr = F3(
-	function (func, baseCase, _n0) {
-		var tree = _n0.c;
-		var tail = _n0.d;
-		var helper = F2(
-			function (node, acc) {
-				if (node.$ === 'SubTree') {
-					var subTree = node.a;
-					return A3(elm$core$Elm$JsArray$foldr, helper, acc, subTree);
-				} else {
-					var values = node.a;
-					return A3(elm$core$Elm$JsArray$foldr, func, acc, values);
-				}
-			});
-		return A3(
-			elm$core$Elm$JsArray$foldr,
-			helper,
-			A3(elm$core$Elm$JsArray$foldr, func, baseCase, tail),
-			tree);
-	});
-var elm$core$Array$toList = function (array) {
-	return A3(elm$core$Array$foldr, elm$core$List$cons, _List_Nil, array);
-};
-var elm$core$Basics$modBy = _Basics_modBy;
-var author$project$Asteroids$chooseShape = function (i) {
-	var _n0 = A2(elm$core$Basics$modBy, 4, i);
-	switch (_n0) {
-		case 0:
-			return author$project$Rocks$Classic1;
-		case 1:
-			return author$project$Rocks$Classic2;
-		case 2:
-			return author$project$Rocks$Classic3;
-		default:
-			return author$project$Rocks$Classic4;
-	}
-};
-var elm$core$Basics$fdiv = _Basics_fdiv;
-var elm$core$Basics$toFloat = _Basics_toFloat;
-var author$project$Asteroids$thetaOffset = function (n) {
-	var two_pi = 314;
-	return A2(elm$core$Basics$modBy, two_pi, n) / two_pi;
-};
-var elm$core$Basics$add = _Basics_add;
-var elm$core$Basics$gt = _Utils_gt;
-var elm$core$List$foldl = F3(
-	function (func, acc, list) {
-		foldl:
-		while (true) {
-			if (!list.b) {
-				return acc;
-			} else {
-				var x = list.a;
-				var xs = list.b;
-				var $temp$func = func,
-					$temp$acc = A2(func, x, acc),
-					$temp$list = xs;
-				func = $temp$func;
-				acc = $temp$acc;
-				list = $temp$list;
-				continue foldl;
-			}
-		}
-	});
-var elm$core$List$reverse = function (list) {
-	return A3(elm$core$List$foldl, elm$core$List$cons, _List_Nil, list);
-};
-var elm$core$List$foldrHelper = F4(
-	function (fn, acc, ctr, ls) {
-		if (!ls.b) {
-			return acc;
-		} else {
-			var a = ls.a;
-			var r1 = ls.b;
-			if (!r1.b) {
-				return A2(fn, a, acc);
-			} else {
-				var b = r1.a;
-				var r2 = r1.b;
-				if (!r2.b) {
-					return A2(
-						fn,
-						a,
-						A2(fn, b, acc));
-				} else {
-					var c = r2.a;
-					var r3 = r2.b;
-					if (!r3.b) {
-						return A2(
-							fn,
-							a,
-							A2(
-								fn,
-								b,
-								A2(fn, c, acc)));
-					} else {
-						var d = r3.a;
-						var r4 = r3.b;
-						var res = (ctr > 500) ? A3(
-							elm$core$List$foldl,
-							fn,
-							acc,
-							elm$core$List$reverse(r4)) : A4(elm$core$List$foldrHelper, fn, acc, ctr + 1, r4);
-						return A2(
-							fn,
-							a,
-							A2(
-								fn,
-								b,
-								A2(
-									fn,
-									c,
-									A2(fn, d, res))));
-					}
-				}
-			}
-		}
-	});
-var elm$core$List$foldr = F3(
-	function (fn, acc, ls) {
-		return A4(elm$core$List$foldrHelper, fn, acc, 0, ls);
-	});
-var elm$core$List$append = F2(
-	function (xs, ys) {
-		if (!ys.b) {
-			return xs;
-		} else {
-			return A3(elm$core$List$foldr, elm$core$List$cons, ys, xs);
-		}
-	});
-var author$project$Points$closePolygon = function (list) {
-	if (!list.b) {
-		return _List_Nil;
-	} else {
-		var p = list.a;
-		var ps = list.b;
-		return A2(
-			elm$core$List$append,
-			A2(elm$core$List$cons, p, ps),
-			_List_fromArray(
-				[p]));
-	}
-};
-var elm$core$List$map = F2(
-	function (f, xs) {
-		return A3(
-			elm$core$List$foldr,
-			F2(
-				function (x, acc) {
-					return A2(
-						elm$core$List$cons,
-						f(x),
-						acc);
-				}),
-			_List_Nil,
-			xs);
-	});
-var ianmackenzie$elm_geometry$Point2d$coordinates = function (_n0) {
-	var coordinates_ = _n0.a;
-	return coordinates_;
-};
-var author$project$Points$convertPoints = elm$core$List$map(ianmackenzie$elm_geometry$Point2d$coordinates);
-var joakin$elm_canvas$Canvas$LineTo = function (a) {
-	return {$: 'LineTo', a: a};
-};
-var joakin$elm_canvas$Canvas$lineTo = function (point) {
-	return joakin$elm_canvas$Canvas$LineTo(point);
-};
-var joakin$elm_canvas$Canvas$Path = F2(
-	function (a, b) {
-		return {$: 'Path', a: a, b: b};
-	});
-var joakin$elm_canvas$Canvas$path = F2(
-	function (startingPoint, segments) {
-		return A2(joakin$elm_canvas$Canvas$Path, startingPoint, segments);
-	});
-var author$project$Polygon$pointsToShape = function (points) {
-	if (!points.b) {
-		return A2(
-			joakin$elm_canvas$Canvas$path,
-			_Utils_Tuple2(0, 0),
-			_List_Nil);
-	} else {
-		var p0 = points.a;
-		var ps = points.b;
-		return A2(
-			joakin$elm_canvas$Canvas$path,
-			p0,
-			A2(
-				elm$core$List$map,
-				function (p) {
-					return joakin$elm_canvas$Canvas$lineTo(p);
-				},
-				ps));
-	}
-};
-var elm$core$Basics$composeL = F3(
-	function (g, f, x) {
-		return g(
-			f(x));
-	});
-var ianmackenzie$elm_geometry$Polygon2d$outerLoop = function (_n0) {
-	var polygon = _n0.a;
-	return polygon.outerLoop;
-};
-var author$project$Polygon$polygonToShape = A2(
-	elm$core$Basics$composeL,
-	A2(
-		elm$core$Basics$composeL,
-		A2(elm$core$Basics$composeL, author$project$Polygon$pointsToShape, author$project$Points$convertPoints),
-		author$project$Points$closePolygon),
-	ianmackenzie$elm_geometry$Polygon2d$outerLoop);
-var elm$core$Basics$negate = function (n) {
-	return -n;
-};
-var author$project$Rocks$classicRock1 = _List_fromArray(
-	[
-		_Utils_Tuple2(0.5, 1.0),
-		_Utils_Tuple2(1.0, 0.5),
-		_Utils_Tuple2(0.75, 0.0),
-		_Utils_Tuple2(1.0, -0.5),
-		_Utils_Tuple2(0.25, -1.0),
-		_Utils_Tuple2(-0.5, -1.0),
-		_Utils_Tuple2(-1.0, -0.5),
-		_Utils_Tuple2(-1.0, 0.5),
-		_Utils_Tuple2(-0.5, 1.0),
-		_Utils_Tuple2(0.0, 0.5)
-	]);
-var elm$core$Basics$identity = function (x) {
-	return x;
-};
-var ianmackenzie$elm_geometry$Geometry$Types$Point2d = function (a) {
-	return {$: 'Point2d', a: a};
-};
-var ianmackenzie$elm_geometry$Point2d$fromCoordinates = ianmackenzie$elm_geometry$Geometry$Types$Point2d;
-var author$project$Points$readPoints = elm$core$List$map(ianmackenzie$elm_geometry$Point2d$fromCoordinates);
-var ianmackenzie$elm_geometry$Geometry$Types$Polygon2d = function (a) {
-	return {$: 'Polygon2d', a: a};
-};
-var elm$core$Basics$ge = _Utils_ge;
-var elm$core$List$map2 = _List_map2;
-var elm$core$List$sum = function (numbers) {
-	return A3(elm$core$List$foldl, elm$core$Basics$add, 0, numbers);
-};
-var elm$core$Basics$mul = _Basics_mul;
-var ianmackenzie$elm_geometry$Triangle2d$vertices = function (_n0) {
-	var vertices_ = _n0.a;
-	return vertices_;
-};
-var elm$core$Basics$sub = _Basics_sub;
-var ianmackenzie$elm_geometry$Vector2d$components = function (_n0) {
-	var components_ = _n0.a;
-	return components_;
-};
-var ianmackenzie$elm_geometry$Vector2d$crossProduct = F2(
-	function (firstVector, secondVector) {
-		var _n0 = ianmackenzie$elm_geometry$Vector2d$components(secondVector);
-		var x2 = _n0.a;
-		var y2 = _n0.b;
-		var _n1 = ianmackenzie$elm_geometry$Vector2d$components(firstVector);
-		var x1 = _n1.a;
-		var y1 = _n1.b;
-		return (x1 * y2) - (y1 * x2);
-	});
-var ianmackenzie$elm_geometry$Bootstrap$Point2d$coordinates = function (_n0) {
-	var coordinates_ = _n0.a;
-	return coordinates_;
-};
-var ianmackenzie$elm_geometry$Geometry$Types$Vector2d = function (a) {
-	return {$: 'Vector2d', a: a};
-};
-var ianmackenzie$elm_geometry$Vector2d$fromComponents = ianmackenzie$elm_geometry$Geometry$Types$Vector2d;
-var ianmackenzie$elm_geometry$Vector2d$from = F2(
-	function (firstPoint, secondPoint) {
-		var _n0 = ianmackenzie$elm_geometry$Bootstrap$Point2d$coordinates(secondPoint);
-		var x2 = _n0.a;
-		var y2 = _n0.b;
-		var _n1 = ianmackenzie$elm_geometry$Bootstrap$Point2d$coordinates(firstPoint);
-		var x1 = _n1.a;
-		var y1 = _n1.b;
-		return ianmackenzie$elm_geometry$Vector2d$fromComponents(
-			_Utils_Tuple2(x2 - x1, y2 - y1));
-	});
-var ianmackenzie$elm_geometry$Triangle2d$counterclockwiseArea = function (triangle) {
-	var _n0 = ianmackenzie$elm_geometry$Triangle2d$vertices(triangle);
-	var p1 = _n0.a;
-	var p2 = _n0.b;
-	var p3 = _n0.c;
-	var firstVector = A2(ianmackenzie$elm_geometry$Vector2d$from, p1, p2);
-	var secondVector = A2(ianmackenzie$elm_geometry$Vector2d$from, p1, p3);
-	return 0.5 * A2(ianmackenzie$elm_geometry$Vector2d$crossProduct, firstVector, secondVector);
-};
-var ianmackenzie$elm_geometry$Geometry$Types$Triangle2d = function (a) {
-	return {$: 'Triangle2d', a: a};
-};
-var ianmackenzie$elm_geometry$Triangle2d$fromVertices = ianmackenzie$elm_geometry$Geometry$Types$Triangle2d;
-var ianmackenzie$elm_geometry$Polygon2d$counterclockwiseArea = function (vertices_) {
-	if (!vertices_.b) {
-		return 0;
-	} else {
-		if (!vertices_.b.b) {
-			var single = vertices_.a;
-			return 0;
-		} else {
-			if (!vertices_.b.b.b) {
-				var first = vertices_.a;
-				var _n1 = vertices_.b;
-				var second = _n1.a;
-				return 0;
-			} else {
-				var first = vertices_.a;
-				var _n2 = vertices_.b;
-				var second = _n2.a;
-				var rest = _n2.b;
-				var segmentArea = F2(
-					function (start, end) {
-						return ianmackenzie$elm_geometry$Triangle2d$counterclockwiseArea(
-							ianmackenzie$elm_geometry$Triangle2d$fromVertices(
-								_Utils_Tuple3(first, start, end)));
-					});
-				var segmentAreas = A3(
-					elm$core$List$map2,
-					segmentArea,
-					A2(elm$core$List$cons, second, rest),
-					rest);
-				return elm$core$List$sum(segmentAreas);
-			}
-		}
-	}
-};
-var ianmackenzie$elm_geometry$Polygon2d$makeOuterLoop = function (vertices_) {
-	return (ianmackenzie$elm_geometry$Polygon2d$counterclockwiseArea(vertices_) >= 0) ? vertices_ : elm$core$List$reverse(vertices_);
-};
-var ianmackenzie$elm_geometry$Polygon2d$singleLoop = function (vertices_) {
-	return ianmackenzie$elm_geometry$Geometry$Types$Polygon2d(
-		{
-			innerLoops: _List_Nil,
-			outerLoop: ianmackenzie$elm_geometry$Polygon2d$makeOuterLoop(vertices_)
-		});
-};
-var author$project$Shapes$polygon = A2(elm$core$Basics$composeL, ianmackenzie$elm_geometry$Polygon2d$singleLoop, author$project$Points$readPoints);
-var author$project$Shapes$classicRockPolygon1 = author$project$Shapes$polygon(author$project$Rocks$classicRock1);
-var author$project$Rocks$classicRock2 = _List_fromArray(
-	[
-		_Utils_Tuple2(1.0, 0.5),
-		_Utils_Tuple2(0.5, 1.0),
-		_Utils_Tuple2(0.0, 0.75),
-		_Utils_Tuple2(-0.5, 1.0),
-		_Utils_Tuple2(-1.0, 0.5),
-		_Utils_Tuple2(-0.75, 0.0),
-		_Utils_Tuple2(-1.0, -0.5),
-		_Utils_Tuple2(-0.5, -1.0),
-		_Utils_Tuple2(-0.25, -0.75),
-		_Utils_Tuple2(0.5, -1.0),
-		_Utils_Tuple2(1.0, -0.25),
-		_Utils_Tuple2(0.5, 0.25)
-	]);
-var author$project$Shapes$classicRockPolygon2 = author$project$Shapes$polygon(author$project$Rocks$classicRock2);
-var author$project$Rocks$classicRock3 = _List_fromArray(
-	[
-		_Utils_Tuple2(-1.0, -0.25),
-		_Utils_Tuple2(-0.5, -1.0),
-		_Utils_Tuple2(0.0, -0.25),
-		_Utils_Tuple2(0.0, -1.0),
-		_Utils_Tuple2(0.5, -1.0),
-		_Utils_Tuple2(1.0, -0.25),
-		_Utils_Tuple2(1.0, 0.25),
-		_Utils_Tuple2(0.5, 1.0),
-		_Utils_Tuple2(-0.25, 1.0),
-		_Utils_Tuple2(-1.0, 0.25),
-		_Utils_Tuple2(-0.5, 0.0)
-	]);
-var author$project$Shapes$classicRockPolygon3 = author$project$Shapes$polygon(author$project$Rocks$classicRock3);
-var author$project$Rocks$classicRock4 = _List_fromArray(
-	[
-		_Utils_Tuple2(1.0, 0.25),
-		_Utils_Tuple2(1.0, 0.5),
-		_Utils_Tuple2(0.25, 1.0),
-		_Utils_Tuple2(-0.5, 1.0),
-		_Utils_Tuple2(-0.25, 0.5),
-		_Utils_Tuple2(-1.0, 0.5),
-		_Utils_Tuple2(-1.0, -0.25),
-		_Utils_Tuple2(-0.5, -1.0),
-		_Utils_Tuple2(0.25, -0.75),
-		_Utils_Tuple2(0.5, -1.0),
-		_Utils_Tuple2(1.0, -0.5),
-		_Utils_Tuple2(0.25, 0.0)
-	]);
-var author$project$Shapes$classicRockPolygon4 = author$project$Shapes$polygon(author$project$Rocks$classicRock4);
-var author$project$Shapes$lookup = function (rockType) {
-	switch (rockType.$) {
-		case 'Classic1':
-			return author$project$Shapes$classicRockPolygon1;
-		case 'Classic2':
-			return author$project$Shapes$classicRockPolygon2;
-		case 'Classic3':
-			return author$project$Shapes$classicRockPolygon3;
-		default:
-			return author$project$Shapes$classicRockPolygon4;
-	}
-};
-var elm$core$Basics$apR = F2(
-	function (x, f) {
-		return f(x);
-	});
-var ianmackenzie$elm_geometry$Point2d$origin = ianmackenzie$elm_geometry$Point2d$fromCoordinates(
-	_Utils_Tuple2(0, 0));
-var elm$core$Basics$lt = _Utils_lt;
-var ianmackenzie$elm_geometry$Point2d$translateBy = F2(
-	function (vector, point) {
-		var _n0 = ianmackenzie$elm_geometry$Vector2d$components(vector);
-		var vx = _n0.a;
-		var vy = _n0.b;
-		var _n1 = ianmackenzie$elm_geometry$Point2d$coordinates(point);
-		var px = _n1.a;
-		var py = _n1.b;
-		return ianmackenzie$elm_geometry$Point2d$fromCoordinates(
-			_Utils_Tuple2(px + vx, py + vy));
-	});
-var ianmackenzie$elm_geometry$Point2d$addTo = F2(
-	function (point, vector) {
-		return A2(ianmackenzie$elm_geometry$Point2d$translateBy, vector, point);
-	});
-var ianmackenzie$elm_geometry$Vector2d$scaleBy = F2(
-	function (scale, vector) {
-		var _n0 = ianmackenzie$elm_geometry$Vector2d$components(vector);
-		var x = _n0.a;
-		var y = _n0.b;
-		return ianmackenzie$elm_geometry$Vector2d$fromComponents(
-			_Utils_Tuple2(x * scale, y * scale));
-	});
-var ianmackenzie$elm_geometry$Point2d$scaleAbout = F3(
-	function (centerPoint, scale, point) {
-		return A2(
-			ianmackenzie$elm_geometry$Point2d$addTo,
-			centerPoint,
-			A2(
-				ianmackenzie$elm_geometry$Vector2d$scaleBy,
-				scale,
-				A2(ianmackenzie$elm_geometry$Vector2d$from, centerPoint, point)));
-	});
-var ianmackenzie$elm_geometry$Polygon2d$innerLoops = function (_n0) {
-	var polygon = _n0.a;
-	return polygon.innerLoops;
-};
-var ianmackenzie$elm_geometry$Polygon2d$mapVertices = F3(
-	function (_function, invert, polygon) {
-		var mappedOuterLoop = A2(
-			elm$core$List$map,
-			_function,
-			ianmackenzie$elm_geometry$Polygon2d$outerLoop(polygon));
-		var mappedInnerLoops = A2(
-			elm$core$List$map,
-			elm$core$List$map(_function),
-			ianmackenzie$elm_geometry$Polygon2d$innerLoops(polygon));
-		return invert ? ianmackenzie$elm_geometry$Geometry$Types$Polygon2d(
-			{
-				innerLoops: A2(elm$core$List$map, elm$core$List$reverse, mappedInnerLoops),
-				outerLoop: elm$core$List$reverse(mappedOuterLoop)
-			}) : ianmackenzie$elm_geometry$Geometry$Types$Polygon2d(
-			{innerLoops: mappedInnerLoops, outerLoop: mappedOuterLoop});
-	});
-var ianmackenzie$elm_geometry$Polygon2d$scaleAbout = F2(
-	function (point, scale) {
-		return A2(
-			ianmackenzie$elm_geometry$Polygon2d$mapVertices,
-			A2(ianmackenzie$elm_geometry$Point2d$scaleAbout, point, scale),
-			scale < 0);
-	});
-var author$project$Shapes$rockWithRadius = F2(
-	function (rt, radius) {
-		var rock = author$project$Shapes$lookup(rt);
-		return author$project$Polygon$polygonToShape(
-			A3(ianmackenzie$elm_geometry$Polygon2d$scaleAbout, ianmackenzie$elm_geometry$Point2d$origin, radius, rock));
-	});
-var avh4$elm_color$Color$RgbaSpace = F4(
-	function (a, b, c, d) {
-		return {$: 'RgbaSpace', a: a, b: b, c: c, d: d};
-	});
-var avh4$elm_color$Color$scaleFrom255 = function (c) {
-	return c / 255;
-};
-var avh4$elm_color$Color$rgb255 = F3(
-	function (r, g, b) {
-		return A4(
-			avh4$elm_color$Color$RgbaSpace,
-			avh4$elm_color$Color$scaleFrom255(r),
-			avh4$elm_color$Color$scaleFrom255(g),
-			avh4$elm_color$Color$scaleFrom255(b),
-			1.0);
-	});
-var ianmackenzie$elm_geometry$Circle2d$radius = function (_n0) {
-	var properties = _n0.a;
-	return properties.radius;
-};
-var author$project$Asteroids$newAsteroid = F2(
-	function (id, position) {
-		var rock = author$project$Asteroids$chooseShape(id);
-		var shape = A2(
-			author$project$Shapes$rockWithRadius,
-			rock,
-			ianmackenzie$elm_geometry$Circle2d$radius(position));
-		return {
-			color: A3(avh4$elm_color$Color$rgb255, 4, 4, 4),
-			id: id,
-			position: position,
-			shape: shape,
-			theta: 0.0,
-			theta0: author$project$Asteroids$thetaOffset(id)
-		};
-	});
-var joakin$elm_canvas$Canvas$Circle = F2(
-	function (a, b) {
-		return {$: 'Circle', a: a, b: b};
-	});
-var joakin$elm_canvas$Canvas$circle = F2(
-	function (pos, radius) {
-		return A2(joakin$elm_canvas$Canvas$Circle, pos, radius);
-	});
-var author$project$Bullets$newBullet = F2(
-	function (id, position) {
-		return {
-			color: A3(avh4$elm_color$Color$rgb255, 251, 251, 255),
-			id: id,
-			position: position,
-			shape: A2(
-				joakin$elm_canvas$Canvas$circle,
-				_Utils_Tuple2(0, 0),
-				4)
-		};
-	});
-var author$project$Explosions$explosionDuration = 20;
-var avh4$elm_color$Color$rgba = F4(
-	function (r, g, b, a) {
-		return A4(avh4$elm_color$Color$RgbaSpace, r, g, b, a);
-	});
-var author$project$Explosions$newExplosion = function (p) {
-	return {
-		color: A4(avh4$elm_color$Color$rgba, 1, 1, 0.8, 0.8),
-		framesRemaining: author$project$Explosions$explosionDuration,
-		opacity: 0.98,
-		position: p,
-		radius: 60.0
-	};
-};
 var author$project$Game$gameDimensions = _Utils_Tuple2(4000.0, 2250.0);
-var author$project$Ships$shipRadius = 20.0;
-var elm$core$Maybe$Just = function (a) {
-	return {$: 'Just', a: a};
-};
-var elm$core$Maybe$Nothing = {$: 'Nothing'};
-var ianmackenzie$elm_geometry$Point2d$centroidHelp = F6(
-	function (x0, y0, count, dx, dy, points) {
-		centroidHelp:
-		while (true) {
-			if (points.b) {
-				var point = points.a;
-				var remaining = points.b;
-				var _n1 = ianmackenzie$elm_geometry$Point2d$coordinates(point);
-				var x = _n1.a;
-				var y = _n1.b;
-				var newDx = dx + (x - x0);
-				var newDy = dy + (y - y0);
-				var $temp$x0 = x0,
-					$temp$y0 = y0,
-					$temp$count = count + 1,
-					$temp$dx = newDx,
-					$temp$dy = newDy,
-					$temp$points = remaining;
-				x0 = $temp$x0;
-				y0 = $temp$y0;
-				count = $temp$count;
-				dx = $temp$dx;
-				dy = $temp$dy;
-				points = $temp$points;
-				continue centroidHelp;
-			} else {
-				return ianmackenzie$elm_geometry$Point2d$fromCoordinates(
-					_Utils_Tuple2(x0 + (dx / count), y0 + (dy / count)));
-			}
-		}
-	});
-var ianmackenzie$elm_geometry$Point2d$centroid = function (points) {
-	if (!points.b) {
-		return elm$core$Maybe$Nothing;
-	} else {
-		var first = points.a;
-		var rest = points.b;
-		var _n1 = ianmackenzie$elm_geometry$Point2d$coordinates(first);
-		var x0 = _n1.a;
-		var y0 = _n1.b;
-		return elm$core$Maybe$Just(
-			A6(ianmackenzie$elm_geometry$Point2d$centroidHelp, x0, y0, 1, 0, 0, rest));
-	}
-};
-var author$project$Polygon$polygonCentroid = A2(elm$core$Basics$composeL, ianmackenzie$elm_geometry$Point2d$centroid, ianmackenzie$elm_geometry$Polygon2d$outerLoop);
-var elm$core$Basics$False = {$: 'False'};
-var ianmackenzie$elm_geometry$Polygon2d$translateBy = function (vector) {
-	return A2(
-		ianmackenzie$elm_geometry$Polygon2d$mapVertices,
-		ianmackenzie$elm_geometry$Point2d$translateBy(vector),
-		false);
-};
-var author$project$SpaceShip$centreAboutMass = function (ship) {
-	var _n0 = author$project$Polygon$polygonCentroid(ship);
-	if (_n0.$ === 'Nothing') {
-		return ship;
-	} else {
-		var c = _n0.a;
-		return A2(
-			ianmackenzie$elm_geometry$Polygon2d$translateBy,
-			A2(ianmackenzie$elm_geometry$Vector2d$from, c, ianmackenzie$elm_geometry$Point2d$origin),
-			ship);
-	}
-};
-var author$project$SpaceShip$arcadeShipEast = author$project$SpaceShip$centreAboutMass(
-	A3(
-		ianmackenzie$elm_geometry$Polygon2d$scaleAbout,
-		ianmackenzie$elm_geometry$Point2d$origin,
-		1.0 / 24.0,
-		ianmackenzie$elm_geometry$Polygon2d$singleLoop(
-			author$project$Points$readPoints(
-				_List_fromArray(
-					[
-						_Utils_Tuple2(24, 0),
-						_Utils_Tuple2(-24, -16),
-						_Utils_Tuple2(-16, -8),
-						_Utils_Tuple2(-16, 8),
-						_Utils_Tuple2(-24, 16),
-						_Utils_Tuple2(24, 0)
-					])))));
-var author$project$SpaceShip$shipWithRadius = function (r) {
-	return author$project$Polygon$polygonToShape(
-		A3(ianmackenzie$elm_geometry$Polygon2d$scaleAbout, ianmackenzie$elm_geometry$Point2d$origin, r, author$project$SpaceShip$arcadeShipEast));
-};
-var author$project$Ships$newShip = F3(
-	function (id, position, theta) {
-		return {
-			color: A3(avh4$elm_color$Color$rgb255, 251, 255, 251),
-			id: id,
-			position: position,
-			radius: author$project$Ships$shipRadius,
-			shape: author$project$SpaceShip$shipWithRadius(author$project$Ships$shipRadius),
-			tagColor: A4(avh4$elm_color$Color$rgba, 1, 1, 1, 0.8),
-			theta: theta
-		};
-	});
+var elm$core$Basics$fdiv = _Basics_fdiv;
 var avh4$elm_color$Color$black = A4(avh4$elm_color$Color$RgbaSpace, 0 / 255, 0 / 255, 0 / 255, 1.0);
 var elm$core$Dict$RBEmpty_elm_builtin = {$: 'RBEmpty_elm_builtin'};
 var elm$core$Dict$empty = elm$core$Dict$RBEmpty_elm_builtin;
-var elm$core$Dict$Black = {$: 'Black'};
-var elm$core$Dict$RBNode_elm_builtin = F5(
-	function (a, b, c, d, e) {
-		return {$: 'RBNode_elm_builtin', a: a, b: b, c: c, d: d, e: e};
-	});
-var elm$core$Basics$compare = _Utils_compare;
-var elm$core$Dict$Red = {$: 'Red'};
-var elm$core$Dict$balance = F5(
-	function (color, key, value, left, right) {
-		if ((right.$ === 'RBNode_elm_builtin') && (right.a.$ === 'Red')) {
-			var _n1 = right.a;
-			var rK = right.b;
-			var rV = right.c;
-			var rLeft = right.d;
-			var rRight = right.e;
-			if ((left.$ === 'RBNode_elm_builtin') && (left.a.$ === 'Red')) {
-				var _n3 = left.a;
-				var lK = left.b;
-				var lV = left.c;
-				var lLeft = left.d;
-				var lRight = left.e;
-				return A5(
-					elm$core$Dict$RBNode_elm_builtin,
-					elm$core$Dict$Red,
-					key,
-					value,
-					A5(elm$core$Dict$RBNode_elm_builtin, elm$core$Dict$Black, lK, lV, lLeft, lRight),
-					A5(elm$core$Dict$RBNode_elm_builtin, elm$core$Dict$Black, rK, rV, rLeft, rRight));
-			} else {
-				return A5(
-					elm$core$Dict$RBNode_elm_builtin,
-					color,
-					rK,
-					rV,
-					A5(elm$core$Dict$RBNode_elm_builtin, elm$core$Dict$Red, key, value, left, rLeft),
-					rRight);
-			}
-		} else {
-			if ((((left.$ === 'RBNode_elm_builtin') && (left.a.$ === 'Red')) && (left.d.$ === 'RBNode_elm_builtin')) && (left.d.a.$ === 'Red')) {
-				var _n5 = left.a;
-				var lK = left.b;
-				var lV = left.c;
-				var _n6 = left.d;
-				var _n7 = _n6.a;
-				var llK = _n6.b;
-				var llV = _n6.c;
-				var llLeft = _n6.d;
-				var llRight = _n6.e;
-				var lRight = left.e;
-				return A5(
-					elm$core$Dict$RBNode_elm_builtin,
-					elm$core$Dict$Red,
-					lK,
-					lV,
-					A5(elm$core$Dict$RBNode_elm_builtin, elm$core$Dict$Black, llK, llV, llLeft, llRight),
-					A5(elm$core$Dict$RBNode_elm_builtin, elm$core$Dict$Black, key, value, lRight, right));
-			} else {
-				return A5(elm$core$Dict$RBNode_elm_builtin, color, key, value, left, right);
-			}
-		}
-	});
-var elm$core$Dict$insertHelp = F3(
-	function (key, value, dict) {
-		if (dict.$ === 'RBEmpty_elm_builtin') {
-			return A5(elm$core$Dict$RBNode_elm_builtin, elm$core$Dict$Red, key, value, elm$core$Dict$RBEmpty_elm_builtin, elm$core$Dict$RBEmpty_elm_builtin);
-		} else {
-			var nColor = dict.a;
-			var nKey = dict.b;
-			var nValue = dict.c;
-			var nLeft = dict.d;
-			var nRight = dict.e;
-			var _n1 = A2(elm$core$Basics$compare, key, nKey);
-			switch (_n1.$) {
-				case 'LT':
-					return A5(
-						elm$core$Dict$balance,
-						nColor,
-						nKey,
-						nValue,
-						A3(elm$core$Dict$insertHelp, key, value, nLeft),
-						nRight);
-				case 'EQ':
-					return A5(elm$core$Dict$RBNode_elm_builtin, nColor, nKey, value, nLeft, nRight);
-				default:
-					return A5(
-						elm$core$Dict$balance,
-						nColor,
-						nKey,
-						nValue,
-						nLeft,
-						A3(elm$core$Dict$insertHelp, key, value, nRight));
-			}
-		}
-	});
-var elm$core$Dict$insert = F3(
-	function (key, value, dict) {
-		var _n0 = A3(elm$core$Dict$insertHelp, key, value, dict);
-		if ((_n0.$ === 'RBNode_elm_builtin') && (_n0.a.$ === 'Red')) {
-			var _n1 = _n0.a;
-			var k = _n0.b;
-			var v = _n0.c;
-			var l = _n0.d;
-			var r = _n0.e;
-			return A5(elm$core$Dict$RBNode_elm_builtin, elm$core$Dict$Black, k, v, l, r);
-		} else {
-			var x = _n0;
-			return x;
-		}
-	});
-var elm$core$Basics$abs = function (n) {
-	return (n < 0) ? (-n) : n;
-};
-var ianmackenzie$elm_geometry$Geometry$Types$Circle2d = function (a) {
-	return {$: 'Circle2d', a: a};
-};
-var ianmackenzie$elm_geometry$Circle2d$withRadius = F2(
-	function (radius_, centerPoint_) {
-		return ianmackenzie$elm_geometry$Geometry$Types$Circle2d(
-			{
-				centerPoint: centerPoint_,
-				radius: elm$core$Basics$abs(radius_)
-			});
-	});
 var joakin$elm_canvas$Canvas$Scale = F2(
 	function (a, b) {
 		return {$: 'Scale', a: a, b: b};
@@ -5157,49 +4426,15 @@ var author$project$Game$newGame = function (dims) {
 	var canvas_x = _n1.a;
 	var canvas_y = _n1.b;
 	return {
-		asteroids: A3(
-			elm$core$Dict$insert,
-			1,
-			A2(
-				author$project$Asteroids$newAsteroid,
-				1,
-				A2(ianmackenzie$elm_geometry$Circle2d$withRadius, 120, ianmackenzie$elm_geometry$Point2d$origin)),
-			elm$core$Dict$empty),
-		bullets: _List_fromArray(
-			[
-				A2(
-				author$project$Bullets$newBullet,
-				0,
-				_Utils_Tuple2(1000, 1000)),
-				A2(
-				author$project$Bullets$newBullet,
-				1,
-				_Utils_Tuple2(2000, 2000))
-			]),
+		asteroids: elm$core$Dict$empty,
+		bullets: _List_Nil,
 		dimension: dims,
 		explosions: _List_fromArray(
 			[
 				author$project$Explosions$newExplosion(
 				_Utils_Tuple2(3000, 500))
 			]),
-		ships: _List_fromArray(
-			[
-				A3(
-				author$project$Ships$newShip,
-				'TAG',
-				_Utils_Tuple2(100, 100),
-				3.14 / 4.0),
-				A3(
-				author$project$Ships$newShip,
-				'WST',
-				_Utils_Tuple2(3500, 500),
-				3.14),
-				A3(
-				author$project$Ships$newShip,
-				'TWN',
-				_Utils_Tuple2(1440, 1440),
-				3.14 / 2.0)
-			]),
+		ships: _List_Nil,
 		spaceColor: avh4$elm_color$Color$black,
 		transform: A2(joakin$elm_canvas$Canvas$scale, canvas_x / game_x, canvas_y / game_y)
 	};
@@ -5226,6 +4461,7 @@ var elm$core$Basics$logBase = F2(
 	function (base, number) {
 		return _Basics_log(number) / _Basics_log(base);
 	});
+var elm$core$Basics$toFloat = _Basics_toFloat;
 var elm$core$Array$shiftStep = elm$core$Basics$ceiling(
 	A2(elm$core$Basics$logBase, 2, elm$core$Array$branchFactor));
 var elm$core$Elm$JsArray$empty = _JsArray_empty;
@@ -5237,6 +4473,28 @@ var elm$core$Array$SubTree = function (a) {
 	return {$: 'SubTree', a: a};
 };
 var elm$core$Elm$JsArray$initializeFromList = _JsArray_initializeFromList;
+var elm$core$List$foldl = F3(
+	function (func, acc, list) {
+		foldl:
+		while (true) {
+			if (!list.b) {
+				return acc;
+			} else {
+				var x = list.a;
+				var xs = list.b;
+				var $temp$func = func,
+					$temp$acc = A2(func, x, acc),
+					$temp$list = xs;
+				func = $temp$func;
+				acc = $temp$acc;
+				list = $temp$list;
+				continue foldl;
+			}
+		}
+	});
+var elm$core$List$reverse = function (list) {
+	return A3(elm$core$List$foldl, elm$core$List$cons, _List_Nil, list);
+};
 var elm$core$Array$compressNodes = F2(
 	function (nodes, acc) {
 		compressNodes:
@@ -5259,6 +4517,10 @@ var elm$core$Array$compressNodes = F2(
 			}
 		}
 	});
+var elm$core$Basics$apR = F2(
+	function (x, f) {
+		return f(x);
+	});
 var elm$core$Basics$eq = _Utils_equal;
 var elm$core$Tuple$first = function (_n0) {
 	var x = _n0.a;
@@ -5280,15 +4542,19 @@ var elm$core$Array$treeFromBuilder = F2(
 			}
 		}
 	});
+var elm$core$Basics$add = _Basics_add;
 var elm$core$Basics$apL = F2(
 	function (f, x) {
 		return f(x);
 	});
 var elm$core$Basics$floor = _Basics_floor;
+var elm$core$Basics$gt = _Utils_gt;
 var elm$core$Basics$max = F2(
 	function (x, y) {
 		return (_Utils_cmp(x, y) > 0) ? x : y;
 	});
+var elm$core$Basics$mul = _Basics_mul;
+var elm$core$Basics$sub = _Basics_sub;
 var elm$core$Elm$JsArray$length = _JsArray_length;
 var elm$core$Array$builderToArray = F2(
 	function (reverseNodeList, builder) {
@@ -5313,7 +4579,9 @@ var elm$core$Array$builderToArray = F2(
 				builder.tail);
 		}
 	});
+var elm$core$Basics$False = {$: 'False'};
 var elm$core$Basics$idiv = _Basics_idiv;
+var elm$core$Basics$lt = _Utils_lt;
 var elm$core$Elm$JsArray$initialize = _JsArray_initialize;
 var elm$core$Array$initializeHelp = F5(
 	function (fn, fromIndex, len, nodeList, tail) {
@@ -5354,6 +4622,10 @@ var elm$core$Array$initialize = F2(
 			return A5(elm$core$Array$initializeHelp, fn, initialFromIndex, len, _List_Nil, tail);
 		}
 	});
+var elm$core$Maybe$Just = function (a) {
+	return {$: 'Just', a: a};
+};
+var elm$core$Maybe$Nothing = {$: 'Nothing'};
 var elm$core$Result$Err = function (a) {
 	return {$: 'Err', a: a};
 };
@@ -5415,6 +4687,7 @@ var elm$core$List$length = function (xs) {
 		0,
 		xs);
 };
+var elm$core$List$map2 = _List_map2;
 var elm$core$List$rangeHelp = F3(
 	function (lo, hi, list) {
 		rangeHelp:
@@ -5602,10 +4875,82 @@ var elm$core$Basics$never = function (_n0) {
 		continue never;
 	}
 };
+var elm$core$Basics$identity = function (x) {
+	return x;
+};
 var elm$core$Task$Perform = function (a) {
 	return {$: 'Perform', a: a};
 };
 var elm$core$Task$init = elm$core$Task$succeed(_Utils_Tuple0);
+var elm$core$List$foldrHelper = F4(
+	function (fn, acc, ctr, ls) {
+		if (!ls.b) {
+			return acc;
+		} else {
+			var a = ls.a;
+			var r1 = ls.b;
+			if (!r1.b) {
+				return A2(fn, a, acc);
+			} else {
+				var b = r1.a;
+				var r2 = r1.b;
+				if (!r2.b) {
+					return A2(
+						fn,
+						a,
+						A2(fn, b, acc));
+				} else {
+					var c = r2.a;
+					var r3 = r2.b;
+					if (!r3.b) {
+						return A2(
+							fn,
+							a,
+							A2(
+								fn,
+								b,
+								A2(fn, c, acc)));
+					} else {
+						var d = r3.a;
+						var r4 = r3.b;
+						var res = (ctr > 500) ? A3(
+							elm$core$List$foldl,
+							fn,
+							acc,
+							elm$core$List$reverse(r4)) : A4(elm$core$List$foldrHelper, fn, acc, ctr + 1, r4);
+						return A2(
+							fn,
+							a,
+							A2(
+								fn,
+								b,
+								A2(
+									fn,
+									c,
+									A2(fn, d, res))));
+					}
+				}
+			}
+		}
+	});
+var elm$core$List$foldr = F3(
+	function (fn, acc, ls) {
+		return A4(elm$core$List$foldrHelper, fn, acc, 0, ls);
+	});
+var elm$core$List$map = F2(
+	function (f, xs) {
+		return A3(
+			elm$core$List$foldr,
+			F2(
+				function (x, acc) {
+					return A2(
+						elm$core$List$cons,
+						f(x),
+						acc);
+				}),
+			_List_Nil,
+			xs);
+	});
 var elm$core$Task$andThen = _Scheduler_andThen;
 var elm$core$Task$map = F2(
 	function (func, taskA) {
@@ -5925,6 +5270,11 @@ var elm$browser$Browser$AnimationManager$onSelfMsg = F3(
 var elm$browser$Browser$AnimationManager$Time = function (a) {
 	return {$: 'Time', a: a};
 };
+var elm$core$Basics$composeL = F3(
+	function (g, f, x) {
+		return g(
+			f(x));
+	});
 var elm$browser$Browser$AnimationManager$subMap = F2(
 	function (func, sub) {
 		if (sub.$ === 'Time') {
@@ -5953,6 +5303,492 @@ var author$project$Main$subscriptions = function (model) {
 				elm$browser$Browser$Events$onAnimationFrameDelta(author$project$Main$Frame)
 			]));
 };
+var author$project$Rocks$Classic1 = {$: 'Classic1'};
+var author$project$Rocks$Classic2 = {$: 'Classic2'};
+var author$project$Rocks$Classic3 = {$: 'Classic3'};
+var author$project$Rocks$Classic4 = {$: 'Classic4'};
+var elm$core$Basics$modBy = _Basics_modBy;
+var author$project$Asteroids$chooseShape = function (i) {
+	var _n0 = A2(elm$core$Basics$modBy, 4, i);
+	switch (_n0) {
+		case 0:
+			return author$project$Rocks$Classic1;
+		case 1:
+			return author$project$Rocks$Classic2;
+		case 2:
+			return author$project$Rocks$Classic3;
+		default:
+			return author$project$Rocks$Classic4;
+	}
+};
+var author$project$Asteroids$thetaOffset = function (n) {
+	var two_pi = 314;
+	return A2(elm$core$Basics$modBy, two_pi, n) / two_pi;
+};
+var elm$core$List$append = F2(
+	function (xs, ys) {
+		if (!ys.b) {
+			return xs;
+		} else {
+			return A3(elm$core$List$foldr, elm$core$List$cons, ys, xs);
+		}
+	});
+var author$project$Points$closePolygon = function (list) {
+	if (!list.b) {
+		return _List_Nil;
+	} else {
+		var p = list.a;
+		var ps = list.b;
+		return A2(
+			elm$core$List$append,
+			A2(elm$core$List$cons, p, ps),
+			_List_fromArray(
+				[p]));
+	}
+};
+var ianmackenzie$elm_geometry$Point2d$coordinates = function (_n0) {
+	var coordinates_ = _n0.a;
+	return coordinates_;
+};
+var author$project$Points$convertPoints = elm$core$List$map(ianmackenzie$elm_geometry$Point2d$coordinates);
+var joakin$elm_canvas$Canvas$LineTo = function (a) {
+	return {$: 'LineTo', a: a};
+};
+var joakin$elm_canvas$Canvas$lineTo = function (point) {
+	return joakin$elm_canvas$Canvas$LineTo(point);
+};
+var joakin$elm_canvas$Canvas$Path = F2(
+	function (a, b) {
+		return {$: 'Path', a: a, b: b};
+	});
+var joakin$elm_canvas$Canvas$path = F2(
+	function (startingPoint, segments) {
+		return A2(joakin$elm_canvas$Canvas$Path, startingPoint, segments);
+	});
+var author$project$Polygon$pointsToShape = function (points) {
+	if (!points.b) {
+		return A2(
+			joakin$elm_canvas$Canvas$path,
+			_Utils_Tuple2(0, 0),
+			_List_Nil);
+	} else {
+		var p0 = points.a;
+		var ps = points.b;
+		return A2(
+			joakin$elm_canvas$Canvas$path,
+			p0,
+			A2(
+				elm$core$List$map,
+				function (p) {
+					return joakin$elm_canvas$Canvas$lineTo(p);
+				},
+				ps));
+	}
+};
+var ianmackenzie$elm_geometry$Polygon2d$outerLoop = function (_n0) {
+	var polygon = _n0.a;
+	return polygon.outerLoop;
+};
+var author$project$Polygon$polygonToShape = A2(
+	elm$core$Basics$composeL,
+	A2(
+		elm$core$Basics$composeL,
+		A2(elm$core$Basics$composeL, author$project$Polygon$pointsToShape, author$project$Points$convertPoints),
+		author$project$Points$closePolygon),
+	ianmackenzie$elm_geometry$Polygon2d$outerLoop);
+var elm$core$Basics$negate = function (n) {
+	return -n;
+};
+var author$project$Rocks$classicRock1 = _List_fromArray(
+	[
+		_Utils_Tuple2(0.5, 1.0),
+		_Utils_Tuple2(1.0, 0.5),
+		_Utils_Tuple2(0.75, 0.0),
+		_Utils_Tuple2(1.0, -0.5),
+		_Utils_Tuple2(0.25, -1.0),
+		_Utils_Tuple2(-0.5, -1.0),
+		_Utils_Tuple2(-1.0, -0.5),
+		_Utils_Tuple2(-1.0, 0.5),
+		_Utils_Tuple2(-0.5, 1.0),
+		_Utils_Tuple2(0.0, 0.5)
+	]);
+var ianmackenzie$elm_geometry$Geometry$Types$Point2d = function (a) {
+	return {$: 'Point2d', a: a};
+};
+var ianmackenzie$elm_geometry$Point2d$fromCoordinates = ianmackenzie$elm_geometry$Geometry$Types$Point2d;
+var author$project$Points$readPoints = elm$core$List$map(ianmackenzie$elm_geometry$Point2d$fromCoordinates);
+var ianmackenzie$elm_geometry$Geometry$Types$Polygon2d = function (a) {
+	return {$: 'Polygon2d', a: a};
+};
+var elm$core$Basics$ge = _Utils_ge;
+var elm$core$List$sum = function (numbers) {
+	return A3(elm$core$List$foldl, elm$core$Basics$add, 0, numbers);
+};
+var ianmackenzie$elm_geometry$Triangle2d$vertices = function (_n0) {
+	var vertices_ = _n0.a;
+	return vertices_;
+};
+var ianmackenzie$elm_geometry$Vector2d$components = function (_n0) {
+	var components_ = _n0.a;
+	return components_;
+};
+var ianmackenzie$elm_geometry$Vector2d$crossProduct = F2(
+	function (firstVector, secondVector) {
+		var _n0 = ianmackenzie$elm_geometry$Vector2d$components(secondVector);
+		var x2 = _n0.a;
+		var y2 = _n0.b;
+		var _n1 = ianmackenzie$elm_geometry$Vector2d$components(firstVector);
+		var x1 = _n1.a;
+		var y1 = _n1.b;
+		return (x1 * y2) - (y1 * x2);
+	});
+var ianmackenzie$elm_geometry$Bootstrap$Point2d$coordinates = function (_n0) {
+	var coordinates_ = _n0.a;
+	return coordinates_;
+};
+var ianmackenzie$elm_geometry$Geometry$Types$Vector2d = function (a) {
+	return {$: 'Vector2d', a: a};
+};
+var ianmackenzie$elm_geometry$Vector2d$fromComponents = ianmackenzie$elm_geometry$Geometry$Types$Vector2d;
+var ianmackenzie$elm_geometry$Vector2d$from = F2(
+	function (firstPoint, secondPoint) {
+		var _n0 = ianmackenzie$elm_geometry$Bootstrap$Point2d$coordinates(secondPoint);
+		var x2 = _n0.a;
+		var y2 = _n0.b;
+		var _n1 = ianmackenzie$elm_geometry$Bootstrap$Point2d$coordinates(firstPoint);
+		var x1 = _n1.a;
+		var y1 = _n1.b;
+		return ianmackenzie$elm_geometry$Vector2d$fromComponents(
+			_Utils_Tuple2(x2 - x1, y2 - y1));
+	});
+var ianmackenzie$elm_geometry$Triangle2d$counterclockwiseArea = function (triangle) {
+	var _n0 = ianmackenzie$elm_geometry$Triangle2d$vertices(triangle);
+	var p1 = _n0.a;
+	var p2 = _n0.b;
+	var p3 = _n0.c;
+	var firstVector = A2(ianmackenzie$elm_geometry$Vector2d$from, p1, p2);
+	var secondVector = A2(ianmackenzie$elm_geometry$Vector2d$from, p1, p3);
+	return 0.5 * A2(ianmackenzie$elm_geometry$Vector2d$crossProduct, firstVector, secondVector);
+};
+var ianmackenzie$elm_geometry$Geometry$Types$Triangle2d = function (a) {
+	return {$: 'Triangle2d', a: a};
+};
+var ianmackenzie$elm_geometry$Triangle2d$fromVertices = ianmackenzie$elm_geometry$Geometry$Types$Triangle2d;
+var ianmackenzie$elm_geometry$Polygon2d$counterclockwiseArea = function (vertices_) {
+	if (!vertices_.b) {
+		return 0;
+	} else {
+		if (!vertices_.b.b) {
+			var single = vertices_.a;
+			return 0;
+		} else {
+			if (!vertices_.b.b.b) {
+				var first = vertices_.a;
+				var _n1 = vertices_.b;
+				var second = _n1.a;
+				return 0;
+			} else {
+				var first = vertices_.a;
+				var _n2 = vertices_.b;
+				var second = _n2.a;
+				var rest = _n2.b;
+				var segmentArea = F2(
+					function (start, end) {
+						return ianmackenzie$elm_geometry$Triangle2d$counterclockwiseArea(
+							ianmackenzie$elm_geometry$Triangle2d$fromVertices(
+								_Utils_Tuple3(first, start, end)));
+					});
+				var segmentAreas = A3(
+					elm$core$List$map2,
+					segmentArea,
+					A2(elm$core$List$cons, second, rest),
+					rest);
+				return elm$core$List$sum(segmentAreas);
+			}
+		}
+	}
+};
+var ianmackenzie$elm_geometry$Polygon2d$makeOuterLoop = function (vertices_) {
+	return (ianmackenzie$elm_geometry$Polygon2d$counterclockwiseArea(vertices_) >= 0) ? vertices_ : elm$core$List$reverse(vertices_);
+};
+var ianmackenzie$elm_geometry$Polygon2d$singleLoop = function (vertices_) {
+	return ianmackenzie$elm_geometry$Geometry$Types$Polygon2d(
+		{
+			innerLoops: _List_Nil,
+			outerLoop: ianmackenzie$elm_geometry$Polygon2d$makeOuterLoop(vertices_)
+		});
+};
+var author$project$Shapes$polygon = A2(elm$core$Basics$composeL, ianmackenzie$elm_geometry$Polygon2d$singleLoop, author$project$Points$readPoints);
+var author$project$Shapes$classicRockPolygon1 = author$project$Shapes$polygon(author$project$Rocks$classicRock1);
+var author$project$Rocks$classicRock2 = _List_fromArray(
+	[
+		_Utils_Tuple2(1.0, 0.5),
+		_Utils_Tuple2(0.5, 1.0),
+		_Utils_Tuple2(0.0, 0.75),
+		_Utils_Tuple2(-0.5, 1.0),
+		_Utils_Tuple2(-1.0, 0.5),
+		_Utils_Tuple2(-0.75, 0.0),
+		_Utils_Tuple2(-1.0, -0.5),
+		_Utils_Tuple2(-0.5, -1.0),
+		_Utils_Tuple2(-0.25, -0.75),
+		_Utils_Tuple2(0.5, -1.0),
+		_Utils_Tuple2(1.0, -0.25),
+		_Utils_Tuple2(0.5, 0.25)
+	]);
+var author$project$Shapes$classicRockPolygon2 = author$project$Shapes$polygon(author$project$Rocks$classicRock2);
+var author$project$Rocks$classicRock3 = _List_fromArray(
+	[
+		_Utils_Tuple2(-1.0, -0.25),
+		_Utils_Tuple2(-0.5, -1.0),
+		_Utils_Tuple2(0.0, -0.25),
+		_Utils_Tuple2(0.0, -1.0),
+		_Utils_Tuple2(0.5, -1.0),
+		_Utils_Tuple2(1.0, -0.25),
+		_Utils_Tuple2(1.0, 0.25),
+		_Utils_Tuple2(0.5, 1.0),
+		_Utils_Tuple2(-0.25, 1.0),
+		_Utils_Tuple2(-1.0, 0.25),
+		_Utils_Tuple2(-0.5, 0.0)
+	]);
+var author$project$Shapes$classicRockPolygon3 = author$project$Shapes$polygon(author$project$Rocks$classicRock3);
+var author$project$Rocks$classicRock4 = _List_fromArray(
+	[
+		_Utils_Tuple2(1.0, 0.25),
+		_Utils_Tuple2(1.0, 0.5),
+		_Utils_Tuple2(0.25, 1.0),
+		_Utils_Tuple2(-0.5, 1.0),
+		_Utils_Tuple2(-0.25, 0.5),
+		_Utils_Tuple2(-1.0, 0.5),
+		_Utils_Tuple2(-1.0, -0.25),
+		_Utils_Tuple2(-0.5, -1.0),
+		_Utils_Tuple2(0.25, -0.75),
+		_Utils_Tuple2(0.5, -1.0),
+		_Utils_Tuple2(1.0, -0.5),
+		_Utils_Tuple2(0.25, 0.0)
+	]);
+var author$project$Shapes$classicRockPolygon4 = author$project$Shapes$polygon(author$project$Rocks$classicRock4);
+var author$project$Shapes$lookup = function (rockType) {
+	switch (rockType.$) {
+		case 'Classic1':
+			return author$project$Shapes$classicRockPolygon1;
+		case 'Classic2':
+			return author$project$Shapes$classicRockPolygon2;
+		case 'Classic3':
+			return author$project$Shapes$classicRockPolygon3;
+		default:
+			return author$project$Shapes$classicRockPolygon4;
+	}
+};
+var ianmackenzie$elm_geometry$Point2d$origin = ianmackenzie$elm_geometry$Point2d$fromCoordinates(
+	_Utils_Tuple2(0, 0));
+var ianmackenzie$elm_geometry$Point2d$translateBy = F2(
+	function (vector, point) {
+		var _n0 = ianmackenzie$elm_geometry$Vector2d$components(vector);
+		var vx = _n0.a;
+		var vy = _n0.b;
+		var _n1 = ianmackenzie$elm_geometry$Point2d$coordinates(point);
+		var px = _n1.a;
+		var py = _n1.b;
+		return ianmackenzie$elm_geometry$Point2d$fromCoordinates(
+			_Utils_Tuple2(px + vx, py + vy));
+	});
+var ianmackenzie$elm_geometry$Point2d$addTo = F2(
+	function (point, vector) {
+		return A2(ianmackenzie$elm_geometry$Point2d$translateBy, vector, point);
+	});
+var ianmackenzie$elm_geometry$Vector2d$scaleBy = F2(
+	function (scale, vector) {
+		var _n0 = ianmackenzie$elm_geometry$Vector2d$components(vector);
+		var x = _n0.a;
+		var y = _n0.b;
+		return ianmackenzie$elm_geometry$Vector2d$fromComponents(
+			_Utils_Tuple2(x * scale, y * scale));
+	});
+var ianmackenzie$elm_geometry$Point2d$scaleAbout = F3(
+	function (centerPoint, scale, point) {
+		return A2(
+			ianmackenzie$elm_geometry$Point2d$addTo,
+			centerPoint,
+			A2(
+				ianmackenzie$elm_geometry$Vector2d$scaleBy,
+				scale,
+				A2(ianmackenzie$elm_geometry$Vector2d$from, centerPoint, point)));
+	});
+var ianmackenzie$elm_geometry$Polygon2d$innerLoops = function (_n0) {
+	var polygon = _n0.a;
+	return polygon.innerLoops;
+};
+var ianmackenzie$elm_geometry$Polygon2d$mapVertices = F3(
+	function (_function, invert, polygon) {
+		var mappedOuterLoop = A2(
+			elm$core$List$map,
+			_function,
+			ianmackenzie$elm_geometry$Polygon2d$outerLoop(polygon));
+		var mappedInnerLoops = A2(
+			elm$core$List$map,
+			elm$core$List$map(_function),
+			ianmackenzie$elm_geometry$Polygon2d$innerLoops(polygon));
+		return invert ? ianmackenzie$elm_geometry$Geometry$Types$Polygon2d(
+			{
+				innerLoops: A2(elm$core$List$map, elm$core$List$reverse, mappedInnerLoops),
+				outerLoop: elm$core$List$reverse(mappedOuterLoop)
+			}) : ianmackenzie$elm_geometry$Geometry$Types$Polygon2d(
+			{innerLoops: mappedInnerLoops, outerLoop: mappedOuterLoop});
+	});
+var ianmackenzie$elm_geometry$Polygon2d$scaleAbout = F2(
+	function (point, scale) {
+		return A2(
+			ianmackenzie$elm_geometry$Polygon2d$mapVertices,
+			A2(ianmackenzie$elm_geometry$Point2d$scaleAbout, point, scale),
+			scale < 0);
+	});
+var author$project$Shapes$rockWithRadius = F2(
+	function (rt, radius) {
+		var rock = author$project$Shapes$lookup(rt);
+		return author$project$Polygon$polygonToShape(
+			A3(ianmackenzie$elm_geometry$Polygon2d$scaleAbout, ianmackenzie$elm_geometry$Point2d$origin, radius, rock));
+	});
+var avh4$elm_color$Color$scaleFrom255 = function (c) {
+	return c / 255;
+};
+var avh4$elm_color$Color$rgb255 = F3(
+	function (r, g, b) {
+		return A4(
+			avh4$elm_color$Color$RgbaSpace,
+			avh4$elm_color$Color$scaleFrom255(r),
+			avh4$elm_color$Color$scaleFrom255(g),
+			avh4$elm_color$Color$scaleFrom255(b),
+			1.0);
+	});
+var ianmackenzie$elm_geometry$Circle2d$radius = function (_n0) {
+	var properties = _n0.a;
+	return properties.radius;
+};
+var author$project$Asteroids$newAsteroid = F2(
+	function (id, position) {
+		var rock = author$project$Asteroids$chooseShape(id);
+		var shape = A2(
+			author$project$Shapes$rockWithRadius,
+			rock,
+			ianmackenzie$elm_geometry$Circle2d$radius(position));
+		return {
+			color: A3(avh4$elm_color$Color$rgb255, 4, 4, 4),
+			id: id,
+			position: position,
+			shape: shape,
+			theta: 0.0,
+			theta0: author$project$Asteroids$thetaOffset(id)
+		};
+	});
+var elm$core$Dict$Black = {$: 'Black'};
+var elm$core$Dict$RBNode_elm_builtin = F5(
+	function (a, b, c, d, e) {
+		return {$: 'RBNode_elm_builtin', a: a, b: b, c: c, d: d, e: e};
+	});
+var elm$core$Basics$compare = _Utils_compare;
+var elm$core$Dict$Red = {$: 'Red'};
+var elm$core$Dict$balance = F5(
+	function (color, key, value, left, right) {
+		if ((right.$ === 'RBNode_elm_builtin') && (right.a.$ === 'Red')) {
+			var _n1 = right.a;
+			var rK = right.b;
+			var rV = right.c;
+			var rLeft = right.d;
+			var rRight = right.e;
+			if ((left.$ === 'RBNode_elm_builtin') && (left.a.$ === 'Red')) {
+				var _n3 = left.a;
+				var lK = left.b;
+				var lV = left.c;
+				var lLeft = left.d;
+				var lRight = left.e;
+				return A5(
+					elm$core$Dict$RBNode_elm_builtin,
+					elm$core$Dict$Red,
+					key,
+					value,
+					A5(elm$core$Dict$RBNode_elm_builtin, elm$core$Dict$Black, lK, lV, lLeft, lRight),
+					A5(elm$core$Dict$RBNode_elm_builtin, elm$core$Dict$Black, rK, rV, rLeft, rRight));
+			} else {
+				return A5(
+					elm$core$Dict$RBNode_elm_builtin,
+					color,
+					rK,
+					rV,
+					A5(elm$core$Dict$RBNode_elm_builtin, elm$core$Dict$Red, key, value, left, rLeft),
+					rRight);
+			}
+		} else {
+			if ((((left.$ === 'RBNode_elm_builtin') && (left.a.$ === 'Red')) && (left.d.$ === 'RBNode_elm_builtin')) && (left.d.a.$ === 'Red')) {
+				var _n5 = left.a;
+				var lK = left.b;
+				var lV = left.c;
+				var _n6 = left.d;
+				var _n7 = _n6.a;
+				var llK = _n6.b;
+				var llV = _n6.c;
+				var llLeft = _n6.d;
+				var llRight = _n6.e;
+				var lRight = left.e;
+				return A5(
+					elm$core$Dict$RBNode_elm_builtin,
+					elm$core$Dict$Red,
+					lK,
+					lV,
+					A5(elm$core$Dict$RBNode_elm_builtin, elm$core$Dict$Black, llK, llV, llLeft, llRight),
+					A5(elm$core$Dict$RBNode_elm_builtin, elm$core$Dict$Black, key, value, lRight, right));
+			} else {
+				return A5(elm$core$Dict$RBNode_elm_builtin, color, key, value, left, right);
+			}
+		}
+	});
+var elm$core$Dict$insertHelp = F3(
+	function (key, value, dict) {
+		if (dict.$ === 'RBEmpty_elm_builtin') {
+			return A5(elm$core$Dict$RBNode_elm_builtin, elm$core$Dict$Red, key, value, elm$core$Dict$RBEmpty_elm_builtin, elm$core$Dict$RBEmpty_elm_builtin);
+		} else {
+			var nColor = dict.a;
+			var nKey = dict.b;
+			var nValue = dict.c;
+			var nLeft = dict.d;
+			var nRight = dict.e;
+			var _n1 = A2(elm$core$Basics$compare, key, nKey);
+			switch (_n1.$) {
+				case 'LT':
+					return A5(
+						elm$core$Dict$balance,
+						nColor,
+						nKey,
+						nValue,
+						A3(elm$core$Dict$insertHelp, key, value, nLeft),
+						nRight);
+				case 'EQ':
+					return A5(elm$core$Dict$RBNode_elm_builtin, nColor, nKey, value, nLeft, nRight);
+				default:
+					return A5(
+						elm$core$Dict$balance,
+						nColor,
+						nKey,
+						nValue,
+						nLeft,
+						A3(elm$core$Dict$insertHelp, key, value, nRight));
+			}
+		}
+	});
+var elm$core$Dict$insert = F3(
+	function (key, value, dict) {
+		var _n0 = A3(elm$core$Dict$insertHelp, key, value, dict);
+		if ((_n0.$ === 'RBNode_elm_builtin') && (_n0.a.$ === 'Red')) {
+			var _n1 = _n0.a;
+			var k = _n0.b;
+			var v = _n0.c;
+			var l = _n0.d;
+			var r = _n0.e;
+			return A5(elm$core$Dict$RBNode_elm_builtin, elm$core$Dict$Black, k, v, l, r);
+		} else {
+			var x = _n0;
+			return x;
+		}
+	});
 var elm$core$Dict$foldl = F3(
 	function (func, acc, dict) {
 		foldl:
@@ -6109,6 +5945,20 @@ var elm$json$Json$Decode$andThen = _Json_andThen;
 var elm$json$Json$Decode$field = _Json_decodeField;
 var elm$json$Json$Decode$float = _Json_decodeFloat;
 var elm$json$Json$Decode$int = _Json_decodeInt;
+var elm$core$Basics$abs = function (n) {
+	return (n < 0) ? (-n) : n;
+};
+var ianmackenzie$elm_geometry$Geometry$Types$Circle2d = function (a) {
+	return {$: 'Circle2d', a: a};
+};
+var ianmackenzie$elm_geometry$Circle2d$withRadius = F2(
+	function (radius_, centerPoint_) {
+		return ianmackenzie$elm_geometry$Geometry$Types$Circle2d(
+			{
+				centerPoint: centerPoint_,
+				radius: elm$core$Basics$abs(radius_)
+			});
+	});
 var author$project$StateParser$asteroidDecoder = A2(
 	elm$json$Json$Decode$andThen,
 	function (id) {
@@ -6278,14 +6128,11 @@ var author$project$StateParser$gameDecoder = A6(
 	elm$json$Json$Decode$map5,
 	author$project$StateParser$Graphics,
 	A2(elm$json$Json$Decode$field, 'a', author$project$StateParser$asteroidsDecoder),
-	elm$json$Json$Decode$maybe(
-		A2(elm$json$Json$Decode$field, 'b', author$project$StateParser$bulletsDecoder)),
+	A2(elm$json$Json$Decode$field, 'b', author$project$StateParser$bulletsDecoder),
 	elm$json$Json$Decode$maybe(
 		A2(elm$json$Json$Decode$field, 'dim', author$project$StateParser$dimDecoder)),
-	elm$json$Json$Decode$maybe(
-		A2(elm$json$Json$Decode$field, 'x', author$project$StateParser$explosionsDecoder)),
-	elm$json$Json$Decode$maybe(
-		A2(elm$json$Json$Decode$field, 's', author$project$StateParser$shipsDecoder)));
+	A2(elm$json$Json$Decode$field, 'x', author$project$StateParser$explosionsDecoder),
+	A2(elm$json$Json$Decode$field, 's', author$project$StateParser$shipsDecoder));
 var elm$json$Json$Decode$decodeString = _Json_runOnString;
 var author$project$Main$mergeGraphics = F2(
 	function (model, state_json) {
@@ -6765,6 +6612,14 @@ var author$project$Game$renderBullets = function (tf) {
 	return elm$core$List$map(
 		author$project$Bullets$renderBullet(tf));
 };
+var joakin$elm_canvas$Canvas$Circle = F2(
+	function (a, b) {
+		return {$: 'Circle', a: a, b: b};
+	});
+var joakin$elm_canvas$Canvas$circle = F2(
+	function (pos, radius) {
+		return A2(joakin$elm_canvas$Canvas$Circle, pos, radius);
+	});
 var author$project$Explosions$renderExplosion = F2(
 	function (tf, explosion) {
 		var color = explosion.color;

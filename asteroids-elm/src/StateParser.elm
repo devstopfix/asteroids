@@ -8,10 +8,10 @@ import Point2d exposing (Point2d, fromCoordinates, origin)
 
 type alias Graphics =
     { asteroids : List AsteroidLocation
-    , bullets : Maybe (List BullletLocation)
+    , bullets : List BullletLocation
     , dimensions : Maybe BoundingBox2d
-    , explosions : Maybe (List Point2d)
-    , ships : Maybe (List ShipLocation)
+    , explosions : List Point2d
+    , ships : List ShipLocation
     }
 
 
@@ -43,10 +43,10 @@ gameDecoder : Decoder Graphics
 gameDecoder =
     map5 Graphics
         (field "a" asteroidsDecoder)
-        (maybe (field "b" bulletsDecoder))
+        (field "b" bulletsDecoder)
         (maybe (field "dim" dimDecoder))
-        (maybe (field "x" explosionsDecoder))
-        (maybe (field "s" shipsDecoder))
+        (field "x" explosionsDecoder)
+        (field "s" shipsDecoder)
 
 
 asteroidsDecoder : Decoder (List AsteroidLocation)

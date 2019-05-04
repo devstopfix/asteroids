@@ -44,17 +44,10 @@ newGame dims =
             gameDimensions
     in
     { dimension = dims
-    , asteroids = Dict.empty |> Dict.insert 1 (newAsteroid 1 (withRadius 120 origin))
-    , bullets =
-        [ newBullet 0 ( 1000, 1000 )
-        , newBullet 1 ( 2000, 2000 )
-        ]
+    , asteroids = Dict.empty
+    , bullets = []
     , explosions = [ newExplosion ( 3000, 500 ) ]
-    , ships =
-        [ newShip "TAG" ( 100, 100 ) (3.14 / 4.0)
-        , newShip "WST" ( 3500, 500 ) 3.14
-        , newShip "TWN" ( 1440, 1440 ) (3.14 / 2.0)
-        ]
+    , ships = []
     , spaceColor = Color.black
     , transform = scale (canvas_x / game_x) (canvas_y / game_y)
     }
