@@ -3,18 +3,16 @@ module Game exposing (Game, mergeGame, newGame, viewGame)
 import Asteroids exposing (..)
 import Bullets exposing (Bullet, newBullet, renderBullet)
 import Canvas exposing (..)
+import Circle2d exposing (Circle2d, withRadius)
 import Color exposing (Color)
 import Dict exposing (Dict)
 import Explosions exposing (Explosion, newExplosion, renderExplosion)
 import Html exposing (Html)
 import Html.Attributes exposing (style)
 import List.FlatMap exposing (flatMap)
-import Ships exposing (..)
-import StateParser exposing (Graphics)
-
-
-import Circle2d exposing (Circle2d, withRadius)
 import Point2d exposing (origin)
+import Ships exposing (..)
+import StateParser exposing (AsteroidLocation, Graphics, Id)
 
 
 type alias Dimension =
@@ -125,4 +123,29 @@ renderShips tf =
 
 mergeGame : Game -> Graphics -> Game
 mergeGame game graphics =
-    game
+    { game | asteroids = updateAsteroids graphics.asteroids game.asteroids }
+
+
+updateAsteroids maybe_asteroids game_asteroids =
+    case maybe_asteroids of
+        Just asteroids ->
+            mergeAsteroids (toAsteroidMap asteroids) game_asteroids
+
+        Nothing ->
+            game_asteroids
+
+
+toAsteroidMap : List AsteroidLocation -> Dict Id AsteroidLocation
+toAsteroidMap =
+    Dict.fromList << List.map (\a -> ( a.id, a ))
+
+
+mergeAsteroids : Dict Int AsteroidLocation -> Dict Int Asteroid -> Dict Int Asteroid
+mergeAsteroids graphics_asteroids game_asteroids =
+    Dict.merge
+        (\id a -> Dict.insert id (newAsteroid id a.location))
+        (\id a b -> Dict.insert id { b | position = a.location })
+        (\id _ -> identity) -- Remove
+        graphics_asteroids
+        game_asteroids
+        Dict.empty

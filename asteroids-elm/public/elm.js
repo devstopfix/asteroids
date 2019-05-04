@@ -5207,11 +5207,7 @@ var author$project$Game$newGame = function (dims) {
 var author$project$Main$sampleGames = _List_fromArray(
 	[
 		author$project$Game$newGame(
-		_Utils_Tuple2(800, 450)),
-		author$project$Game$newGame(
-		_Utils_Tuple2(400, 225)),
-		author$project$Game$newGame(
-		_Utils_Tuple2(400, 225))
+		_Utils_Tuple2(800, 450))
 	]);
 var author$project$Main$initState = {count: 0, games: author$project$Main$sampleGames};
 var author$project$Main$Frame = function (a) {
@@ -5957,6 +5953,356 @@ var author$project$Main$subscriptions = function (model) {
 				elm$browser$Browser$Events$onAnimationFrameDelta(author$project$Main$Frame)
 			]));
 };
+var elm$core$Dict$foldl = F3(
+	function (func, acc, dict) {
+		foldl:
+		while (true) {
+			if (dict.$ === 'RBEmpty_elm_builtin') {
+				return acc;
+			} else {
+				var key = dict.b;
+				var value = dict.c;
+				var left = dict.d;
+				var right = dict.e;
+				var $temp$func = func,
+					$temp$acc = A3(
+					func,
+					key,
+					value,
+					A3(elm$core$Dict$foldl, func, acc, left)),
+					$temp$dict = right;
+				func = $temp$func;
+				acc = $temp$acc;
+				dict = $temp$dict;
+				continue foldl;
+			}
+		}
+	});
+var elm$core$Dict$merge = F6(
+	function (leftStep, bothStep, rightStep, leftDict, rightDict, initialResult) {
+		var stepState = F3(
+			function (rKey, rValue, _n0) {
+				stepState:
+				while (true) {
+					var list = _n0.a;
+					var result = _n0.b;
+					if (!list.b) {
+						return _Utils_Tuple2(
+							list,
+							A3(rightStep, rKey, rValue, result));
+					} else {
+						var _n2 = list.a;
+						var lKey = _n2.a;
+						var lValue = _n2.b;
+						var rest = list.b;
+						if (_Utils_cmp(lKey, rKey) < 0) {
+							var $temp$rKey = rKey,
+								$temp$rValue = rValue,
+								$temp$_n0 = _Utils_Tuple2(
+								rest,
+								A3(leftStep, lKey, lValue, result));
+							rKey = $temp$rKey;
+							rValue = $temp$rValue;
+							_n0 = $temp$_n0;
+							continue stepState;
+						} else {
+							if (_Utils_cmp(lKey, rKey) > 0) {
+								return _Utils_Tuple2(
+									list,
+									A3(rightStep, rKey, rValue, result));
+							} else {
+								return _Utils_Tuple2(
+									rest,
+									A4(bothStep, lKey, lValue, rValue, result));
+							}
+						}
+					}
+				}
+			});
+		var _n3 = A3(
+			elm$core$Dict$foldl,
+			stepState,
+			_Utils_Tuple2(
+				elm$core$Dict$toList(leftDict),
+				initialResult),
+			rightDict);
+		var leftovers = _n3.a;
+		var intermediateResult = _n3.b;
+		return A3(
+			elm$core$List$foldl,
+			F2(
+				function (_n4, result) {
+					var k = _n4.a;
+					var v = _n4.b;
+					return A3(leftStep, k, v, result);
+				}),
+			intermediateResult,
+			leftovers);
+	});
+var author$project$Game$mergeAsteroids = F2(
+	function (graphics_asteroids, game_asteroids) {
+		return A6(
+			elm$core$Dict$merge,
+			F2(
+				function (id, a) {
+					return A2(
+						elm$core$Dict$insert,
+						id,
+						A2(author$project$Asteroids$newAsteroid, id, a.location));
+				}),
+			F3(
+				function (id, a, b) {
+					return A2(
+						elm$core$Dict$insert,
+						id,
+						_Utils_update(
+							b,
+							{position: a.location}));
+				}),
+			F2(
+				function (id, b) {
+					return A2(elm$core$Dict$insert, id, b);
+				}),
+			graphics_asteroids,
+			game_asteroids,
+			elm$core$Dict$empty);
+	});
+var elm$core$Dict$fromList = function (assocs) {
+	return A3(
+		elm$core$List$foldl,
+		F2(
+			function (_n0, dict) {
+				var key = _n0.a;
+				var value = _n0.b;
+				return A3(elm$core$Dict$insert, key, value, dict);
+			}),
+		elm$core$Dict$empty,
+		assocs);
+};
+var author$project$Game$toAsteroidMap = A2(
+	elm$core$Basics$composeL,
+	elm$core$Dict$fromList,
+	elm$core$List$map(
+		function (a) {
+			return _Utils_Tuple2(a.id, a);
+		}));
+var author$project$Game$updateAsteroids = F2(
+	function (maybe_asteroids, game_asteroids) {
+		if (maybe_asteroids.$ === 'Just') {
+			var asteroids = maybe_asteroids.a;
+			return A2(
+				author$project$Game$mergeAsteroids,
+				author$project$Game$toAsteroidMap(asteroids),
+				game_asteroids);
+		} else {
+			return game_asteroids;
+		}
+	});
+var author$project$Game$mergeGame = F2(
+	function (game, graphics) {
+		return _Utils_update(
+			game,
+			{
+				asteroids: A2(author$project$Game$updateAsteroids, graphics.asteroids, game.asteroids)
+			});
+	});
+var author$project$StateParser$Graphics = F5(
+	function (asteroids, bullets, dimensions, explosions, ships) {
+		return {asteroids: asteroids, bullets: bullets, dimensions: dimensions, explosions: explosions, ships: ships};
+	});
+var elm$json$Json$Decode$andThen = _Json_andThen;
+var elm$json$Json$Decode$field = _Json_decodeField;
+var elm$json$Json$Decode$float = _Json_decodeFloat;
+var elm$json$Json$Decode$int = _Json_decodeInt;
+var author$project$StateParser$asteroidDecoder = A2(
+	elm$json$Json$Decode$andThen,
+	function (id) {
+		return A2(
+			elm$json$Json$Decode$andThen,
+			function (x) {
+				return A2(
+					elm$json$Json$Decode$andThen,
+					function (y) {
+						return A2(
+							elm$json$Json$Decode$andThen,
+							function (r) {
+								return elm$json$Json$Decode$succeed(
+									{
+										id: id,
+										location: A2(
+											ianmackenzie$elm_geometry$Circle2d$withRadius,
+											r,
+											ianmackenzie$elm_geometry$Point2d$fromCoordinates(
+												_Utils_Tuple2(x, y)))
+									});
+							},
+							A2(elm$json$Json$Decode$field, '3', elm$json$Json$Decode$float));
+					},
+					A2(elm$json$Json$Decode$field, '2', elm$json$Json$Decode$float));
+			},
+			A2(elm$json$Json$Decode$field, '1', elm$json$Json$Decode$float));
+	},
+	A2(elm$json$Json$Decode$field, '0', elm$json$Json$Decode$int));
+var elm$json$Json$Decode$list = _Json_decodeList;
+var author$project$StateParser$asteroidsDecoder = elm$json$Json$Decode$list(author$project$StateParser$asteroidDecoder);
+var author$project$StateParser$bulletDecoder = A2(
+	elm$json$Json$Decode$andThen,
+	function (id) {
+		return A2(
+			elm$json$Json$Decode$andThen,
+			function (x) {
+				return A2(
+					elm$json$Json$Decode$andThen,
+					function (y) {
+						return elm$json$Json$Decode$succeed(
+							{
+								id: id,
+								location: ianmackenzie$elm_geometry$Point2d$fromCoordinates(
+									_Utils_Tuple2(x, y))
+							});
+					},
+					A2(elm$json$Json$Decode$field, '2', elm$json$Json$Decode$float));
+			},
+			A2(elm$json$Json$Decode$field, '1', elm$json$Json$Decode$float));
+	},
+	A2(elm$json$Json$Decode$field, '0', elm$json$Json$Decode$int));
+var author$project$StateParser$bulletsDecoder = elm$json$Json$Decode$list(author$project$StateParser$bulletDecoder);
+var elm$json$Json$Decode$fail = _Json_fail;
+var elm$core$Basics$min = F2(
+	function (x, y) {
+		return (_Utils_cmp(x, y) < 0) ? x : y;
+	});
+var ianmackenzie$elm_geometry$Geometry$Types$BoundingBox2d = function (a) {
+	return {$: 'BoundingBox2d', a: a};
+};
+var ianmackenzie$elm_geometry$BoundingBox2d$fromExtrema = function (extrema_) {
+	return ((_Utils_cmp(extrema_.minX, extrema_.maxX) < 1) && (_Utils_cmp(extrema_.minY, extrema_.maxY) < 1)) ? ianmackenzie$elm_geometry$Geometry$Types$BoundingBox2d(extrema_) : ianmackenzie$elm_geometry$Geometry$Types$BoundingBox2d(
+		{
+			maxX: A2(elm$core$Basics$max, extrema_.minX, extrema_.maxX),
+			maxY: A2(elm$core$Basics$max, extrema_.minY, extrema_.maxY),
+			minX: A2(elm$core$Basics$min, extrema_.minX, extrema_.maxX),
+			minY: A2(elm$core$Basics$min, extrema_.minY, extrema_.maxY)
+		});
+};
+var ianmackenzie$elm_geometry$BoundingBox2d$from = F2(
+	function (firstPoint, secondPoint) {
+		var _n0 = ianmackenzie$elm_geometry$Point2d$coordinates(secondPoint);
+		var x2 = _n0.a;
+		var y2 = _n0.b;
+		var _n1 = ianmackenzie$elm_geometry$Point2d$coordinates(firstPoint);
+		var x1 = _n1.a;
+		var y1 = _n1.b;
+		return ianmackenzie$elm_geometry$BoundingBox2d$fromExtrema(
+			{
+				maxX: A2(elm$core$Basics$max, x1, x2),
+				maxY: A2(elm$core$Basics$max, y1, y2),
+				minX: A2(elm$core$Basics$min, x1, x2),
+				minY: A2(elm$core$Basics$min, y1, y2)
+			});
+	});
+var author$project$StateParser$dimHelp = function (fs) {
+	if ((fs.b && fs.b.b) && (!fs.b.b.b)) {
+		var x = fs.a;
+		var _n1 = fs.b;
+		var y = _n1.a;
+		return elm$json$Json$Decode$succeed(
+			A2(
+				ianmackenzie$elm_geometry$BoundingBox2d$from,
+				ianmackenzie$elm_geometry$Point2d$origin,
+				ianmackenzie$elm_geometry$Point2d$fromCoordinates(
+					_Utils_Tuple2(x, y))));
+	} else {
+		return elm$json$Json$Decode$fail('Expecting 2 floats');
+	}
+};
+var author$project$StateParser$dimDecoder = A2(
+	elm$json$Json$Decode$andThen,
+	author$project$StateParser$dimHelp,
+	elm$json$Json$Decode$list(elm$json$Json$Decode$float));
+var author$project$StateParser$explosionDecoder = A2(
+	elm$json$Json$Decode$andThen,
+	function (x) {
+		return A2(
+			elm$json$Json$Decode$andThen,
+			function (y) {
+				return elm$json$Json$Decode$succeed(
+					ianmackenzie$elm_geometry$Point2d$fromCoordinates(
+						_Utils_Tuple2(x, y)));
+			},
+			A2(elm$json$Json$Decode$field, '1', elm$json$Json$Decode$float));
+	},
+	A2(elm$json$Json$Decode$field, '0', elm$json$Json$Decode$float));
+var author$project$StateParser$explosionsDecoder = elm$json$Json$Decode$list(author$project$StateParser$explosionDecoder);
+var author$project$StateParser$shipDecoder = A2(
+	elm$json$Json$Decode$andThen,
+	function (tag) {
+		return A2(
+			elm$json$Json$Decode$andThen,
+			function (x) {
+				return A2(
+					elm$json$Json$Decode$andThen,
+					function (y) {
+						return A2(
+							elm$json$Json$Decode$andThen,
+							function (r) {
+								return A2(
+									elm$json$Json$Decode$andThen,
+									function (theta) {
+										return elm$json$Json$Decode$succeed(
+											{
+												id: tag,
+												location: A2(
+													ianmackenzie$elm_geometry$Circle2d$withRadius,
+													r,
+													ianmackenzie$elm_geometry$Point2d$fromCoordinates(
+														_Utils_Tuple2(x, y))),
+												theta: theta
+											});
+									},
+									A2(elm$json$Json$Decode$field, '4', elm$json$Json$Decode$float));
+							},
+							A2(elm$json$Json$Decode$field, '3', elm$json$Json$Decode$float));
+					},
+					A2(elm$json$Json$Decode$field, '2', elm$json$Json$Decode$float));
+			},
+			A2(elm$json$Json$Decode$field, '1', elm$json$Json$Decode$float));
+	},
+	A2(elm$json$Json$Decode$field, '0', elm$json$Json$Decode$string));
+var author$project$StateParser$shipsDecoder = elm$json$Json$Decode$list(author$project$StateParser$shipDecoder);
+var elm$json$Json$Decode$map5 = _Json_map5;
+var elm$json$Json$Decode$oneOf = _Json_oneOf;
+var elm$json$Json$Decode$maybe = function (decoder) {
+	return elm$json$Json$Decode$oneOf(
+		_List_fromArray(
+			[
+				A2(elm$json$Json$Decode$map, elm$core$Maybe$Just, decoder),
+				elm$json$Json$Decode$succeed(elm$core$Maybe$Nothing)
+			]));
+};
+var author$project$StateParser$gameDecoder = A6(
+	elm$json$Json$Decode$map5,
+	author$project$StateParser$Graphics,
+	elm$json$Json$Decode$maybe(
+		A2(elm$json$Json$Decode$field, 'a', author$project$StateParser$asteroidsDecoder)),
+	elm$json$Json$Decode$maybe(
+		A2(elm$json$Json$Decode$field, 'b', author$project$StateParser$bulletsDecoder)),
+	elm$json$Json$Decode$maybe(
+		A2(elm$json$Json$Decode$field, 'dim', author$project$StateParser$dimDecoder)),
+	elm$json$Json$Decode$maybe(
+		A2(elm$json$Json$Decode$field, 'x', author$project$StateParser$explosionsDecoder)),
+	elm$json$Json$Decode$maybe(
+		A2(elm$json$Json$Decode$field, 's', author$project$StateParser$shipsDecoder)));
+var elm$json$Json$Decode$decodeString = _Json_runOnString;
+var author$project$Main$mergeGraphics = F2(
+	function (model, state_json) {
+		var _n0 = A2(elm$json$Json$Decode$decodeString, author$project$StateParser$gameDecoder, state_json);
+		if (_n0.$ === 'Ok') {
+			var graphics = _n0.a;
+			return A2(author$project$Game$mergeGame, model, graphics);
+		} else {
+			return model;
+		}
+	});
 var elm$core$Basics$pi = _Basics_pi;
 var author$project$Asteroids$cycle = function (t) {
 	var framesPerRevolution = 960;
@@ -6049,7 +6395,26 @@ var author$project$Main$update = F2(
 				elm$core$Platform$Cmd$none);
 		} else {
 			var state_json = msg.a;
-			return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
+			var _n1 = model.games;
+			if (!_n1.b) {
+				return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
+			} else {
+				if (!_n1.b.b) {
+					var game = _n1.a;
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{
+								games: _List_fromArray(
+									[
+										A2(author$project$Main$mergeGraphics, game, state_json)
+									])
+							}),
+						elm$core$Platform$Cmd$none);
+				} else {
+					return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
+				}
+			}
 		}
 	});
 var avh4$elm_color$Color$white = A4(avh4$elm_color$Color$RgbaSpace, 255 / 255, 255 / 255, 255 / 255, 1.0);

@@ -21,11 +21,12 @@
     <script src="./elm.js"></script>
     <script>
       var localURL = new URL("ws://localhost:8065/0/graphics");
+      var localTestCardURL = new URL("ws://localhost:8065/1/graphics");
       var serverURL = new URL("ws://g0.elixoids.devstopfix.net/0/graphics");
       var app = Elm.Main.init({ node: document.querySelector("main") });
 
       if (app && app.ports) {
-        var ws = new WebSocket(serverURL);
+        var ws = new WebSocket(localTestCardURL);
         ws.onmessage = function(message)
         {
             app.ports.graphicsIn.send(message.data);

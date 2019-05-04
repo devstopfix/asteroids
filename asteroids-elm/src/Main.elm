@@ -57,8 +57,8 @@ initState =
 
 sampleGames =
     [ newGame ( 800, 450 )
-    , newGame ( 400, 225 )
-    , newGame ( 400, 225 )
+    -- , newGame ( 400, 225 )
+    -- , newGame ( 400, 225 )
     -- , newGame ( 200, 112 )
     -- , newGame ( 200, 112 )
     -- , newGame ( 200, 112 )
@@ -90,16 +90,21 @@ update msg model =
             )
 
         GraphicsIn state_json ->
-            ( model, Cmd.none )
-            -- mergeGraphics model state_json
+            case model.games of
+                [] ->
+                    ( model, Cmd.none)
+                [game] ->
+                    ( {model | games = [ (mergeGraphics game state_json) ] }, Cmd.none)
+                _ ->
+                    ( model, Cmd.none )
 
 
 mergeGraphics model state_json =
     case Json.Decode.decodeString StateParser.gameDecoder state_json of
         Ok graphics ->
-            ( mergeGame model graphics, Cmd.none )
+            mergeGame model graphics
         Err _ ->
-            ( model, Cmd.none )
+            model
 
 
 updateGames : Int -> List Game -> List Game
