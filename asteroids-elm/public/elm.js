@@ -6060,8 +6060,8 @@ var author$project$Game$mergeAsteroids = F2(
 							{position: a.location}));
 				}),
 			F2(
-				function (id, b) {
-					return A2(elm$core$Dict$insert, id, b);
+				function (id, _n0) {
+					return elm$core$Basics$identity;
 				}),
 			graphics_asteroids,
 			game_asteroids,
@@ -6087,16 +6087,11 @@ var author$project$Game$toAsteroidMap = A2(
 			return _Utils_Tuple2(a.id, a);
 		}));
 var author$project$Game$updateAsteroids = F2(
-	function (maybe_asteroids, game_asteroids) {
-		if (maybe_asteroids.$ === 'Just') {
-			var asteroids = maybe_asteroids.a;
-			return A2(
-				author$project$Game$mergeAsteroids,
-				author$project$Game$toAsteroidMap(asteroids),
-				game_asteroids);
-		} else {
-			return game_asteroids;
-		}
+	function (asteroids, game_asteroids) {
+		return A2(
+			author$project$Game$mergeAsteroids,
+			author$project$Game$toAsteroidMap(asteroids),
+			game_asteroids);
 	});
 var author$project$Game$mergeGame = F2(
 	function (game, graphics) {
@@ -6282,8 +6277,7 @@ var elm$json$Json$Decode$maybe = function (decoder) {
 var author$project$StateParser$gameDecoder = A6(
 	elm$json$Json$Decode$map5,
 	author$project$StateParser$Graphics,
-	elm$json$Json$Decode$maybe(
-		A2(elm$json$Json$Decode$field, 'a', author$project$StateParser$asteroidsDecoder)),
+	A2(elm$json$Json$Decode$field, 'a', author$project$StateParser$asteroidsDecoder),
 	elm$json$Json$Decode$maybe(
 		A2(elm$json$Json$Decode$field, 'b', author$project$StateParser$bulletsDecoder)),
 	elm$json$Json$Decode$maybe(

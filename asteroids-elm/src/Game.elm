@@ -126,13 +126,13 @@ mergeGame game graphics =
     { game | asteroids = updateAsteroids graphics.asteroids game.asteroids }
 
 
-updateAsteroids maybe_asteroids game_asteroids =
-    case maybe_asteroids of
-        Just asteroids ->
+updateAsteroids asteroids game_asteroids =
+    -- case maybe_asteroids of
+    --     Just asteroids ->
             mergeAsteroids (toAsteroidMap asteroids) game_asteroids
 
-        Nothing ->
-            game_asteroids
+        -- Nothing ->
+        --     game_asteroids
 
 
 toAsteroidMap : List AsteroidLocation -> Dict Id AsteroidLocation

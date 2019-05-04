@@ -1,4 +1,4 @@
-module StateParser exposing (gameDecoder, Graphics, AsteroidLocation, Id)
+module StateParser exposing (AsteroidLocation, Graphics, Id, gameDecoder)
 
 import BoundingBox2d exposing (BoundingBox2d, from)
 import Circle2d exposing (Circle2d, withRadius)
@@ -7,7 +7,7 @@ import Point2d exposing (Point2d, fromCoordinates, origin)
 
 
 type alias Graphics =
-    { asteroids : Maybe (List AsteroidLocation)
+    { asteroids : List AsteroidLocation
     , bullets : Maybe (List BullletLocation)
     , dimensions : Maybe BoundingBox2d
     , explosions : Maybe (List Point2d)
@@ -42,7 +42,7 @@ type alias ShipLocation =
 gameDecoder : Decoder Graphics
 gameDecoder =
     map5 Graphics
-        (maybe (field "a" asteroidsDecoder))
+        (field "a" asteroidsDecoder)
         (maybe (field "b" bulletsDecoder))
         (maybe (field "dim" dimDecoder))
         (maybe (field "x" explosionsDecoder))
@@ -104,8 +104,6 @@ dimHelp fs =
 
         _ ->
             fail "Expecting 2 floats"
-
-
 
 
 explosionsDecoder : Decoder (List Point2d)
