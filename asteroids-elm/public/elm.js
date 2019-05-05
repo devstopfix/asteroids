@@ -4397,6 +4397,10 @@ var avh4$elm_color$Color$RgbaSpace = F4(
 	});
 var elm$core$Basics$fdiv = _Basics_fdiv;
 var avh4$elm_color$Color$black = A4(avh4$elm_color$Color$RgbaSpace, 0 / 255, 0 / 255, 0 / 255, 1.0);
+var elm$core$Basics$mul = _Basics_mul;
+var elm$core$Basics$negate = function (n) {
+	return -n;
+};
 var elm$core$Dict$RBEmpty_elm_builtin = {$: 'RBEmpty_elm_builtin'};
 var elm$core$Dict$empty = elm$core$Dict$RBEmpty_elm_builtin;
 var joakin$elm_canvas$Canvas$ApplyMatrix = function (a) {
@@ -4418,7 +4422,7 @@ var author$project$Game$newGame = function (dims) {
 		ships: elm$core$Dict$empty,
 		spaceColor: avh4$elm_color$Color$black,
 		transform: joakin$elm_canvas$Canvas$applyMatrix(
-			{dx: 0, dy: 0, m11: canvas_x / game_x, m12: 0, m21: 0, m22: canvas_y / game_y})
+			{dx: 0, dy: canvas_y, m11: canvas_x / game_x, m12: 0, m21: 0, m22: (-1) * (canvas_y / game_y)})
 	};
 };
 var author$project$Main$sampleGames = _List_fromArray(
@@ -4535,7 +4539,6 @@ var elm$core$Basics$max = F2(
 	function (x, y) {
 		return (_Utils_cmp(x, y) > 0) ? x : y;
 	});
-var elm$core$Basics$mul = _Basics_mul;
 var elm$core$Basics$sub = _Basics_sub;
 var elm$core$Elm$JsArray$length = _JsArray_length;
 var elm$core$Array$builderToArray = F2(
@@ -5399,9 +5402,6 @@ var author$project$Polygon$polygonToShape = A2(
 		A2(elm$core$Basics$composeL, author$project$Polygon$pointsToShape, author$project$Points$convertPoints),
 		author$project$Points$closePolygon),
 	ianmackenzie$elm_geometry$Polygon2d$outerLoop);
-var elm$core$Basics$negate = function (n) {
-	return -n;
-};
 var author$project$Rocks$classicRock1 = _List_fromArray(
 	[
 		_Utils_Tuple2(0.5, 1.0),

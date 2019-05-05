@@ -50,11 +50,11 @@ newGame dims =
     , ships = Dict.empty
     , spaceColor = Color.black
     , transform = (applyMatrix {m11 = (canvas_x / game_x)
-        , m22 = (canvas_y / game_y)
+        , m22 = -1 * (canvas_y / game_y)
         , m12 = 0
         , m21 = 0
         , dx = 0
-        , dy = 0  }
+        , dy = canvas_y  }
         )
     }
 
