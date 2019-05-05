@@ -25,8 +25,19 @@
   </head>
   <body>
     <main></main>
-    <script src="./elixoids.js"></script>
+    <script src="./elm-canvas.2.2.js"></script>
+    <script src="./elixoids.dev.js"></script>
     <script>
+
+        function run(url, id) {
+            var ws = new WebSocket(url);
+            app.ports.addGame.send(id);
+            ws.onmessage = function(message)
+            {
+                app.ports.graphicsIn.send(message.data);
+            };
+        }
+
       var localURL = new URL("ws://localhost:8065/0/graphics");
       var localTestCardURL = new URL("ws://localhost:8065/1/graphics");
       var serverURL = new URL("ws://g0.elixoids.devstopfix.net/0/graphics");
@@ -34,13 +45,8 @@
       var nextGameId = 0;
 
       if (app && app.ports) {
-        const id = nextGameId+=1;
-        var ws = new WebSocket(localTestCardURL);
-        app.ports.addGame.send(id);
-        ws.onmessage = function(message)
-        {
-            app.ports.graphicsIn.send(message.data);
-        };
+        run(localURL, nextGameId+=1 )
+        app.ports.addGame.send(nextGameId+=1);
       }
     </script>
   </body>

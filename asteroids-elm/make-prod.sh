@@ -25,4 +25,4 @@ closure-compiler --js $target2 $canvas --compilation_level SIMPLE_OPTIMIZATIONS 
 
 # PROD
 
-closure-compiler --js $target2 $canvas --compilation_level SIMPLE_OPTIMIZATIONS --language_out ECMASCRIPT_2015 --js_output_file $target
+cp $target6 $target
