@@ -5288,25 +5288,17 @@ var author$project$Game$newGame = function (dims) {
 			{dx: 0, dy: canvas_y, m11: canvas_x / game_x, m12: 0, m21: 0, m22: (-1) * (canvas_y / game_y)})
 	};
 };
-var author$project$Explosions$explosionDuration = 20;
-var avh4$elm_color$Color$scaleFrom255 = function (c) {
-	return c / 255;
-};
-var avh4$elm_color$Color$rgb255 = F3(
-	function (r, g, b) {
-		return A4(
-			avh4$elm_color$Color$RgbaSpace,
-			avh4$elm_color$Color$scaleFrom255(r),
-			avh4$elm_color$Color$scaleFrom255(g),
-			avh4$elm_color$Color$scaleFrom255(b),
-			1.0);
+var author$project$Explosions$explosionDuration = 15;
+var avh4$elm_color$Color$rgba = F4(
+	function (r, g, b, a) {
+		return A4(avh4$elm_color$Color$RgbaSpace, r, g, b, a);
 	});
 var author$project$Explosions$newExplosion = function (p) {
 	return {
-		color: A3(avh4$elm_color$Color$rgb255, 4, 185, 235),
+		color: A4(avh4$elm_color$Color$rgba, 1, 1, 1, 0.9),
 		framesRemaining: author$project$Explosions$explosionDuration,
 		position: p,
-		radius: 30.0
+		radius: 40.0
 	};
 };
 var elm$core$List$append = F2(
@@ -5342,6 +5334,18 @@ var author$project$Asteroids$chooseShape = function (i) {
 			return author$project$Rocks$Classic4;
 	}
 };
+var avh4$elm_color$Color$scaleFrom255 = function (c) {
+	return c / 255;
+};
+var avh4$elm_color$Color$rgb255 = F3(
+	function (r, g, b) {
+		return A4(
+			avh4$elm_color$Color$RgbaSpace,
+			avh4$elm_color$Color$scaleFrom255(r),
+			avh4$elm_color$Color$scaleFrom255(g),
+			avh4$elm_color$Color$scaleFrom255(b),
+			1.0);
+	});
 var author$project$Asteroids$granite = A3(avh4$elm_color$Color$rgb255, 5, 8, 9);
 var author$project$Asteroids$thetaOffset = function (n) {
 	var two_pi = 314;
@@ -6073,10 +6077,6 @@ var author$project$SpaceShip$shipWithRadius = function (r) {
 	return author$project$Polygon$polygonToShape(
 		A3(ianmackenzie$elm_geometry$Polygon2d$scaleAbout, ianmackenzie$elm_geometry$Point2d$origin, r, author$project$SpaceShip$arcadeShipEast));
 };
-var avh4$elm_color$Color$rgba = F4(
-	function (r, g, b, a) {
-		return A4(avh4$elm_color$Color$RgbaSpace, r, g, b, a);
-	});
 var author$project$Ships$newShip = F3(
 	function (id, position, theta) {
 		return {
@@ -6392,7 +6392,7 @@ var author$project$Explosions$updateExplosion = F2(
 	function (t, explosion) {
 		return _Utils_update(
 			explosion,
-			{framesRemaining: explosion.framesRemaining - 1, radius: explosion.radius * 1.13});
+			{framesRemaining: explosion.framesRemaining - 1, radius: explosion.radius * 1.05});
 	});
 var elm$core$List$filter = F2(
 	function (isGood, list) {
@@ -7235,7 +7235,7 @@ var author$project$Explosions$renderExplosion = F2(
 			_List_fromArray(
 				[
 					joakin$elm_canvas$Canvas$stroke(color),
-					joakin$elm_canvas$Canvas$lineWidth(16.0),
+					joakin$elm_canvas$Canvas$fill(color),
 					joakin$elm_canvas$Canvas$transform(
 					_List_fromArray(
 						[

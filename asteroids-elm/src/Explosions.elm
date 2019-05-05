@@ -9,21 +9,20 @@ type alias Radius =
     Float
 
 
-
 type alias Explosion =
-    { position : Point2d, color : Color, framesRemaining : Int, radius : Radius}
+    { position : Point2d, color : Color, framesRemaining : Int, radius : Radius }
 
 
 explosionDuration =
-    20
+    15
 
 
 newExplosion : Point2d -> Explosion
 newExplosion p =
     { position = p
     , framesRemaining = explosionDuration
-    , color = Color.rgb255 4 185 235
-    , radius = 30.0
+    , color = Color.rgba 1 1 1 0.9
+    , radius = 40.0
     }
 
 
@@ -35,7 +34,7 @@ updateExplosions t =
 updateExplosion : Int -> Explosion -> Explosion
 updateExplosion t explosion =
     { explosion
-        | radius = explosion.radius * 1.13
+        | radius = explosion.radius * 1.05
         , framesRemaining = explosion.framesRemaining - 1
     }
 
@@ -54,5 +53,5 @@ renderExplosion tf explosion =
             explosion.color
     in
     shapes
-        [ stroke color, lineWidth 16.0, transform [ tf, translate x y ] ]
+        [ stroke color, fill color, transform [ tf, translate x y ] ]
         [ circle ( 0, 0 ) explosion.radius ]
