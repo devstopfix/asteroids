@@ -19,6 +19,10 @@ type alias Dimension =
     ( Float, Float )
 
 
+type alias WorldTransform =
+    List Transform
+
+
 type alias Game =
     { dimension : Dimension
     , asteroids : Dict Int Asteroid
@@ -26,7 +30,7 @@ type alias Game =
     , explosions : List Explosion
     , ships : Dict String Ship
     , spaceColor : Color
-    , transform : Transform
+    , transform : WorldTransform
     }
 
 
@@ -49,14 +53,22 @@ newGame dims =
     , explosions = []
     , ships = Dict.empty
     , spaceColor = Color.black
-    , transform = (applyMatrix {m11 = (canvas_x / game_x)
-        , m22 = (canvas_y / game_y)
+    , transform = gameTransform dims gameDimensions
+    }
+
+
+gameTransform : Dimension -> Dimension -> WorldTransform
+gameTransform ( canvas_x, canvas_y ) ( game_x, game_y ) =
+    [ translate 0 canvas_y
+    , applyMatrix
+        { m11 = canvas_x / game_x
+        , m22= -1 * (canvas_y / game_y)
         , m12 = 0
         , m21 = 0
         , dx = 0
-        , dy = 0  }
-        )
-    }
+        , dy = 0
+        }
+    ]
 
 
 viewGame : Game -> Html msg

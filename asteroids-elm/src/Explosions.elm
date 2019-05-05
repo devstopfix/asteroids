@@ -49,7 +49,7 @@ isActive e =
     e.framesRemaining > 0
 
 
-renderExplosion : Transform -> Explosion -> Renderable
+renderExplosion : List Transform -> Explosion -> Renderable
 renderExplosion tf explosion =
     let
         ( x, y ) =
@@ -57,7 +57,10 @@ renderExplosion tf explosion =
 
         color =
             explosion.color
+
+        transformations =
+            List.append tf [translate x y]
     in
     shapes
-        [ stroke color, fill color, transform [ tf, translate x y ] ]
+        [ stroke color, fill color, transform transformations ]
         [ circle ( 0, 0 ) explosion.radius ]

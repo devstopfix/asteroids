@@ -38,18 +38,22 @@ newShip id position theta =
     }
 
 
-renderShip : Transform -> Ship -> Renderable
+renderShip : List Transform -> Ship -> Renderable
 renderShip tf ship =
     let
         ( x, y ) =
             coordinates (centerPoint ship.position)
+
+        transformations =
+            List.append tf [ translate x y, rotate ship.theta ]
+
     in
     shapes
-        [ stroke ship.color, transform [ tf, translate x y, rotate ship.theta ], lineWidth 2.0 ]
+        [ stroke ship.color, transform transformations, lineWidth 2.0 ]
         [ ship.shape ]
 
 
-renderTag : Transform -> Ship -> List Renderable
+renderTag : List Transform -> Ship -> List Renderable
 renderTag tf ship =
     let
         ( x, y ) =
@@ -66,8 +70,12 @@ renderTag tf ship =
 
         tagDY =
             tagOffset (radius ship.position)
+
+        transformations =
+            List.append tf [ translate x y, rotate tagTheta, translate -x -y, translate 0 tagDY ]
+
     in
-    [ text [ stroke color, fill color, transform [ tf, translate x y, rotate tagTheta, translate -x -y, translate 0 tagDY ], font { size = 36, family = tagFont }, align Center ] ( x, y ) tag ]
+    [ text [ stroke color, fill color, transform transformations, font { size = 36, family = tagFont }, align Center ] ( x, y ) tag ]
 
 
 offset90deg =

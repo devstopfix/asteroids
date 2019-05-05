@@ -4391,18 +4391,40 @@ var elm$core$Set$toList = function (_n0) {
 	return elm$core$Dict$keys(dict);
 };
 var author$project$Game$gameDimensions = _Utils_Tuple2(4000.0, 2250.0);
-var avh4$elm_color$Color$RgbaSpace = F4(
-	function (a, b, c, d) {
-		return {$: 'RgbaSpace', a: a, b: b, c: c, d: d};
-	});
 var elm$core$Basics$fdiv = _Basics_fdiv;
-var avh4$elm_color$Color$black = A4(avh4$elm_color$Color$RgbaSpace, 0 / 255, 0 / 255, 0 / 255, 1.0);
-var elm$core$Dict$RBEmpty_elm_builtin = {$: 'RBEmpty_elm_builtin'};
-var elm$core$Dict$empty = elm$core$Dict$RBEmpty_elm_builtin;
+var elm$core$Basics$mul = _Basics_mul;
+var elm$core$Basics$negate = function (n) {
+	return -n;
+};
 var joakin$elm_canvas$Canvas$ApplyMatrix = function (a) {
 	return {$: 'ApplyMatrix', a: a};
 };
 var joakin$elm_canvas$Canvas$applyMatrix = joakin$elm_canvas$Canvas$ApplyMatrix;
+var joakin$elm_canvas$Canvas$Translate = F2(
+	function (a, b) {
+		return {$: 'Translate', a: a, b: b};
+	});
+var joakin$elm_canvas$Canvas$translate = joakin$elm_canvas$Canvas$Translate;
+var author$project$Game$gameTransform = F2(
+	function (_n0, _n1) {
+		var canvas_x = _n0.a;
+		var canvas_y = _n0.b;
+		var game_x = _n1.a;
+		var game_y = _n1.b;
+		return _List_fromArray(
+			[
+				A2(joakin$elm_canvas$Canvas$translate, 0, canvas_y),
+				joakin$elm_canvas$Canvas$applyMatrix(
+				{dx: 0, dy: 0, m11: canvas_x / game_x, m12: 0, m21: 0, m22: (-1) * (canvas_y / game_y)})
+			]);
+	});
+var avh4$elm_color$Color$RgbaSpace = F4(
+	function (a, b, c, d) {
+		return {$: 'RgbaSpace', a: a, b: b, c: c, d: d};
+	});
+var avh4$elm_color$Color$black = A4(avh4$elm_color$Color$RgbaSpace, 0 / 255, 0 / 255, 0 / 255, 1.0);
+var elm$core$Dict$RBEmpty_elm_builtin = {$: 'RBEmpty_elm_builtin'};
+var elm$core$Dict$empty = elm$core$Dict$RBEmpty_elm_builtin;
 var author$project$Game$newGame = function (dims) {
 	var _n0 = author$project$Game$gameDimensions;
 	var game_x = _n0.a;
@@ -4417,8 +4439,7 @@ var author$project$Game$newGame = function (dims) {
 		explosions: _List_Nil,
 		ships: elm$core$Dict$empty,
 		spaceColor: avh4$elm_color$Color$black,
-		transform: joakin$elm_canvas$Canvas$applyMatrix(
-			{dx: 0, dy: 0, m11: canvas_x / game_x, m12: 0, m21: 0, m22: canvas_y / game_y})
+		transform: A2(author$project$Game$gameTransform, dims, author$project$Game$gameDimensions)
 	};
 };
 var author$project$Main$sampleGames = _List_fromArray(
@@ -4535,7 +4556,6 @@ var elm$core$Basics$max = F2(
 	function (x, y) {
 		return (_Utils_cmp(x, y) > 0) ? x : y;
 	});
-var elm$core$Basics$mul = _Basics_mul;
 var elm$core$Basics$sub = _Basics_sub;
 var elm$core$Elm$JsArray$length = _JsArray_length;
 var elm$core$Array$builderToArray = F2(
@@ -5399,9 +5419,6 @@ var author$project$Polygon$polygonToShape = A2(
 		A2(elm$core$Basics$composeL, author$project$Polygon$pointsToShape, author$project$Points$convertPoints),
 		author$project$Points$closePolygon),
 	ianmackenzie$elm_geometry$Polygon2d$outerLoop);
-var elm$core$Basics$negate = function (n) {
-	return -n;
-};
 var author$project$Rocks$classicRock1 = _List_fromArray(
 	[
 		_Utils_Tuple2(0.5, 1.0),
@@ -6763,30 +6780,27 @@ var joakin$elm_canvas$Canvas$transform = function (transforms) {
 			},
 			transforms));
 };
-var joakin$elm_canvas$Canvas$Translate = F2(
-	function (a, b) {
-		return {$: 'Translate', a: a, b: b};
-	});
-var joakin$elm_canvas$Canvas$translate = joakin$elm_canvas$Canvas$Translate;
 var author$project$Asteroids$renderAsteroid = F2(
 	function (tf, asteroid) {
 		var _n0 = ianmackenzie$elm_geometry$Point2d$coordinates(
 			ianmackenzie$elm_geometry$Circle2d$centerPoint(asteroid.position));
 		var x = _n0.a;
 		var y = _n0.b;
+		var transformations = A2(
+			elm$core$List$append,
+			tf,
+			_List_fromArray(
+				[
+					A2(joakin$elm_canvas$Canvas$translate, x, y),
+					joakin$elm_canvas$Canvas$rotate(asteroid.theta)
+				]));
 		return A2(
 			joakin$elm_canvas$Canvas$shapes,
 			_List_fromArray(
 				[
 					joakin$elm_canvas$Canvas$stroke(avh4$elm_color$Color$gray),
 					joakin$elm_canvas$Canvas$fill(asteroid.color),
-					joakin$elm_canvas$Canvas$transform(
-					_List_fromArray(
-						[
-							tf,
-							A2(joakin$elm_canvas$Canvas$translate, x, y),
-							joakin$elm_canvas$Canvas$rotate(asteroid.theta)
-						])),
+					joakin$elm_canvas$Canvas$transform(transformations),
 					joakin$elm_canvas$Canvas$lineWidth(4.0)
 				]),
 			_List_fromArray(
@@ -6801,18 +6815,20 @@ var author$project$Bullets$renderBullet = F2(
 		var _n0 = ianmackenzie$elm_geometry$Point2d$coordinates(bullet.position);
 		var x = _n0.a;
 		var y = _n0.b;
+		var transformations = A2(
+			elm$core$List$append,
+			tf,
+			_List_fromArray(
+				[
+					A2(joakin$elm_canvas$Canvas$translate, x, y)
+				]));
 		return A2(
 			joakin$elm_canvas$Canvas$shapes,
 			_List_fromArray(
 				[
 					joakin$elm_canvas$Canvas$stroke(bullet.color),
 					joakin$elm_canvas$Canvas$fill(bullet.color),
-					joakin$elm_canvas$Canvas$transform(
-					_List_fromArray(
-						[
-							tf,
-							A2(joakin$elm_canvas$Canvas$translate, x, y)
-						]))
+					joakin$elm_canvas$Canvas$transform(transformations)
 				]),
 			_List_fromArray(
 				[bullet.shape]));
@@ -6827,18 +6843,20 @@ var author$project$Explosions$renderExplosion = F2(
 		var _n0 = ianmackenzie$elm_geometry$Point2d$coordinates(explosion.position);
 		var x = _n0.a;
 		var y = _n0.b;
+		var transformations = A2(
+			elm$core$List$append,
+			tf,
+			_List_fromArray(
+				[
+					A2(joakin$elm_canvas$Canvas$translate, x, y)
+				]));
 		return A2(
 			joakin$elm_canvas$Canvas$shapes,
 			_List_fromArray(
 				[
 					joakin$elm_canvas$Canvas$stroke(color),
 					joakin$elm_canvas$Canvas$fill(color),
-					joakin$elm_canvas$Canvas$transform(
-					_List_fromArray(
-						[
-							tf,
-							A2(joakin$elm_canvas$Canvas$translate, x, y)
-						]))
+					joakin$elm_canvas$Canvas$transform(transformations)
 				]),
 			_List_fromArray(
 				[
@@ -6858,18 +6876,20 @@ var author$project$Ships$renderShip = F2(
 			ianmackenzie$elm_geometry$Circle2d$centerPoint(ship.position));
 		var x = _n0.a;
 		var y = _n0.b;
+		var transformations = A2(
+			elm$core$List$append,
+			tf,
+			_List_fromArray(
+				[
+					A2(joakin$elm_canvas$Canvas$translate, x, y),
+					joakin$elm_canvas$Canvas$rotate(ship.theta)
+				]));
 		return A2(
 			joakin$elm_canvas$Canvas$shapes,
 			_List_fromArray(
 				[
 					joakin$elm_canvas$Canvas$stroke(ship.color),
-					joakin$elm_canvas$Canvas$transform(
-					_List_fromArray(
-						[
-							tf,
-							A2(joakin$elm_canvas$Canvas$translate, x, y),
-							joakin$elm_canvas$Canvas$rotate(ship.theta)
-						])),
+					joakin$elm_canvas$Canvas$transform(transformations),
 					joakin$elm_canvas$Canvas$lineWidth(2.0)
 				]),
 			_List_fromArray(
@@ -6983,6 +7003,16 @@ var author$project$Ships$renderTag = F2(
 			ianmackenzie$elm_geometry$Circle2d$centerPoint(ship.position));
 		var x = _n0.a;
 		var y = _n0.b;
+		var transformations = A2(
+			elm$core$List$append,
+			tf,
+			_List_fromArray(
+				[
+					A2(joakin$elm_canvas$Canvas$translate, x, y),
+					joakin$elm_canvas$Canvas$rotate(tagTheta),
+					A2(joakin$elm_canvas$Canvas$translate, -x, -y),
+					A2(joakin$elm_canvas$Canvas$translate, 0, tagDY)
+				]));
 		return _List_fromArray(
 			[
 				A3(
@@ -6991,15 +7021,7 @@ var author$project$Ships$renderTag = F2(
 					[
 						joakin$elm_canvas$Canvas$stroke(color),
 						joakin$elm_canvas$Canvas$fill(color),
-						joakin$elm_canvas$Canvas$transform(
-						_List_fromArray(
-							[
-								tf,
-								A2(joakin$elm_canvas$Canvas$translate, x, y),
-								joakin$elm_canvas$Canvas$rotate(tagTheta),
-								A2(joakin$elm_canvas$Canvas$translate, -x, -y),
-								A2(joakin$elm_canvas$Canvas$translate, 0, tagDY)
-							])),
+						joakin$elm_canvas$Canvas$transform(transformations),
 						joakin$elm_canvas$Canvas$font(
 						{family: author$project$Ships$tagFont, size: 36}),
 						joakin$elm_canvas$Canvas$align(joakin$elm_canvas$Canvas$Center)

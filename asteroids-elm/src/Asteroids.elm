@@ -1,11 +1,11 @@
-module Asteroids exposing (Asteroid, newAsteroid, rotateAsteroids, renderAsteroid)
+module Asteroids exposing (Asteroid, newAsteroid, renderAsteroid, rotateAsteroids)
 
 import Canvas exposing (..)
 import Circle2d exposing (Circle2d, centerPoint, radius)
 import Color exposing (Color)
 import Dict exposing (Dict)
-import Points exposing (convertPoints)
 import Point2d exposing (coordinates)
+import Points exposing (convertPoints)
 import Polygon exposing (pointsToShape)
 import Rocks exposing (..)
 import Shapes exposing (rockWithRadius)
@@ -90,20 +90,24 @@ cycle t =
     f * 2 * pi
 
 
-thetaOffset: Int -> Theta
+thetaOffset : Int -> Theta
 thetaOffset n =
     let
-        two_pi = 314
+        two_pi =
+            314
     in
-        toFloat (modBy two_pi n) / two_pi
+    toFloat (modBy two_pi n) / two_pi
 
 
-renderAsteroid : Transform -> Asteroid -> Renderable
+renderAsteroid : List Transform -> Asteroid -> Renderable
 renderAsteroid tf asteroid =
     let
         ( x, y ) =
             coordinates (centerPoint asteroid.position)
+
+        transformations =
+            List.append tf [ translate x y, rotate asteroid.theta ]
     in
     shapes
-        [ stroke Color.gray, fill asteroid.color, transform [ tf, translate x y, rotate asteroid.theta ], lineWidth 4.0 ]
+        [ stroke Color.gray, fill asteroid.color, transform transformations, lineWidth 4.0 ]
         [ asteroid.shape ]

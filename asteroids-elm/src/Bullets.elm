@@ -22,12 +22,15 @@ newBullet id position =
     }
 
 
-renderBullet : Transform -> Bullet -> Renderable
+renderBullet : List Transform -> Bullet -> Renderable
 renderBullet tf bullet =
     let
         ( x, y ) =
             coordinates bullet.position
+
+        transformations =
+            List.append tf [translate x y]
     in
     shapes
-        [ stroke bullet.color, fill bullet.color, transform [ tf, translate x y ] ]
+        [ stroke bullet.color, fill bullet.color, transform transformations ]
         [ bullet.shape ]
