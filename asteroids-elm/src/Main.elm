@@ -6,10 +6,10 @@ import Browser.Events exposing (onAnimationFrameDelta)
 import Canvas exposing (..)
 import Debug exposing (log)
 import Explosions exposing (updateExplosions)
-import Game exposing (Game, newGame, viewGame, mergeGame)
+import Game exposing (Game, mergeGame, newGame, viewGame)
 import Html exposing (Html, div, p, text)
 import Html.Attributes exposing (style)
-import Json.Decode exposing (decodeString, Error)
+import Json.Decode exposing (Error, decodeString)
 import StateParser exposing (gameDecoder)
 
 
@@ -56,13 +56,7 @@ initState =
 
 
 sampleGames =
-    [ newGame ( 800, 450 )
-    -- , newGame ( 400, 225 )
-    -- , newGame ( 400, 225 )
-    -- , newGame ( 200, 112 )
-    -- , newGame ( 200, 112 )
-    -- , newGame ( 200, 112 )
-    -- , newGame ( 200, 112 )
+    [ newGame ( 1400, 788 )
     ]
 
 
@@ -73,10 +67,7 @@ view model =
             model.count
     in
     div []
-        (List.append
-            (List.map (\g -> Game.viewGame g) model.games)
-            [ p [] [ text "Hello, Player!" ] ]
-        )
+        (List.map (\g -> Game.viewGame g) model.games)
 
 
 update msg model =
@@ -92,9 +83,11 @@ update msg model =
         GraphicsIn state_json ->
             case model.games of
                 [] ->
-                    ( model, Cmd.none)
-                [game] ->
-                    ( {model | games = [ (mergeGraphics game state_json) ] }, Cmd.none)
+                    ( model, Cmd.none )
+
+                [ game ] ->
+                    ( { model | games = [ mergeGraphics game state_json ] }, Cmd.none )
+
                 _ ->
                     ( model, Cmd.none )
 
@@ -103,6 +96,7 @@ mergeGraphics model state_json =
     case Json.Decode.decodeString StateParser.gameDecoder state_json of
         Ok graphics ->
             mergeGame model graphics
+
         Err _ ->
             model
 

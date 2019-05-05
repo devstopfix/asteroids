@@ -84,7 +84,7 @@ viewGame game =
             renderSpace game
     in
     Canvas.toHtml ( round width, round height )
-        [ style "border" "2px solid darkred" ]
+        [ ]
         (List.foldl List.append [] [ explosions, asteroids, ships, bullets, tags, space ])
 
 

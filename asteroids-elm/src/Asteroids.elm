@@ -1,11 +1,11 @@
-module Asteroids exposing (Asteroid, newAsteroid, rotateAsteroids, renderAsteroid)
+module Asteroids exposing (Asteroid, newAsteroid, renderAsteroid, rotateAsteroids)
 
 import Canvas exposing (..)
 import Circle2d exposing (Circle2d, centerPoint, radius)
 import Color exposing (Color)
 import Dict exposing (Dict)
-import Points exposing (convertPoints)
 import Point2d exposing (coordinates)
+import Points exposing (convertPoints)
 import Polygon exposing (pointsToShape)
 import Rocks exposing (..)
 import Shapes exposing (rockWithRadius)
@@ -41,8 +41,14 @@ newAsteroid id position =
     , theta = 0.0
     , theta0 = thetaOffset id
     , shape = shape
-    , color = Color.rgb255 1 1 1
+    , color = granite
     }
+
+
+-- https://encycolorpedia.com/2f353b
+granite=
+    Color.rgb255 5 8 9
+
 
 
 chooseShape : Int -> RockType
@@ -90,12 +96,13 @@ cycle t =
     f * 2 * pi
 
 
-thetaOffset: Int -> Theta
+thetaOffset : Int -> Theta
 thetaOffset n =
     let
-        two_pi = 314
+        two_pi =
+            314
     in
-        toFloat (modBy two_pi n) / two_pi
+    toFloat (modBy two_pi n) / two_pi
 
 
 renderAsteroid : Transform -> Asteroid -> Renderable

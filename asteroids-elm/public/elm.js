@@ -4428,7 +4428,7 @@ var author$project$Game$newGame = function (dims) {
 var author$project$Main$sampleGames = _List_fromArray(
 	[
 		author$project$Game$newGame(
-		_Utils_Tuple2(800, 450))
+		_Utils_Tuple2(1400, 788))
 	]);
 var author$project$Main$initState = {count: 0, games: author$project$Main$sampleGames};
 var author$project$Main$Frame = function (a) {
@@ -5289,17 +5289,24 @@ var author$project$Main$subscriptions = function (model) {
 			]));
 };
 var author$project$Explosions$explosionDuration = 20;
-var avh4$elm_color$Color$rgb = F3(
+var avh4$elm_color$Color$scaleFrom255 = function (c) {
+	return c / 255;
+};
+var avh4$elm_color$Color$rgb255 = F3(
 	function (r, g, b) {
-		return A4(avh4$elm_color$Color$RgbaSpace, r, g, b, 1.0);
+		return A4(
+			avh4$elm_color$Color$RgbaSpace,
+			avh4$elm_color$Color$scaleFrom255(r),
+			avh4$elm_color$Color$scaleFrom255(g),
+			avh4$elm_color$Color$scaleFrom255(b),
+			1.0);
 	});
 var author$project$Explosions$newExplosion = function (p) {
 	return {
-		color: A3(avh4$elm_color$Color$rgb, 0.86, 1.0, 1.0),
+		color: A3(avh4$elm_color$Color$rgb255, 4, 185, 235),
 		framesRemaining: author$project$Explosions$explosionDuration,
-		opacity: 0.98,
 		position: p,
-		radius: 60.0
+		radius: 30.0
 	};
 };
 var elm$core$List$append = F2(
@@ -5335,6 +5342,7 @@ var author$project$Asteroids$chooseShape = function (i) {
 			return author$project$Rocks$Classic4;
 	}
 };
+var author$project$Asteroids$granite = A3(avh4$elm_color$Color$rgb255, 5, 8, 9);
 var author$project$Asteroids$thetaOffset = function (n) {
 	var two_pi = 314;
 	return A2(elm$core$Basics$modBy, two_pi, n) / two_pi;
@@ -5651,18 +5659,6 @@ var author$project$Shapes$rockWithRadius = F2(
 		return author$project$Polygon$polygonToShape(
 			A3(ianmackenzie$elm_geometry$Polygon2d$scaleAbout, ianmackenzie$elm_geometry$Point2d$origin, radius, rock));
 	});
-var avh4$elm_color$Color$scaleFrom255 = function (c) {
-	return c / 255;
-};
-var avh4$elm_color$Color$rgb255 = F3(
-	function (r, g, b) {
-		return A4(
-			avh4$elm_color$Color$RgbaSpace,
-			avh4$elm_color$Color$scaleFrom255(r),
-			avh4$elm_color$Color$scaleFrom255(g),
-			avh4$elm_color$Color$scaleFrom255(b),
-			1.0);
-	});
 var ianmackenzie$elm_geometry$Circle2d$radius = function (_n0) {
 	var properties = _n0.a;
 	return properties.radius;
@@ -5675,7 +5671,7 @@ var author$project$Asteroids$newAsteroid = F2(
 			rock,
 			ianmackenzie$elm_geometry$Circle2d$radius(position));
 		return {
-			color: A3(avh4$elm_color$Color$rgb255, 1, 1, 1),
+			color: author$project$Asteroids$granite,
 			id: id,
 			position: position,
 			shape: shape,
@@ -6397,7 +6393,7 @@ var author$project$Explosions$updateExplosion = F2(
 	function (t, explosion) {
 		return _Utils_update(
 			explosion,
-			{framesRemaining: explosion.framesRemaining - 1, opacity: explosion.opacity * 0.9, radius: explosion.radius * 1.05});
+			{framesRemaining: explosion.framesRemaining - 1, radius: explosion.radius * 1.13});
 	});
 var elm$core$List$filter = F2(
 	function (isGood, list) {
@@ -6832,7 +6828,7 @@ var author$project$Explosions$renderExplosion = F2(
 			_List_fromArray(
 				[
 					joakin$elm_canvas$Canvas$stroke(color),
-					joakin$elm_canvas$Canvas$fill(color),
+					joakin$elm_canvas$Canvas$lineWidth(16.0),
 					joakin$elm_canvas$Canvas$transform(
 					_List_fromArray(
 						[
@@ -7029,8 +7025,6 @@ var elm$core$Dict$values = function (dict) {
 		_List_Nil,
 		dict);
 };
-var elm$virtual_dom$VirtualDom$style = _VirtualDom_style;
-var elm$html$Html$Attributes$style = elm$virtual_dom$VirtualDom$style;
 var elm$html$Html$canvas = _VirtualDom_node('canvas');
 var elm$virtual_dom$VirtualDom$node = function (tag) {
 	return _VirtualDom_node(
@@ -7585,10 +7579,7 @@ var author$project$Game$viewGame = function (game) {
 		_Utils_Tuple2(
 			elm$core$Basics$round(width),
 			elm$core$Basics$round(height)),
-		_List_fromArray(
-			[
-				A2(elm$html$Html$Attributes$style, 'border', '2px solid darkred')
-			]),
+		_List_Nil,
 		A3(
 			elm$core$List$foldl,
 			elm$core$List$append,
@@ -7597,32 +7588,17 @@ var author$project$Game$viewGame = function (game) {
 				[explosions, asteroids, ships, bullets, tags, space])));
 };
 var elm$html$Html$div = _VirtualDom_node('div');
-var elm$html$Html$p = _VirtualDom_node('p');
-var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
-var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
 var author$project$Main$view = function (model) {
 	var t = model.count;
 	return A2(
 		elm$html$Html$div,
 		_List_Nil,
 		A2(
-			elm$core$List$append,
-			A2(
-				elm$core$List$map,
-				function (g) {
-					return author$project$Game$viewGame(g);
-				},
-				model.games),
-			_List_fromArray(
-				[
-					A2(
-					elm$html$Html$p,
-					_List_Nil,
-					_List_fromArray(
-						[
-							elm$html$Html$text('Hello, Player!')
-						]))
-				])));
+			elm$core$List$map,
+			function (g) {
+				return author$project$Game$viewGame(g);
+			},
+			model.games));
 };
 var elm$browser$Browser$element = _Browser_element;
 var author$project$Main$main = elm$browser$Browser$element(
