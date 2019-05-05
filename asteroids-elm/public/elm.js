@@ -4399,11 +4399,10 @@ var elm$core$Basics$fdiv = _Basics_fdiv;
 var avh4$elm_color$Color$black = A4(avh4$elm_color$Color$RgbaSpace, 0 / 255, 0 / 255, 0 / 255, 1.0);
 var elm$core$Dict$RBEmpty_elm_builtin = {$: 'RBEmpty_elm_builtin'};
 var elm$core$Dict$empty = elm$core$Dict$RBEmpty_elm_builtin;
-var joakin$elm_canvas$Canvas$Scale = F2(
-	function (a, b) {
-		return {$: 'Scale', a: a, b: b};
-	});
-var joakin$elm_canvas$Canvas$scale = joakin$elm_canvas$Canvas$Scale;
+var joakin$elm_canvas$Canvas$ApplyMatrix = function (a) {
+	return {$: 'ApplyMatrix', a: a};
+};
+var joakin$elm_canvas$Canvas$applyMatrix = joakin$elm_canvas$Canvas$ApplyMatrix;
 var author$project$Game$newGame = function (dims) {
 	var _n0 = author$project$Game$gameDimensions;
 	var game_x = _n0.a;
@@ -4416,9 +4415,10 @@ var author$project$Game$newGame = function (dims) {
 		bullets: elm$core$Dict$empty,
 		dimension: dims,
 		explosions: _List_Nil,
-		ships: _List_Nil,
+		ships: elm$core$Dict$empty,
 		spaceColor: avh4$elm_color$Color$black,
-		transform: A2(joakin$elm_canvas$Canvas$scale, canvas_x / game_x, canvas_y / game_y)
+		transform: joakin$elm_canvas$Canvas$applyMatrix(
+			{dx: 0, dy: 0, m11: canvas_x / game_x, m12: 0, m21: 0, m22: canvas_y / game_y})
 	};
 };
 var author$project$Main$sampleGames = _List_fromArray(
@@ -5292,7 +5292,7 @@ var avh4$elm_color$Color$rgb = F3(
 	});
 var author$project$Explosions$newExplosion = function (p) {
 	return {
-		color: A3(avh4$elm_color$Color$rgb, 0.8, 0.8, 1.0),
+		color: A3(avh4$elm_color$Color$rgb, 0.86, 1.0, 1.0),
 		framesRemaining: author$project$Explosions$explosionDuration,
 		opacity: 0.98,
 		position: p,
@@ -5994,6 +5994,147 @@ var author$project$Game$updateBullets = F2(
 			author$project$Game$toBulletMap(bullets),
 			game_bullets);
 	});
+var ianmackenzie$elm_geometry$Point2d$centroidHelp = F6(
+	function (x0, y0, count, dx, dy, points) {
+		centroidHelp:
+		while (true) {
+			if (points.b) {
+				var point = points.a;
+				var remaining = points.b;
+				var _n1 = ianmackenzie$elm_geometry$Point2d$coordinates(point);
+				var x = _n1.a;
+				var y = _n1.b;
+				var newDx = dx + (x - x0);
+				var newDy = dy + (y - y0);
+				var $temp$x0 = x0,
+					$temp$y0 = y0,
+					$temp$count = count + 1,
+					$temp$dx = newDx,
+					$temp$dy = newDy,
+					$temp$points = remaining;
+				x0 = $temp$x0;
+				y0 = $temp$y0;
+				count = $temp$count;
+				dx = $temp$dx;
+				dy = $temp$dy;
+				points = $temp$points;
+				continue centroidHelp;
+			} else {
+				return ianmackenzie$elm_geometry$Point2d$fromCoordinates(
+					_Utils_Tuple2(x0 + (dx / count), y0 + (dy / count)));
+			}
+		}
+	});
+var ianmackenzie$elm_geometry$Point2d$centroid = function (points) {
+	if (!points.b) {
+		return elm$core$Maybe$Nothing;
+	} else {
+		var first = points.a;
+		var rest = points.b;
+		var _n1 = ianmackenzie$elm_geometry$Point2d$coordinates(first);
+		var x0 = _n1.a;
+		var y0 = _n1.b;
+		return elm$core$Maybe$Just(
+			A6(ianmackenzie$elm_geometry$Point2d$centroidHelp, x0, y0, 1, 0, 0, rest));
+	}
+};
+var author$project$Polygon$polygonCentroid = A2(elm$core$Basics$composeL, ianmackenzie$elm_geometry$Point2d$centroid, ianmackenzie$elm_geometry$Polygon2d$outerLoop);
+var ianmackenzie$elm_geometry$Polygon2d$translateBy = function (vector) {
+	return A2(
+		ianmackenzie$elm_geometry$Polygon2d$mapVertices,
+		ianmackenzie$elm_geometry$Point2d$translateBy(vector),
+		false);
+};
+var author$project$SpaceShip$centreAboutMass = function (ship) {
+	var _n0 = author$project$Polygon$polygonCentroid(ship);
+	if (_n0.$ === 'Nothing') {
+		return ship;
+	} else {
+		var c = _n0.a;
+		return A2(
+			ianmackenzie$elm_geometry$Polygon2d$translateBy,
+			A2(ianmackenzie$elm_geometry$Vector2d$from, c, ianmackenzie$elm_geometry$Point2d$origin),
+			ship);
+	}
+};
+var author$project$SpaceShip$arcadeShipEast = author$project$SpaceShip$centreAboutMass(
+	A3(
+		ianmackenzie$elm_geometry$Polygon2d$scaleAbout,
+		ianmackenzie$elm_geometry$Point2d$origin,
+		1.0 / 24.0,
+		ianmackenzie$elm_geometry$Polygon2d$singleLoop(
+			author$project$Points$readPoints(
+				_List_fromArray(
+					[
+						_Utils_Tuple2(24, 0),
+						_Utils_Tuple2(-24, -16),
+						_Utils_Tuple2(-16, -8),
+						_Utils_Tuple2(-16, 8),
+						_Utils_Tuple2(-24, 16),
+						_Utils_Tuple2(24, 0)
+					])))));
+var author$project$SpaceShip$shipWithRadius = function (r) {
+	return author$project$Polygon$polygonToShape(
+		A3(ianmackenzie$elm_geometry$Polygon2d$scaleAbout, ianmackenzie$elm_geometry$Point2d$origin, r, author$project$SpaceShip$arcadeShipEast));
+};
+var avh4$elm_color$Color$rgba = F4(
+	function (r, g, b, a) {
+		return A4(avh4$elm_color$Color$RgbaSpace, r, g, b, a);
+	});
+var author$project$Ships$newShip = F3(
+	function (id, position, theta) {
+		return {
+			color: A3(avh4$elm_color$Color$rgb255, 251, 255, 251),
+			id: id,
+			position: position,
+			shape: author$project$SpaceShip$shipWithRadius(
+				ianmackenzie$elm_geometry$Circle2d$radius(position)),
+			tagColor: A4(avh4$elm_color$Color$rgba, 1, 1, 1, 0.8),
+			theta: theta
+		};
+	});
+var author$project$Game$mergeShips = F2(
+	function (graphics_ships, game_ships) {
+		return A6(
+			elm$core$Dict$merge,
+			F2(
+				function (id, a) {
+					return A2(
+						elm$core$Dict$insert,
+						id,
+						A3(author$project$Ships$newShip, id, a.location, a.theta));
+				}),
+			F3(
+				function (id, a, b) {
+					return A2(
+						elm$core$Dict$insert,
+						id,
+						_Utils_update(
+							b,
+							{position: a.location, theta: a.theta}));
+				}),
+			F2(
+				function (id, _n0) {
+					return elm$core$Basics$identity;
+				}),
+			graphics_ships,
+			game_ships,
+			elm$core$Dict$empty);
+	});
+var author$project$Game$toShipMap = A2(
+	elm$core$Basics$composeL,
+	elm$core$Dict$fromList,
+	elm$core$List$map(
+		function (a) {
+			return _Utils_Tuple2(a.id, a);
+		}));
+var author$project$Game$updateShips = F2(
+	function (ships, game_ships) {
+		return A2(
+			author$project$Game$mergeShips,
+			author$project$Game$toShipMap(ships),
+			game_ships);
+	});
 var author$project$Game$mergeGame = F2(
 	function (game, graphics) {
 		return _Utils_update(
@@ -6001,7 +6142,8 @@ var author$project$Game$mergeGame = F2(
 			{
 				asteroids: A2(author$project$Game$updateAsteroids, graphics.asteroids, game.asteroids),
 				bullets: A2(author$project$Game$updateBullets, graphics.bullets, game.bullets),
-				explosions: A2(author$project$Game$appendExplosions, graphics.explosions, game.explosions)
+				explosions: A2(author$project$Game$appendExplosions, graphics.explosions, game.explosions),
+				ships: A2(author$project$Game$updateShips, graphics.ships, game.ships)
 			});
 	});
 var author$project$StateParser$Graphics = F5(
@@ -6255,7 +6397,7 @@ var author$project$Explosions$updateExplosion = F2(
 	function (t, explosion) {
 		return _Utils_update(
 			explosion,
-			{framesRemaining: explosion.framesRemaining - 1, opacity: explosion.opacity * 0.95, radius: explosion.radius * 1.05});
+			{framesRemaining: explosion.framesRemaining - 1, opacity: explosion.opacity * 0.9, radius: explosion.radius * 1.05});
 	});
 var elm$core$List$filter = F2(
 	function (isGood, list) {
@@ -6712,7 +6854,8 @@ var author$project$Game$renderExplosions = function (tf) {
 };
 var author$project$Ships$renderShip = F2(
 	function (tf, ship) {
-		var _n0 = ship.position;
+		var _n0 = ianmackenzie$elm_geometry$Point2d$coordinates(
+			ianmackenzie$elm_geometry$Circle2d$centerPoint(ship.position));
 		var x = _n0.a;
 		var y = _n0.b;
 		return A2(
@@ -6832,10 +6975,12 @@ var joakin$elm_canvas$Canvas$text = F3(
 var author$project$Ships$renderTag = F2(
 	function (tf, ship) {
 		var tagTheta = author$project$Ships$offset90deg(ship.theta);
-		var tagDY = author$project$Ships$tagOffset(ship.radius);
+		var tagDY = author$project$Ships$tagOffset(
+			ianmackenzie$elm_geometry$Circle2d$radius(ship.position));
 		var tag = author$project$Ships$trimTag(ship.id);
 		var color = ship.tagColor;
-		var _n0 = ship.position;
+		var _n0 = ianmackenzie$elm_geometry$Point2d$coordinates(
+			ianmackenzie$elm_geometry$Circle2d$centerPoint(ship.position));
 		var x = _n0.a;
 		var y = _n0.b;
 		return _List_fromArray(
@@ -7414,9 +7559,15 @@ var joakin$elm_canvas$Canvas$toHtml = F3(
 				]));
 	});
 var author$project$Game$viewGame = function (game) {
-	var tags = A2(author$project$Game$renderTags, game.transform, game.ships);
+	var tags = A2(
+		author$project$Game$renderTags,
+		game.transform,
+		elm$core$Dict$values(game.ships));
 	var space = author$project$Game$renderSpace(game);
-	var ships = A2(author$project$Game$renderShips, game.transform, game.ships);
+	var ships = A2(
+		author$project$Game$renderShips,
+		game.transform,
+		elm$core$Dict$values(game.ships));
 	var explosions = A2(author$project$Game$renderExplosions, game.transform, game.explosions);
 	var bullets = A2(
 		author$project$Game$renderBullets,

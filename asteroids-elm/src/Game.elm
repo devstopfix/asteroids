@@ -12,7 +12,7 @@ import Html.Attributes exposing (style)
 import List.FlatMap exposing (flatMap)
 import Point2d exposing (origin)
 import Ships exposing (..)
-import StateParser exposing (AsteroidLocation, BulletLocation, Graphics, Id)
+import StateParser exposing (AsteroidLocation, BulletLocation, Graphics, Id, ShipLocation)
 
 
 type alias Dimension =
@@ -24,7 +24,7 @@ type alias Game =
     , asteroids : Dict Int Asteroid
     , bullets : Dict Int Bullet
     , explosions : List Explosion
-    , ships : List Ship
+    , ships : Dict String Ship
     , spaceColor : Color
     , transform : Transform
     }
@@ -47,9 +47,15 @@ newGame dims =
     , asteroids = Dict.empty
     , bullets = Dict.empty
     , explosions = []
-    , ships = []
+    , ships = Dict.empty
     , spaceColor = Color.black
-    , transform = scale (canvas_x / game_x) (canvas_y / game_y)
+    , transform = (applyMatrix {m11 = (canvas_x / game_x)
+        , m22 = (canvas_y / game_y)
+        , m12 = 0
+        , m21 = 0
+        , dx = 0
+        , dy = 0  }
+        )
     }
 
 
@@ -69,10 +75,10 @@ viewGame game =
             renderExplosions game.transform game.explosions
 
         ships =
-            renderShips game.transform game.ships
+            renderShips game.transform (Dict.values game.ships)
 
         tags =
-            renderTags game.transform game.ships
+            renderTags game.transform (Dict.values game.ships)
 
         space =
             renderSpace game
@@ -120,6 +126,7 @@ mergeGame game graphics =
         | asteroids = updateAsteroids graphics.asteroids game.asteroids
         , bullets = updateBullets graphics.bullets game.bullets
         , explosions = appendExplosions graphics.explosions game.explosions
+        , ships = updateShips graphics.ships game.ships
     }
 
 
@@ -167,4 +174,24 @@ mergeBullets graphics_bullets game_bullets =
         (\id _ -> identity)
         graphics_bullets
         game_bullets
+        Dict.empty
+
+
+updateShips ships game_ships =
+    mergeShips (toShipMap ships) game_ships
+
+
+toShipMap : List ShipLocation -> Dict String ShipLocation
+toShipMap =
+    Dict.fromList << List.map (\a -> ( a.id, a ))
+
+
+mergeShips : Dict String ShipLocation -> Dict String Ship -> Dict String Ship
+mergeShips graphics_ships game_ships =
+    Dict.merge
+        (\id a -> Dict.insert id (newShip id a.location a.theta))
+        (\id a b -> Dict.insert id { b | position = a.location, theta = a.theta })
+        (\id _ -> identity)
+        graphics_ships
+        game_ships
         Dict.empty
