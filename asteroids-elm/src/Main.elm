@@ -4,7 +4,7 @@ import Asteroids exposing (rotateAsteroids)
 import Browser
 import Browser.Events exposing (onAnimationFrameDelta)
 import Canvas exposing (..)
-import Debug exposing (log)
+import Dict exposing (Dict)
 import Explosions exposing (updateExplosions)
 import Game exposing (Game, mergeGame, newGame, viewGame)
 import Html exposing (Html, div, p, text)
@@ -16,15 +16,18 @@ import StateParser exposing (gameDecoder)
 port graphicsIn : (String -> msg) -> Sub msg
 
 
-type alias Model =
-    { count : Int
-    , games : List Game
-    }
+port addGame : (Int -> msg) -> Sub msg
+
+
+type alias GameId = Int
+
+type alias Model = Dict GameId Game
 
 
 type Msg
     = Frame Float
     | GraphicsIn String
+    | AddGame Int
 
 
 main : Program () Model Msg
@@ -32,7 +35,7 @@ main =
     Browser.element
         { init =
             \() ->
-                ( initState
+                ( Dict.empty
                 , Cmd.none
                 )
         , view = view
@@ -46,53 +49,38 @@ subscriptions model =
     Sub.batch
         [ graphicsIn GraphicsIn
         , onAnimationFrameDelta Frame
+        , addGame AddGame
         ]
 
 
-initState =
-    { count = 0
-    , games = sampleGames
-    }
-
-
-sampleGames =
-    [ newGame ( 1400, 788 )
-    ]
 
 
 view : Model -> Html msg
-view model =
-    let
-        t =
-            model.count
-    in
+view games =
     div []
-        (List.map (\g -> Game.viewGame g) model.games)
+        (List.map (\g -> Game.viewGame g) (Dict.values games) )
 
 
-update msg model =
+update msg games =
     case msg of
         Frame _ ->
-            ( { model
-                | count = model.count + 1
-                , games = updateGames model.count model.games
-              }
+            ( updateGames 0 games
             , Cmd.none
             )
 
         GraphicsIn state_json ->
-            case model.games of
-                [] ->
-                    ( model, Cmd.none )
-
-                [ game ] ->
-                    ( { model | games = [ mergeGraphics game state_json ] }, Cmd.none )
-
-                _ ->
-                    ( model, Cmd.none )
+            ( Dict.update 1 (Maybe.map (mergeGraphics state_json)) games, Cmd.none )
 
 
-mergeGraphics model state_json =
+        AddGame id ->
+            let
+                game =
+                    newGame ( 1400, 788 )
+            in
+            ( Dict.insert id game games , Cmd.none )
+
+
+mergeGraphics state_json model =
     case Json.Decode.decodeString StateParser.gameDecoder state_json of
         Ok graphics ->
             mergeGame model graphics
@@ -101,9 +89,9 @@ mergeGraphics model state_json =
             model
 
 
-updateGames : Int -> List Game -> List Game
+updateGames : GameId -> Dict GameId Game -> Dict GameId Game
 updateGames t =
-    List.map (updateGame t)
+    Dict.map (\_ g -> (updateGame t g) )
 
 
 updateGame : Int -> Game -> Game
