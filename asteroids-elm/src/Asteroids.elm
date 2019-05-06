@@ -111,14 +111,14 @@ thetaOffset n =
     toFloat (modBy two_pi n) / two_pi
 
 
-renderAsteroid : List Transform -> Asteroid -> Renderable
+renderAsteroid : Transform -> Asteroid -> Renderable
 renderAsteroid tf asteroid =
     let
         ( x, y ) =
             coordinates (centerPoint asteroid.position)
 
         transformations =
-            List.append tf [ translate x y, rotate asteroid.theta ]
+            [tf, translate x y, rotate asteroid.theta ]
     in
     shapes
         [ stroke Color.gray, fill asteroid.color, transform transformations, lineWidth 4.0 ]

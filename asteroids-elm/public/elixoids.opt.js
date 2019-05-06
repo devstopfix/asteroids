@@ -7130,19 +7130,19 @@ var author$project$Asteroids$renderAsteroid = F2(
 			ianmackenzie$elm_geometry$Circle2d$centerPoint(asteroid.br));
 		var x = _n0.a;
 		var y = _n0.b;
+		var transformations = _List_fromArray(
+			[
+				tf,
+				A2(joakin$elm_canvas$Canvas$translate, x, y),
+				joakin$elm_canvas$Canvas$rotate(asteroid.aM)
+			]);
 		return A2(
 			joakin$elm_canvas$Canvas$shapes,
 			_List_fromArray(
 				[
 					joakin$elm_canvas$Canvas$stroke(avh4$elm_color$Color$gray),
 					joakin$elm_canvas$Canvas$fill(asteroid.a4),
-					joakin$elm_canvas$Canvas$transform(
-					_List_fromArray(
-						[
-							tf,
-							A2(joakin$elm_canvas$Canvas$translate, x, y),
-							joakin$elm_canvas$Canvas$rotate(asteroid.aM)
-						])),
+					joakin$elm_canvas$Canvas$transform(transformations),
 					joakin$elm_canvas$Canvas$lineWidth(4.0)
 				]),
 			_List_fromArray(
@@ -7157,18 +7157,18 @@ var author$project$Bullets$renderBullet = F2(
 		var _n0 = ianmackenzie$elm_geometry$Point2d$coordinates(bullet.br);
 		var x = _n0.a;
 		var y = _n0.b;
+		var transformations = _List_fromArray(
+			[
+				tf,
+				A2(joakin$elm_canvas$Canvas$translate, x, y)
+			]);
 		return A2(
 			joakin$elm_canvas$Canvas$shapes,
 			_List_fromArray(
 				[
 					joakin$elm_canvas$Canvas$stroke(bullet.a4),
 					joakin$elm_canvas$Canvas$fill(bullet.a4),
-					joakin$elm_canvas$Canvas$transform(
-					_List_fromArray(
-						[
-							tf,
-							A2(joakin$elm_canvas$Canvas$translate, x, y)
-						]))
+					joakin$elm_canvas$Canvas$transform(transformations)
 				]),
 			_List_fromArray(
 				[bullet.bw]));
@@ -7183,18 +7183,18 @@ var author$project$Explosions$renderExplosion = F2(
 		var _n0 = ianmackenzie$elm_geometry$Point2d$coordinates(explosion.br);
 		var x = _n0.a;
 		var y = _n0.b;
+		var transformations = _List_fromArray(
+			[
+				tf,
+				A2(joakin$elm_canvas$Canvas$translate, x, y)
+			]);
 		return A2(
 			joakin$elm_canvas$Canvas$shapes,
 			_List_fromArray(
 				[
 					joakin$elm_canvas$Canvas$stroke(color),
 					joakin$elm_canvas$Canvas$fill(color),
-					joakin$elm_canvas$Canvas$transform(
-					_List_fromArray(
-						[
-							tf,
-							A2(joakin$elm_canvas$Canvas$translate, x, y)
-						]))
+					joakin$elm_canvas$Canvas$transform(transformations)
 				]),
 			_List_fromArray(
 				[
@@ -7214,18 +7214,18 @@ var author$project$Ships$renderShip = F2(
 			ianmackenzie$elm_geometry$Circle2d$centerPoint(ship.br));
 		var x = _n0.a;
 		var y = _n0.b;
+		var transformations = _List_fromArray(
+			[
+				tf,
+				A2(joakin$elm_canvas$Canvas$translate, x, y),
+				joakin$elm_canvas$Canvas$rotate(ship.aM)
+			]);
 		return A2(
 			joakin$elm_canvas$Canvas$shapes,
 			_List_fromArray(
 				[
 					joakin$elm_canvas$Canvas$stroke(ship.a4),
-					joakin$elm_canvas$Canvas$transform(
-					_List_fromArray(
-						[
-							tf,
-							A2(joakin$elm_canvas$Canvas$translate, x, y),
-							joakin$elm_canvas$Canvas$rotate(ship.aM)
-						])),
+					joakin$elm_canvas$Canvas$transform(transformations),
 					joakin$elm_canvas$Canvas$lineWidth(2.0)
 				]),
 			_List_fromArray(
@@ -7338,6 +7338,14 @@ var author$project$Ships$renderTag = F2(
 			ianmackenzie$elm_geometry$Circle2d$centerPoint(ship.br));
 		var x = _n0.a;
 		var y = _n0.b;
+		var transformations = _List_fromArray(
+			[
+				tf,
+				A2(joakin$elm_canvas$Canvas$translate, x, y),
+				joakin$elm_canvas$Canvas$rotate(tagTheta),
+				A2(joakin$elm_canvas$Canvas$translate, -x, -y),
+				A2(joakin$elm_canvas$Canvas$translate, 0, tagDY)
+			]);
 		return _List_fromArray(
 			[
 				A3(
@@ -7346,15 +7354,7 @@ var author$project$Ships$renderTag = F2(
 					[
 						joakin$elm_canvas$Canvas$stroke(color),
 						joakin$elm_canvas$Canvas$fill(color),
-						joakin$elm_canvas$Canvas$transform(
-						_List_fromArray(
-							[
-								tf,
-								A2(joakin$elm_canvas$Canvas$translate, x, y),
-								joakin$elm_canvas$Canvas$rotate(tagTheta),
-								A2(joakin$elm_canvas$Canvas$translate, -x, -y),
-								A2(joakin$elm_canvas$Canvas$translate, 0, tagDY)
-							])),
+						joakin$elm_canvas$Canvas$transform(transformations),
 						joakin$elm_canvas$Canvas$font(
 						{cq: author$project$Ships$tagFont, cN: 36}),
 						joakin$elm_canvas$Canvas$align(2)

@@ -19,9 +19,6 @@ type alias Dimension =
     ( Float, Float )
 
 
-type alias WorldTransform =
-    List Transform
-
 
 type alias Game =
     { dimension : Dimension
@@ -30,7 +27,7 @@ type alias Game =
     , explosions : List Explosion
     , ships : Dict String Ship
     , spaceColor : Color
-    , transform : WorldTransform
+    , transform : Transform
     }
 
 
