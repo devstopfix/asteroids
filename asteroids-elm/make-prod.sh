@@ -11,6 +11,7 @@ target5=public/elixoids_canvas.dev.simple.js
 target6=public/elixoids_canvas.opt.simple.js
 
 target=public/elixoids.js
+prod_target=../../elixoids/priv/html/elixoids.js
 
 rm $target
 
@@ -26,6 +27,12 @@ time closure-compiler --js $target1 $canvas --compilation_level SIMPLE_OPTIMIZAT
 if closure-compiler --js $target2 $canvas --compilation_level SIMPLE_OPTIMIZATIONS --language_out ECMASCRIPT_2015 --js_output_file $target6; then
     rm $target
     cp $target6 $target
+
+    md5 $prod_target
+    cp $target $prod_target
+    md5 $prod_target
+
+    gzip -k -f $prod_target
     echo "OK!"
 fi
 
