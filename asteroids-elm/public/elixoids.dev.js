@@ -5288,7 +5288,7 @@ var author$project$Game$newGame = function (dims) {
 			{dx: 0, dy: canvas_y, m11: canvas_x / game_x, m12: 0, m21: 0, m22: (-1) * (canvas_y / game_y)})
 	};
 };
-var author$project$Explosions$explosionDuration = 15;
+var author$project$Explosions$explosionDurationMS = 200;
 var avh4$elm_color$Color$rgba = F4(
 	function (r, g, b, a) {
 		return A4(avh4$elm_color$Color$RgbaSpace, r, g, b, a);
@@ -5296,9 +5296,9 @@ var avh4$elm_color$Color$rgba = F4(
 var author$project$Explosions$newExplosion = function (p) {
 	return {
 		color: A4(avh4$elm_color$Color$rgba, 1, 1, 1, 0.9),
-		framesRemaining: author$project$Explosions$explosionDuration,
 		position: p,
-		radius: 40.0
+		radius: 40.0,
+		ttl: author$project$Explosions$explosionDurationMS
 	};
 };
 var elm$core$List$append = F2(
@@ -6372,14 +6372,14 @@ var author$project$Asteroids$rotateAsteroids = function (msSincePreviousFrame) {
 			return author$project$Asteroids$rotateAsteroid(msSincePreviousFrame);
 		});
 };
-var author$project$Explosions$isActive = function (e) {
-	return e.framesRemaining > 0;
+var author$project$Explosions$isActive = function (explosion) {
+	return explosion.ttl > 0;
 };
 var author$project$Explosions$updateExplosion = F2(
 	function (msSincePreviousFrame, explosion) {
 		return _Utils_update(
 			explosion,
-			{framesRemaining: explosion.framesRemaining - 1, radius: explosion.radius * 1.05});
+			{radius: explosion.radius * 1.08, ttl: explosion.ttl - msSincePreviousFrame});
 	});
 var elm$core$List$filter = F2(
 	function (isGood, list) {

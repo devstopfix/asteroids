@@ -10,17 +10,17 @@ type alias Radius =
 
 
 type alias Explosion =
-    { position : Point2d, color : Color, framesRemaining : Int, radius : Radius }
+    { position : Point2d, color : Color, ttl : Float, radius : Radius }
 
 
-explosionDuration =
-    15
+explosionDurationMS =
+    200
 
 
 newExplosion : Point2d -> Explosion
 newExplosion p =
     { position = p
-    , framesRemaining = explosionDuration
+    , ttl = explosionDurationMS
     , color = Color.rgba 1 1 1 0.9
     , radius = 40.0
     }
@@ -34,13 +34,13 @@ updateExplosions msSincePreviousFrame =
 updateExplosion : Float -> Explosion -> Explosion
 updateExplosion msSincePreviousFrame explosion =
     { explosion
-        | radius = explosion.radius * 1.05
-        , framesRemaining = explosion.framesRemaining - 1
+        | radius = explosion.radius * 1.08
+        , ttl = explosion.ttl - msSincePreviousFrame
     }
 
 
-isActive e =
-    e.framesRemaining > 0
+isActive explosion =
+    explosion.ttl > 0
 
 
 renderExplosion : Transform -> Explosion -> Renderable
