@@ -15,7 +15,8 @@ Open the browser:
 ## Production build
 
 ```
-closure-compiler --js src/Main.elm public/elm-canvas.2.2.js --compilation_level SIMPLE_OPTIMIZATIONS --language_out ECMASCRIPT_2015 --js_output_file public/elixoids.js
+elm make src/Main.elm --optimize --output public/elm.js
+closure-compiler --js public/elm.js public/elm-canvas.2.2.js --compilation_level SIMPLE_OPTIMIZATIONS --language_out ECMASCRIPT_2015 --js_output_file public/elixoids.js
 ```
 
 
