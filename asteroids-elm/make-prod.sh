@@ -14,15 +14,22 @@ target=public/elixoids.js
 
 rm $target
 
-elm make $input            --output $target1
-elm make $input --optimize --output $target2
+time elm make $input            --output $target1
+time elm make $input --optimize --output $target2
 
-closure-compiler --js $target1   --compilation_level SIMPLE_OPTIMIZATIONS --js_output_file $target3
-closure-compiler --js $target2   --compilation_level SIMPLE_OPTIMIZATIONS --js_output_file $target4
-
-closure-compiler --js $target1 $canvas --compilation_level SIMPLE_OPTIMIZATIONS --language_out ECMASCRIPT_2015 --js_output_file $target5
-closure-compiler --js $target2 $canvas --compilation_level SIMPLE_OPTIMIZATIONS --language_out ECMASCRIPT_2015 --js_output_file $target6
+time closure-compiler --js $target1 --compilation_level SIMPLE_OPTIMIZATIONS --js_output_file $target3
+time closure-compiler --js $target2 --compilation_level SIMPLE_OPTIMIZATIONS --js_output_file $target4
 
 # PROD
 
-cp $target6 $target
+time closure-compiler --js $target1 $canvas --compilation_level SIMPLE_OPTIMIZATIONS --language_out ECMASCRIPT_2015 --js_output_file $target5
+if closure-compiler --js $target2 $canvas --compilation_level SIMPLE_OPTIMIZATIONS --language_out ECMASCRIPT_2015 --js_output_file $target6; then
+    rm $target
+    cp $target6 $target
+    echo "OK!"
+fi
+
+# EXPERIMENETS
+
+# target7=public/elixoids_canvas.opt.advanced.js
+# time closure-compiler --js $target2 $canvas --compilation_level ADVANCED_OPTIMIZATIONS --language_out ECMASCRIPT_2015 --js_output_file $target7

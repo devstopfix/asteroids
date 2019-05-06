@@ -12,6 +12,12 @@ Open the browser:
     http://localhost:8000/public/dev.html
 
 
+## Production build
+
+```
+closure-compiler --js src/Main.elm public/elm-canvas.2.2.js --compilation_level SIMPLE_OPTIMIZATIONS --language_out ECMASCRIPT_2015 --js_output_file public/elixoids.js
+```
+
 
 ## Credits
 
