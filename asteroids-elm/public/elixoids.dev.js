@@ -6091,7 +6091,7 @@ var ianmackenzie$elm_geometry$Polygon2d$translateBy = function (vector) {
 		ianmackenzie$elm_geometry$Point2d$translateBy(vector),
 		false);
 };
-var author$project$Spaceship$centreAboutMass = function (ship) {
+var author$project$Ships$centreAboutMass = function (ship) {
 	var _n0 = author$project$Polygon$polygonCentroid(ship);
 	if (_n0.$ === 'Nothing') {
 		return ship;
@@ -6103,7 +6103,7 @@ var author$project$Spaceship$centreAboutMass = function (ship) {
 			ship);
 	}
 };
-var author$project$Spaceship$arcadeShipEast = author$project$Spaceship$centreAboutMass(
+var author$project$Ships$arcadeShipEast = author$project$Ships$centreAboutMass(
 	A3(
 		ianmackenzie$elm_geometry$Polygon2d$scaleAbout,
 		ianmackenzie$elm_geometry$Point2d$origin,
@@ -6119,9 +6119,9 @@ var author$project$Spaceship$arcadeShipEast = author$project$Spaceship$centreAbo
 						_Utils_Tuple2(-24, 16),
 						_Utils_Tuple2(24, 0)
 					])))));
-var author$project$Spaceship$shipWithRadius = function (r) {
+var author$project$Ships$shipWithRadius = function (r) {
 	return author$project$Polygon$polygonToShape(
-		A3(ianmackenzie$elm_geometry$Polygon2d$scaleAbout, ianmackenzie$elm_geometry$Point2d$origin, r, author$project$Spaceship$arcadeShipEast));
+		A3(ianmackenzie$elm_geometry$Polygon2d$scaleAbout, ianmackenzie$elm_geometry$Point2d$origin, r, author$project$Ships$arcadeShipEast));
 };
 var author$project$Ships$newShip = F3(
 	function (id, position, theta) {
@@ -6129,7 +6129,7 @@ var author$project$Ships$newShip = F3(
 			color: A3(avh4$elm_color$Color$rgb255, 251, 255, 251),
 			id: id,
 			position: position,
-			shape: author$project$Spaceship$shipWithRadius(
+			shape: author$project$Ships$shipWithRadius(
 				ianmackenzie$elm_geometry$Circle2d$radius(position)),
 			tagColor: A4(avh4$elm_color$Color$rgba, 1, 1, 1, 0.8),
 			theta: theta
