@@ -4310,20 +4310,15 @@ function _Browser_load(url)
 		}
 	}));
 }
-var author$project$Main$AddGame = function (a) {
-	return {$: 2, a: a};
+var elm$core$Basics$False = 1;
+var elm$core$Basics$True = 0;
+var elm$core$Result$isOk = function (result) {
+	if (!result.$) {
+		return true;
+	} else {
+		return false;
+	}
 };
-var author$project$Main$Frame = function (a) {
-	return {$: 0, a: a};
-};
-var author$project$Main$GraphicsIn = function (a) {
-	return {$: 1, a: a};
-};
-var elm$core$Array$branchFactor = 32;
-var elm$core$Array$Array_elm_builtin = F4(
-	function (a, b, c, d) {
-		return {$: 0, a: a, b: b, c: c, d: d};
-	});
 var elm$core$Basics$EQ = 1;
 var elm$core$Basics$GT = 2;
 var elm$core$Basics$LT = 0;
@@ -4404,6 +4399,11 @@ var elm$core$Array$foldr = F3(
 var elm$core$Array$toList = function (array) {
 	return A3(elm$core$Array$foldr, elm$core$List$cons, _List_Nil, array);
 };
+var elm$core$Array$branchFactor = 32;
+var elm$core$Array$Array_elm_builtin = F4(
+	function (a, b, c, d) {
+		return {$: 0, a: a, b: b, c: c, d: d};
+	});
 var elm$core$Basics$ceiling = _Basics_ceiling;
 var elm$core$Basics$fdiv = _Basics_fdiv;
 var elm$core$Basics$logBase = F2(
@@ -4528,7 +4528,6 @@ var elm$core$Array$builderToArray = F2(
 				builder.aJ);
 		}
 	});
-var elm$core$Basics$False = 1;
 var elm$core$Basics$idiv = _Basics_idiv;
 var elm$core$Basics$lt = _Utils_lt;
 var elm$core$Elm$JsArray$initialize = _JsArray_initialize;
@@ -4580,14 +4579,6 @@ var elm$core$Result$Err = function (a) {
 };
 var elm$core$Result$Ok = function (a) {
 	return {$: 0, a: a};
-};
-var elm$core$Basics$True = 0;
-var elm$core$Result$isOk = function (result) {
-	if (!result.$) {
-		return true;
-	} else {
-		return false;
-	}
 };
 var elm$json$Json$Decode$Failure = F2(
 	function (a, b) {
@@ -4794,6 +4785,20 @@ var elm$json$Json$Decode$errorToStringHelp = F2(
 			}
 		}
 	});
+var elm$core$Platform$Cmd$batch = _Platform_batch;
+var elm$core$Platform$Cmd$none = elm$core$Platform$Cmd$batch(_List_Nil);
+var author$project$Main$cmdNone = function (msg) {
+	return _Utils_Tuple2(msg, elm$core$Platform$Cmd$none);
+};
+var author$project$Main$AddGame = function (a) {
+	return {$: 2, a: a};
+};
+var author$project$Main$Frame = function (a) {
+	return {$: 0, a: a};
+};
+var author$project$Main$GraphicsIn = function (a) {
+	return {$: 1, a: a};
+};
 var elm$json$Json$Decode$int = _Json_decodeInt;
 var author$project$Main$addGame = _Platform_incomingPort('addGame', elm$json$Json$Decode$int);
 var elm$json$Json$Decode$string = _Json_decodeString;
@@ -6871,36 +6876,31 @@ var elm$core$Maybe$map = F2(
 			return elm$core$Maybe$Nothing;
 		}
 	});
-var elm$core$Platform$Cmd$batch = _Platform_batch;
-var elm$core$Platform$Cmd$none = elm$core$Platform$Cmd$batch(_List_Nil);
 var author$project$Main$update = F2(
 	function (msg, games) {
 		switch (msg.$) {
 			case 0:
 				var msSincePreviousFrame = msg.a;
-				return _Utils_Tuple2(
+				return author$project$Main$cmdNone(
 					A2(
 						elm$core$Dict$map,
 						author$project$Main$updateGame(msSincePreviousFrame),
-						games),
-					elm$core$Platform$Cmd$none);
+						games));
 			case 1:
 				var frame_json = msg.a;
-				return _Utils_Tuple2(
+				return author$project$Main$cmdNone(
 					A3(
 						elm$core$Dict$update,
 						1,
 						elm$core$Maybe$map(
 							author$project$Main$mergeGraphics(frame_json)),
-						games),
-					elm$core$Platform$Cmd$none);
+						games));
 			default:
 				var id = msg.a;
 				var game = author$project$Game$newGame(
 					_Utils_Tuple2(1400, 788));
-				return _Utils_Tuple2(
-					A3(elm$core$Dict$insert, id, game, games),
-					elm$core$Platform$Cmd$none);
+				return author$project$Main$cmdNone(
+					A3(elm$core$Dict$insert, id, game, games));
 		}
 	});
 var avh4$elm_color$Color$gray = A4(avh4$elm_color$Color$RgbaSpace, 211 / 255, 215 / 255, 207 / 255, 1.0);
@@ -8104,16 +8104,14 @@ var author$project$Main$view = function (games) {
 		_List_Nil,
 		A2(
 			elm$core$List$map,
-			function (g) {
-				return author$project$Game$viewGame(g);
-			},
+			author$project$Game$viewGame,
 			elm$core$Dict$values(games)));
 };
 var elm$browser$Browser$element = _Browser_element;
 var author$project$Main$main = elm$browser$Browser$element(
 	{
 		cx: function (_n0) {
-			return _Utils_Tuple2(elm$core$Dict$empty, elm$core$Platform$Cmd$none);
+			return author$project$Main$cmdNone(elm$core$Dict$empty);
 		},
 		cP: author$project$Main$subscriptions,
 		cS: author$project$Main$update,

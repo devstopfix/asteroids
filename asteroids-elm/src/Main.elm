@@ -19,7 +19,6 @@ port graphicsIn : (String -> msg) -> Sub msg
 port addGame : (Int -> msg) -> Sub msg
 
 
-
 type alias Model =
     Dict Int Game
 
@@ -34,10 +33,7 @@ main : Program () Model Msg
 main =
     Browser.element
         { init =
-            \() ->
-                ( Dict.empty
-                , Cmd.none
-                )
+            \() -> cmdNone Dict.empty
         , view = view
         , update = update
         , subscriptions = subscriptions
@@ -56,30 +52,29 @@ subscriptions model =
 view : Model -> Html msg
 view games =
     div []
-        (List.map (\g -> Game.viewGame g) (Dict.values games))
+        (List.map Game.viewGame (Dict.values games))
 
 
-update: Msg -> Model -> ( Model, Cmd Msg)
+update : Msg -> Model -> ( Model, Cmd Msg )
 update msg games =
     case msg of
         Frame msSincePreviousFrame ->
-            -- ( Dict.map (\_ g -> updateGame msSincePreviousFrame g)
-            ( Dict.map (updateGame msSincePreviousFrame) games
-            , Cmd.none
-            )
+            cmdNone
+                (Dict.map (updateGame msSincePreviousFrame) games)
 
         GraphicsIn frame_json ->
-            ( Dict.update 1 (Maybe.map (mergeGraphics frame_json)) games, Cmd.none )
+            cmdNone
+                (Dict.update 1 (Maybe.map (mergeGraphics frame_json)) games)
 
         AddGame id ->
             let
                 game =
                     newGame ( 1400, 788 )
             in
-            ( Dict.insert id game games, Cmd.none )
+            cmdNone (Dict.insert id game games)
 
 
-mergeGraphics: String -> Game -> Game
+mergeGraphics : String -> Game -> Game
 mergeGraphics state_json game =
     case Json.Decode.decodeString gameDecoder state_json of
         Ok frame ->
@@ -89,10 +84,13 @@ mergeGraphics state_json game =
             game
 
 
-
 updateGame : Float -> Int -> Game -> Game
 updateGame msSincePreviousFrame game_id game =
     { game
         | asteroids = rotateAsteroids msSincePreviousFrame game.asteroids
         , explosions = updateExplosions msSincePreviousFrame game.explosions
     }
+
+
+cmdNone msg =
+    ( msg, Cmd.none )
