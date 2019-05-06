@@ -7,10 +7,10 @@ import Canvas exposing (..)
 import Dict exposing (Dict)
 import Explosions exposing (updateExplosions)
 import Game exposing (Game, mergeGame, newGame, viewGame)
+import GraphicsDecoder exposing (gameDecoder)
 import Html exposing (Html, div, p, text)
 import Html.Attributes exposing (style)
 import Json.Decode exposing (Error, decodeString)
-import GraphicsDecoder exposing (gameDecoder)
 
 
 port graphicsIn : (String -> msg) -> Sub msg
@@ -19,9 +19,12 @@ port graphicsIn : (String -> msg) -> Sub msg
 port addGame : (Int -> msg) -> Sub msg
 
 
-type alias GameId = Int
+type alias GameId =
+    Int
 
-type alias Model = Dict GameId Game
+
+type alias Model =
+    Dict GameId Game
 
 
 type Msg
@@ -53,12 +56,10 @@ subscriptions model =
         ]
 
 
-
-
 view : Model -> Html msg
 view games =
     div []
-        (List.map (\g -> Game.viewGame g) (Dict.values games) )
+        (List.map (\g -> Game.viewGame g) (Dict.values games))
 
 
 update msg games =
@@ -71,13 +72,12 @@ update msg games =
         GraphicsIn state_json ->
             ( Dict.update 1 (Maybe.map (mergeGraphics state_json)) games, Cmd.none )
 
-
         AddGame id ->
             let
                 game =
                     newGame ( 1400, 788 )
             in
-            ( Dict.insert id game games , Cmd.none )
+            ( Dict.insert id game games, Cmd.none )
 
 
 mergeGraphics state_json model =
@@ -91,7 +91,7 @@ mergeGraphics state_json model =
 
 updateGames : GameId -> Dict GameId Game -> Dict GameId Game
 updateGames t =
-    Dict.map (\_ g -> (updateGame t g) )
+    Dict.map (\_ g -> updateGame t g)
 
 
 updateGame : Int -> Game -> Game

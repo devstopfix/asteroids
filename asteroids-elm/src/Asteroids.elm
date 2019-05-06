@@ -4,11 +4,10 @@ import Canvas exposing (..)
 import Circle2d exposing (Circle2d, centerPoint, radius)
 import Color exposing (Color)
 import Dict exposing (Dict)
-import Point2d exposing (coordinates)
-import Points exposing (convertPoints)
-import Polygon exposing (pointsToShape)
-import Rocks exposing (..)
-import Shapes exposing (rockWithRadius)
+import Point2d exposing (coordinates, origin)
+import Points exposing (convertPoints, readPoints)
+import Polygon exposing (pointsToShape, polygonToShape)
+import Polygon2d exposing (Polygon2d, outerLoop, scaleAbout, singleLoop)
 
 
 type alias Id =
@@ -45,10 +44,12 @@ newAsteroid id position =
     }
 
 
--- https://encycolorpedia.com/2f353b
-granite=
-    Color.rgb255 5 8 9
 
+-- https://encycolorpedia.com/2f353b
+
+
+granite =
+    Color.rgb255 5 8 9
 
 
 chooseShape : Int -> RockType
@@ -114,3 +115,75 @@ renderAsteroid tf asteroid =
     shapes
         [ stroke Color.gray, fill asteroid.color, transform [ tf, translate x y, rotate asteroid.theta ], lineWidth 4.0 ]
         [ asteroid.shape ]
+
+
+
+-- Arcade shapes http://computerarcheology.com/Arcade/Asteroids/VectorROM.html
+
+
+type RockType
+    = Classic1
+    | Classic2
+    | Classic3
+    | Classic4
+
+
+classicRock1 =
+    [ ( 0.5, 1.0 ), ( 1.0, 0.5 ), ( 0.75, 0.0 ), ( 1.0, -0.5 ), ( 0.25, -1.0 ), ( -0.5, -1.0 ), ( -1.0, -0.5 ), ( -1.0, 0.5 ), ( -0.5, 1.0 ), ( 0.0, 0.5 ) ]
+
+
+classicRock2 =
+    [ ( 1.0, 0.5 ), ( 0.5, 1.0 ), ( 0.0, 0.75 ), ( -0.5, 1.0 ), ( -1.0, 0.5 ), ( -0.75, 0.0 ), ( -1.0, -0.5 ), ( -0.5, -1.0 ), ( -0.25, -0.75 ), ( 0.5, -1.0 ), ( 1.0, -0.25 ), ( 0.5, 0.25 ) ]
+
+
+classicRock3 =
+    [ ( -1.0, -0.25 ), ( -0.5, -1.0 ), ( 0.0, -0.25 ), ( 0.0, -1.0 ), ( 0.5, -1.0 ), ( 1.0, -0.25 ), ( 1.0, 0.25 ), ( 0.5, 1.0 ), ( -0.25, 1.0 ), ( -1.0, 0.25 ), ( -0.5, 0.0 ) ]
+
+
+classicRock4 =
+    [ ( 1.0, 0.25 ), ( 1.0, 0.5 ), ( 0.25, 1.0 ), ( -0.5, 1.0 ), ( -0.25, 0.5 ), ( -1.0, 0.5 ), ( -1.0, -0.25 ), ( -0.5, -1.0 ), ( 0.25, -0.75 ), ( 0.5, -1.0 ), ( 1.0, -0.5 ), ( 0.25, 0.0 ) ]
+
+
+rockWithRadius : RockType -> Float -> Shape
+rockWithRadius rt radius =
+    let
+        rock =
+            lookup rt
+    in
+    scaleAbout origin radius rock |> polygonToShape
+
+
+classicRockPolygon1 =
+    polygon classicRock1
+
+
+classicRockPolygon2 =
+    polygon classicRock2
+
+
+classicRockPolygon3 =
+    polygon classicRock3
+
+
+classicRockPolygon4 =
+    polygon classicRock4
+
+
+lookup rockType =
+    case rockType of
+        Classic1 ->
+            classicRockPolygon1
+
+        Classic2 ->
+            classicRockPolygon2
+
+        Classic3 ->
+            classicRockPolygon3
+
+        Classic4 ->
+            classicRockPolygon4
+
+
+polygon : List ( Float, Float ) -> Polygon2d
+polygon =
+    singleLoop << readPoints

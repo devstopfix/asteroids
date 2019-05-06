@@ -5316,22 +5316,22 @@ var author$project$Game$appendExplosions = F2(
 			explosions,
 			A2(elm$core$List$map, author$project$Explosions$newExplosion, new_explosions));
 	});
-var author$project$Rocks$Classic1 = {$: 'Classic1'};
-var author$project$Rocks$Classic2 = {$: 'Classic2'};
-var author$project$Rocks$Classic3 = {$: 'Classic3'};
-var author$project$Rocks$Classic4 = {$: 'Classic4'};
+var author$project$Asteroids$Classic1 = {$: 'Classic1'};
+var author$project$Asteroids$Classic2 = {$: 'Classic2'};
+var author$project$Asteroids$Classic3 = {$: 'Classic3'};
+var author$project$Asteroids$Classic4 = {$: 'Classic4'};
 var elm$core$Basics$modBy = _Basics_modBy;
 var author$project$Asteroids$chooseShape = function (i) {
 	var _n0 = A2(elm$core$Basics$modBy, 4, i);
 	switch (_n0) {
 		case 0:
-			return author$project$Rocks$Classic1;
+			return author$project$Asteroids$Classic1;
 		case 1:
-			return author$project$Rocks$Classic2;
+			return author$project$Asteroids$Classic2;
 		case 2:
-			return author$project$Rocks$Classic3;
+			return author$project$Asteroids$Classic3;
 		default:
-			return author$project$Rocks$Classic4;
+			return author$project$Asteroids$Classic4;
 	}
 };
 var avh4$elm_color$Color$scaleFrom255 = function (c) {
@@ -5347,74 +5347,7 @@ var avh4$elm_color$Color$rgb255 = F3(
 			1.0);
 	});
 var author$project$Asteroids$granite = A3(avh4$elm_color$Color$rgb255, 5, 8, 9);
-var author$project$Asteroids$thetaOffset = function (n) {
-	var two_pi = 314;
-	return A2(elm$core$Basics$modBy, two_pi, n) / two_pi;
-};
-var author$project$Points$closePolygon = function (list) {
-	if (!list.b) {
-		return _List_Nil;
-	} else {
-		var p = list.a;
-		var ps = list.b;
-		return A2(
-			elm$core$List$append,
-			A2(elm$core$List$cons, p, ps),
-			_List_fromArray(
-				[p]));
-	}
-};
-var ianmackenzie$elm_geometry$Point2d$coordinates = function (_n0) {
-	var coordinates_ = _n0.a;
-	return coordinates_;
-};
-var author$project$Points$convertPoints = elm$core$List$map(ianmackenzie$elm_geometry$Point2d$coordinates);
-var joakin$elm_canvas$Canvas$LineTo = function (a) {
-	return {$: 'LineTo', a: a};
-};
-var joakin$elm_canvas$Canvas$lineTo = function (point) {
-	return joakin$elm_canvas$Canvas$LineTo(point);
-};
-var joakin$elm_canvas$Canvas$Path = F2(
-	function (a, b) {
-		return {$: 'Path', a: a, b: b};
-	});
-var joakin$elm_canvas$Canvas$path = F2(
-	function (startingPoint, segments) {
-		return A2(joakin$elm_canvas$Canvas$Path, startingPoint, segments);
-	});
-var author$project$Polygon$pointsToShape = function (points) {
-	if (!points.b) {
-		return A2(
-			joakin$elm_canvas$Canvas$path,
-			_Utils_Tuple2(0, 0),
-			_List_Nil);
-	} else {
-		var p0 = points.a;
-		var ps = points.b;
-		return A2(
-			joakin$elm_canvas$Canvas$path,
-			p0,
-			A2(
-				elm$core$List$map,
-				function (p) {
-					return joakin$elm_canvas$Canvas$lineTo(p);
-				},
-				ps));
-	}
-};
-var ianmackenzie$elm_geometry$Polygon2d$outerLoop = function (_n0) {
-	var polygon = _n0.a;
-	return polygon.outerLoop;
-};
-var author$project$Polygon$polygonToShape = A2(
-	elm$core$Basics$composeL,
-	A2(
-		elm$core$Basics$composeL,
-		A2(elm$core$Basics$composeL, author$project$Polygon$pointsToShape, author$project$Points$convertPoints),
-		author$project$Points$closePolygon),
-	ianmackenzie$elm_geometry$Polygon2d$outerLoop);
-var author$project$Rocks$classicRock1 = _List_fromArray(
+var author$project$Asteroids$classicRock1 = _List_fromArray(
 	[
 		_Utils_Tuple2(0.5, 1.0),
 		_Utils_Tuple2(1.0, 0.5),
@@ -5533,9 +5466,9 @@ var ianmackenzie$elm_geometry$Polygon2d$singleLoop = function (vertices_) {
 			outerLoop: ianmackenzie$elm_geometry$Polygon2d$makeOuterLoop(vertices_)
 		});
 };
-var author$project$Shapes$polygon = A2(elm$core$Basics$composeL, ianmackenzie$elm_geometry$Polygon2d$singleLoop, author$project$Points$readPoints);
-var author$project$Shapes$classicRockPolygon1 = author$project$Shapes$polygon(author$project$Rocks$classicRock1);
-var author$project$Rocks$classicRock2 = _List_fromArray(
+var author$project$Asteroids$polygon = A2(elm$core$Basics$composeL, ianmackenzie$elm_geometry$Polygon2d$singleLoop, author$project$Points$readPoints);
+var author$project$Asteroids$classicRockPolygon1 = author$project$Asteroids$polygon(author$project$Asteroids$classicRock1);
+var author$project$Asteroids$classicRock2 = _List_fromArray(
 	[
 		_Utils_Tuple2(1.0, 0.5),
 		_Utils_Tuple2(0.5, 1.0),
@@ -5550,8 +5483,8 @@ var author$project$Rocks$classicRock2 = _List_fromArray(
 		_Utils_Tuple2(1.0, -0.25),
 		_Utils_Tuple2(0.5, 0.25)
 	]);
-var author$project$Shapes$classicRockPolygon2 = author$project$Shapes$polygon(author$project$Rocks$classicRock2);
-var author$project$Rocks$classicRock3 = _List_fromArray(
+var author$project$Asteroids$classicRockPolygon2 = author$project$Asteroids$polygon(author$project$Asteroids$classicRock2);
+var author$project$Asteroids$classicRock3 = _List_fromArray(
 	[
 		_Utils_Tuple2(-1.0, -0.25),
 		_Utils_Tuple2(-0.5, -1.0),
@@ -5565,8 +5498,8 @@ var author$project$Rocks$classicRock3 = _List_fromArray(
 		_Utils_Tuple2(-1.0, 0.25),
 		_Utils_Tuple2(-0.5, 0.0)
 	]);
-var author$project$Shapes$classicRockPolygon3 = author$project$Shapes$polygon(author$project$Rocks$classicRock3);
-var author$project$Rocks$classicRock4 = _List_fromArray(
+var author$project$Asteroids$classicRockPolygon3 = author$project$Asteroids$polygon(author$project$Asteroids$classicRock3);
+var author$project$Asteroids$classicRock4 = _List_fromArray(
 	[
 		_Utils_Tuple2(1.0, 0.25),
 		_Utils_Tuple2(1.0, 0.5),
@@ -5581,19 +5514,82 @@ var author$project$Rocks$classicRock4 = _List_fromArray(
 		_Utils_Tuple2(1.0, -0.5),
 		_Utils_Tuple2(0.25, 0.0)
 	]);
-var author$project$Shapes$classicRockPolygon4 = author$project$Shapes$polygon(author$project$Rocks$classicRock4);
-var author$project$Shapes$lookup = function (rockType) {
+var author$project$Asteroids$classicRockPolygon4 = author$project$Asteroids$polygon(author$project$Asteroids$classicRock4);
+var author$project$Asteroids$lookup = function (rockType) {
 	switch (rockType.$) {
 		case 'Classic1':
-			return author$project$Shapes$classicRockPolygon1;
+			return author$project$Asteroids$classicRockPolygon1;
 		case 'Classic2':
-			return author$project$Shapes$classicRockPolygon2;
+			return author$project$Asteroids$classicRockPolygon2;
 		case 'Classic3':
-			return author$project$Shapes$classicRockPolygon3;
+			return author$project$Asteroids$classicRockPolygon3;
 		default:
-			return author$project$Shapes$classicRockPolygon4;
+			return author$project$Asteroids$classicRockPolygon4;
 	}
 };
+var author$project$Points$closePolygon = function (list) {
+	if (!list.b) {
+		return _List_Nil;
+	} else {
+		var p = list.a;
+		var ps = list.b;
+		return A2(
+			elm$core$List$append,
+			A2(elm$core$List$cons, p, ps),
+			_List_fromArray(
+				[p]));
+	}
+};
+var ianmackenzie$elm_geometry$Point2d$coordinates = function (_n0) {
+	var coordinates_ = _n0.a;
+	return coordinates_;
+};
+var author$project$Points$convertPoints = elm$core$List$map(ianmackenzie$elm_geometry$Point2d$coordinates);
+var joakin$elm_canvas$Canvas$LineTo = function (a) {
+	return {$: 'LineTo', a: a};
+};
+var joakin$elm_canvas$Canvas$lineTo = function (point) {
+	return joakin$elm_canvas$Canvas$LineTo(point);
+};
+var joakin$elm_canvas$Canvas$Path = F2(
+	function (a, b) {
+		return {$: 'Path', a: a, b: b};
+	});
+var joakin$elm_canvas$Canvas$path = F2(
+	function (startingPoint, segments) {
+		return A2(joakin$elm_canvas$Canvas$Path, startingPoint, segments);
+	});
+var author$project$Polygon$pointsToShape = function (points) {
+	if (!points.b) {
+		return A2(
+			joakin$elm_canvas$Canvas$path,
+			_Utils_Tuple2(0, 0),
+			_List_Nil);
+	} else {
+		var p0 = points.a;
+		var ps = points.b;
+		return A2(
+			joakin$elm_canvas$Canvas$path,
+			p0,
+			A2(
+				elm$core$List$map,
+				function (p) {
+					return joakin$elm_canvas$Canvas$lineTo(p);
+				},
+				ps));
+	}
+};
+var ianmackenzie$elm_geometry$Polygon2d$outerLoop = function (_n0) {
+	var polygon = _n0.a;
+	return polygon.outerLoop;
+};
+var author$project$Polygon$polygonToShape = A2(
+	elm$core$Basics$composeL,
+	A2(
+		elm$core$Basics$composeL,
+		A2(elm$core$Basics$composeL, author$project$Polygon$pointsToShape, author$project$Points$convertPoints),
+		author$project$Points$closePolygon),
+	ianmackenzie$elm_geometry$Polygon2d$outerLoop);
 var ianmackenzie$elm_geometry$Point2d$origin = ianmackenzie$elm_geometry$Point2d$fromCoordinates(
 	_Utils_Tuple2(0, 0));
 var ianmackenzie$elm_geometry$Point2d$translateBy = F2(
@@ -5657,12 +5653,16 @@ var ianmackenzie$elm_geometry$Polygon2d$scaleAbout = F2(
 			A2(ianmackenzie$elm_geometry$Point2d$scaleAbout, point, scale),
 			scale < 0);
 	});
-var author$project$Shapes$rockWithRadius = F2(
+var author$project$Asteroids$rockWithRadius = F2(
 	function (rt, radius) {
-		var rock = author$project$Shapes$lookup(rt);
+		var rock = author$project$Asteroids$lookup(rt);
 		return author$project$Polygon$polygonToShape(
 			A3(ianmackenzie$elm_geometry$Polygon2d$scaleAbout, ianmackenzie$elm_geometry$Point2d$origin, radius, rock));
 	});
+var author$project$Asteroids$thetaOffset = function (n) {
+	var two_pi = 314;
+	return A2(elm$core$Basics$modBy, two_pi, n) / two_pi;
+};
 var ianmackenzie$elm_geometry$Circle2d$radius = function (_n0) {
 	var properties = _n0.a;
 	return properties.radius;
@@ -5671,7 +5671,7 @@ var author$project$Asteroids$newAsteroid = F2(
 	function (id, position) {
 		var rock = author$project$Asteroids$chooseShape(id);
 		var shape = A2(
-			author$project$Shapes$rockWithRadius,
+			author$project$Asteroids$rockWithRadius,
 			rock,
 			ianmackenzie$elm_geometry$Circle2d$radius(position));
 		return {
@@ -7313,7 +7313,7 @@ var author$project$Game$renderSpace = function (game) {
 		]);
 };
 var author$project$Ships$offset90deg = elm$core$Basics$add(elm$core$Basics$pi / 2);
-var author$project$Ships$tagFont = 'normal lighter Source Code Pro,Source Code Pro,monospace';
+var author$project$Ships$tagFont = 'Source Code Pro,monospace';
 var author$project$Ships$tagOffset = elm$core$Basics$mul(3.0);
 var elm$core$String$trim = _String_trim;
 var author$project$Ships$trimTag = A2(

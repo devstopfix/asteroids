@@ -18,7 +18,6 @@ convertPoints =
     List.map coordinates
 
 
-
 closePolygon list =
     case list of
         [] ->
