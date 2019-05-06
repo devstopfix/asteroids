@@ -5390,19 +5390,6 @@ var avh4$elm_color$Color$rgb255 = F3(
 			1.0);
 	});
 var author$project$Asteroids$granite = A3(avh4$elm_color$Color$rgb255, 5, 8, 9);
-var author$project$Asteroids$classicRock1 = _List_fromArray(
-	[
-		_Utils_Tuple2(0.5, 1.0),
-		_Utils_Tuple2(1.0, 0.5),
-		_Utils_Tuple2(0.75, 0.0),
-		_Utils_Tuple2(1.0, -0.5),
-		_Utils_Tuple2(0.25, -1.0),
-		_Utils_Tuple2(-0.5, -1.0),
-		_Utils_Tuple2(-1.0, -0.5),
-		_Utils_Tuple2(-1.0, 0.5),
-		_Utils_Tuple2(-0.5, 1.0),
-		_Utils_Tuple2(0.0, 0.5)
-	]);
 var ianmackenzie$elm_geometry$Geometry$Types$Point2d = function (a) {
 	return {$: 'Point2d', a: a};
 };
@@ -5510,68 +5497,81 @@ var ianmackenzie$elm_geometry$Polygon2d$singleLoop = function (vertices_) {
 		});
 };
 var author$project$Asteroids$polygon = A2(elm$core$Basics$composeL, ianmackenzie$elm_geometry$Polygon2d$singleLoop, author$project$Points$readPoints);
-var author$project$Asteroids$classicRockPolygon1 = author$project$Asteroids$polygon(author$project$Asteroids$classicRock1);
-var author$project$Asteroids$classicRock2 = _List_fromArray(
-	[
-		_Utils_Tuple2(1.0, 0.5),
-		_Utils_Tuple2(0.5, 1.0),
-		_Utils_Tuple2(0.0, 0.75),
-		_Utils_Tuple2(-0.5, 1.0),
-		_Utils_Tuple2(-1.0, 0.5),
-		_Utils_Tuple2(-0.75, 0.0),
-		_Utils_Tuple2(-1.0, -0.5),
-		_Utils_Tuple2(-0.5, -1.0),
-		_Utils_Tuple2(-0.25, -0.75),
-		_Utils_Tuple2(0.5, -1.0),
-		_Utils_Tuple2(1.0, -0.25),
-		_Utils_Tuple2(0.5, 0.25)
-	]);
-var author$project$Asteroids$classicRockPolygon2 = author$project$Asteroids$polygon(author$project$Asteroids$classicRock2);
-var author$project$Asteroids$classicRock3 = _List_fromArray(
-	[
-		_Utils_Tuple2(-1.0, -0.25),
-		_Utils_Tuple2(-0.5, -1.0),
-		_Utils_Tuple2(0.0, -0.25),
-		_Utils_Tuple2(0.0, -1.0),
-		_Utils_Tuple2(0.5, -1.0),
-		_Utils_Tuple2(1.0, -0.25),
-		_Utils_Tuple2(1.0, 0.25),
-		_Utils_Tuple2(0.5, 1.0),
-		_Utils_Tuple2(-0.25, 1.0),
-		_Utils_Tuple2(-1.0, 0.25),
-		_Utils_Tuple2(-0.5, 0.0)
-	]);
-var author$project$Asteroids$classicRockPolygon3 = author$project$Asteroids$polygon(author$project$Asteroids$classicRock3);
-var author$project$Asteroids$classicRock4 = _List_fromArray(
-	[
-		_Utils_Tuple2(1.0, 0.25),
-		_Utils_Tuple2(1.0, 0.5),
-		_Utils_Tuple2(0.25, 1.0),
-		_Utils_Tuple2(-0.5, 1.0),
-		_Utils_Tuple2(-0.25, 0.5),
-		_Utils_Tuple2(-1.0, 0.5),
-		_Utils_Tuple2(-1.0, -0.25),
-		_Utils_Tuple2(-0.5, -1.0),
-		_Utils_Tuple2(0.25, -0.75),
-		_Utils_Tuple2(0.5, -1.0),
-		_Utils_Tuple2(1.0, -0.5),
-		_Utils_Tuple2(0.25, 0.0)
-	]);
-var author$project$Asteroids$classicRockPolygon4 = author$project$Asteroids$polygon(author$project$Asteroids$classicRock4);
-var author$project$Asteroids$modernRock5 = _List_fromArray(
-	[
-		_Utils_Tuple2(-1, 0),
-		_Utils_Tuple2(-0.5, 0.7),
-		_Utils_Tuple2(-0.3, 0.4),
-		_Utils_Tuple2(0.1, 1),
-		_Utils_Tuple2(0.5, 0.4),
-		_Utils_Tuple2(1, 0),
-		_Utils_Tuple2(0.5, -0.6),
-		_Utils_Tuple2(0.2, -1),
-		_Utils_Tuple2(-0.4, -1),
-		_Utils_Tuple2(-0.4, -0.5)
-	]);
-var author$project$Asteroids$modernRockPolygon5 = author$project$Asteroids$polygon(author$project$Asteroids$modernRock5);
+var author$project$Asteroids$classicRockPolygon1 = author$project$Asteroids$polygon(
+	_List_fromArray(
+		[
+			_Utils_Tuple2(0.5, 1.0),
+			_Utils_Tuple2(1.0, 0.5),
+			_Utils_Tuple2(0.75, 0.0),
+			_Utils_Tuple2(1.0, -0.5),
+			_Utils_Tuple2(0.25, -1.0),
+			_Utils_Tuple2(-0.5, -1.0),
+			_Utils_Tuple2(-1.0, -0.5),
+			_Utils_Tuple2(-1.0, 0.5),
+			_Utils_Tuple2(-0.5, 1.0),
+			_Utils_Tuple2(0.0, 0.5)
+		]));
+var author$project$Asteroids$classicRockPolygon2 = author$project$Asteroids$polygon(
+	_List_fromArray(
+		[
+			_Utils_Tuple2(1.0, 0.5),
+			_Utils_Tuple2(0.5, 1.0),
+			_Utils_Tuple2(0.0, 0.75),
+			_Utils_Tuple2(-0.5, 1.0),
+			_Utils_Tuple2(-1.0, 0.5),
+			_Utils_Tuple2(-0.75, 0.0),
+			_Utils_Tuple2(-1.0, -0.5),
+			_Utils_Tuple2(-0.5, -1.0),
+			_Utils_Tuple2(-0.25, -0.75),
+			_Utils_Tuple2(0.5, -1.0),
+			_Utils_Tuple2(1.0, -0.25),
+			_Utils_Tuple2(0.5, 0.25)
+		]));
+var author$project$Asteroids$classicRockPolygon3 = author$project$Asteroids$polygon(
+	_List_fromArray(
+		[
+			_Utils_Tuple2(-1.0, -0.25),
+			_Utils_Tuple2(-0.5, -1.0),
+			_Utils_Tuple2(0.0, -0.25),
+			_Utils_Tuple2(0.0, -1.0),
+			_Utils_Tuple2(0.5, -1.0),
+			_Utils_Tuple2(1.0, -0.25),
+			_Utils_Tuple2(1.0, 0.25),
+			_Utils_Tuple2(0.5, 1.0),
+			_Utils_Tuple2(-0.25, 1.0),
+			_Utils_Tuple2(-1.0, 0.25),
+			_Utils_Tuple2(-0.5, 0.0)
+		]));
+var author$project$Asteroids$classicRockPolygon4 = author$project$Asteroids$polygon(
+	_List_fromArray(
+		[
+			_Utils_Tuple2(1.0, 0.25),
+			_Utils_Tuple2(1.0, 0.5),
+			_Utils_Tuple2(0.25, 1.0),
+			_Utils_Tuple2(-0.5, 1.0),
+			_Utils_Tuple2(-0.25, 0.5),
+			_Utils_Tuple2(-1.0, 0.5),
+			_Utils_Tuple2(-1.0, -0.25),
+			_Utils_Tuple2(-0.5, -1.0),
+			_Utils_Tuple2(0.25, -0.75),
+			_Utils_Tuple2(0.5, -1.0),
+			_Utils_Tuple2(1.0, -0.5),
+			_Utils_Tuple2(0.25, 0.0)
+		]));
+var author$project$Asteroids$modernRockPolygon5 = author$project$Asteroids$polygon(
+	_List_fromArray(
+		[
+			_Utils_Tuple2(-1, 0),
+			_Utils_Tuple2(-0.5, 0.7),
+			_Utils_Tuple2(-0.3, 0.4),
+			_Utils_Tuple2(0.1, 1),
+			_Utils_Tuple2(0.5, 0.4),
+			_Utils_Tuple2(1, 0),
+			_Utils_Tuple2(0.5, -0.6),
+			_Utils_Tuple2(0.2, -1),
+			_Utils_Tuple2(-0.4, -1),
+			_Utils_Tuple2(-0.4, -0.5)
+		]));
 var author$project$Asteroids$lookup = function (rockType) {
 	switch (rockType.$) {
 		case 'Classic1':
@@ -5721,10 +5721,9 @@ var ianmackenzie$elm_geometry$Circle2d$radius = function (_n0) {
 var author$project$Asteroids$newAsteroid = F2(
 	function (id, position) {
 		var theta0 = A2(elm$core$Basics$modBy, 628, id);
-		var rock = author$project$Asteroids$chooseShape(id);
 		var shape = A2(
 			author$project$Asteroids$rockWithRadius,
-			rock,
+			author$project$Asteroids$chooseShape(id),
 			ianmackenzie$elm_geometry$Circle2d$radius(position));
 		return {color: author$project$Asteroids$granite, id: id, position: position, shape: shape, theta: theta0};
 	});

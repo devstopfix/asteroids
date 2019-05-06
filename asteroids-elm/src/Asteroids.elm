@@ -29,11 +29,8 @@ type alias Asteroid =
 newAsteroid : Id -> Circle2d -> Asteroid
 newAsteroid id position =
     let
-        rock =
-            chooseShape id
-
         shape =
-            rockWithRadius rock (radius position)
+            rockWithRadius (chooseShape id) (radius position)
 
         theta0 =
             modBy 628 id |> toFloat
@@ -128,6 +125,15 @@ renderAsteroid tf asteroid =
         [ asteroid.shape ]
 
 
+rockWithRadius : RockType -> Float -> Shape
+rockWithRadius rt radius =
+    let
+        rock =
+            lookup rt
+    in
+    scaleAbout origin radius rock |> polygonToShape
+
+
 
 -- Arcade shapes http://computerarcheology.com/Arcade/Asteroids/VectorROM.html
 
@@ -140,52 +146,24 @@ type RockType
     | Modern5
 
 
-classicRock1 =
-    [ ( 0.5, 1.0 ), ( 1.0, 0.5 ), ( 0.75, 0.0 ), ( 1.0, -0.5 ), ( 0.25, -1.0 ), ( -0.5, -1.0 ), ( -1.0, -0.5 ), ( -1.0, 0.5 ), ( -0.5, 1.0 ), ( 0.0, 0.5 ) ]
-
-
-classicRock2 =
-    [ ( 1.0, 0.5 ), ( 0.5, 1.0 ), ( 0.0, 0.75 ), ( -0.5, 1.0 ), ( -1.0, 0.5 ), ( -0.75, 0.0 ), ( -1.0, -0.5 ), ( -0.5, -1.0 ), ( -0.25, -0.75 ), ( 0.5, -1.0 ), ( 1.0, -0.25 ), ( 0.5, 0.25 ) ]
-
-
-classicRock3 =
-    [ ( -1.0, -0.25 ), ( -0.5, -1.0 ), ( 0.0, -0.25 ), ( 0.0, -1.0 ), ( 0.5, -1.0 ), ( 1.0, -0.25 ), ( 1.0, 0.25 ), ( 0.5, 1.0 ), ( -0.25, 1.0 ), ( -1.0, 0.25 ), ( -0.5, 0.0 ) ]
-
-
-classicRock4 =
-    [ ( 1.0, 0.25 ), ( 1.0, 0.5 ), ( 0.25, 1.0 ), ( -0.5, 1.0 ), ( -0.25, 0.5 ), ( -1.0, 0.5 ), ( -1.0, -0.25 ), ( -0.5, -1.0 ), ( 0.25, -0.75 ), ( 0.5, -1.0 ), ( 1.0, -0.5 ), ( 0.25, 0.0 ) ]
-
-
-modernRock5 =
-    [ ( -1, 0 ), ( -0.5, 0.7 ), ( -0.3, 0.4 ), ( 0.1, 1 ), ( 0.5, 0.4 ), ( 1, 0 ), ( 0.5, -0.6 ), ( 0.2, -1 ), ( -0.4, -1 ), ( -0.4, -0.5 ) ]
-
-
-rockWithRadius : RockType -> Float -> Shape
-rockWithRadius rt radius =
-    let
-        rock =
-            lookup rt
-    in
-    scaleAbout origin radius rock |> polygonToShape
-
-
 classicRockPolygon1 =
-    polygon classicRock1
+    polygon [ ( 0.5, 1.0 ), ( 1.0, 0.5 ), ( 0.75, 0.0 ), ( 1.0, -0.5 ), ( 0.25, -1.0 ), ( -0.5, -1.0 ), ( -1.0, -0.5 ), ( -1.0, 0.5 ), ( -0.5, 1.0 ), ( 0.0, 0.5 ) ]
 
 
 classicRockPolygon2 =
-    polygon classicRock2
+    polygon [ ( 1.0, 0.5 ), ( 0.5, 1.0 ), ( 0.0, 0.75 ), ( -0.5, 1.0 ), ( -1.0, 0.5 ), ( -0.75, 0.0 ), ( -1.0, -0.5 ), ( -0.5, -1.0 ), ( -0.25, -0.75 ), ( 0.5, -1.0 ), ( 1.0, -0.25 ), ( 0.5, 0.25 ) ]
 
 
 classicRockPolygon3 =
-    polygon classicRock3
+    polygon [ ( -1.0, -0.25 ), ( -0.5, -1.0 ), ( 0.0, -0.25 ), ( 0.0, -1.0 ), ( 0.5, -1.0 ), ( 1.0, -0.25 ), ( 1.0, 0.25 ), ( 0.5, 1.0 ), ( -0.25, 1.0 ), ( -1.0, 0.25 ), ( -0.5, 0.0 ) ]
 
 
 classicRockPolygon4 =
-    polygon classicRock4
+    polygon [ ( 1.0, 0.25 ), ( 1.0, 0.5 ), ( 0.25, 1.0 ), ( -0.5, 1.0 ), ( -0.25, 0.5 ), ( -1.0, 0.5 ), ( -1.0, -0.25 ), ( -0.5, -1.0 ), ( 0.25, -0.75 ), ( 0.5, -1.0 ), ( 1.0, -0.5 ), ( 0.25, 0.0 ) ]
+
 
 modernRockPolygon5 =
-    polygon modernRock5
+    polygon [ ( -1, 0 ), ( -0.5, 0.7 ), ( -0.3, 0.4 ), ( 0.1, 1 ), ( 0.5, 0.4 ), ( 1, 0 ), ( 0.5, -0.6 ), ( 0.2, -1 ), ( -0.4, -1 ), ( -0.4, -0.5 ) ]
 
 
 lookup rockType =
@@ -204,7 +182,6 @@ lookup rockType =
 
         Modern5 ->
             modernRockPolygon5
-
 
 
 polygon : List ( Float, Float ) -> Polygon2d
