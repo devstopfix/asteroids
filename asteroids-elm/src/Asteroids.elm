@@ -56,7 +56,7 @@ granite =
 
 chooseShape : Int -> RockType
 chooseShape i =
-    case modBy 4 i of
+    case modBy 5 i of
         0 ->
             Classic1
 
@@ -66,8 +66,11 @@ chooseShape i =
         2 ->
             Classic3
 
-        _ ->
+        3 ->
             Classic4
+
+        _ ->
+            Modern5
 
 
 rotateAsteroids : Float -> Dict Int Asteroid -> Dict Int Asteroid
@@ -118,7 +121,7 @@ renderAsteroid tf asteroid =
             coordinates (centerPoint asteroid.position)
 
         transformations =
-            [tf, translate x y, rotate asteroid.theta ]
+            [ tf, translate x y, rotate asteroid.theta ]
     in
     shapes
         [ stroke Color.gray, fill asteroid.color, transform transformations, lineWidth 4.0 ]
@@ -134,6 +137,7 @@ type RockType
     | Classic2
     | Classic3
     | Classic4
+    | Modern5
 
 
 classicRock1 =
@@ -150,6 +154,10 @@ classicRock3 =
 
 classicRock4 =
     [ ( 1.0, 0.25 ), ( 1.0, 0.5 ), ( 0.25, 1.0 ), ( -0.5, 1.0 ), ( -0.25, 0.5 ), ( -1.0, 0.5 ), ( -1.0, -0.25 ), ( -0.5, -1.0 ), ( 0.25, -0.75 ), ( 0.5, -1.0 ), ( 1.0, -0.5 ), ( 0.25, 0.0 ) ]
+
+
+modernRock5 =
+    [ ( -1, 0 ), ( -0.5, 0.7 ), ( -0.3, 0.4 ), ( 0.1, 1 ), ( 0.5, 0.4 ), ( 1, 0 ), ( 0.5, -0.6 ), ( 0.2, -1 ), ( -0.4, -1 ), ( -0.4, -0.5 ) ]
 
 
 rockWithRadius : RockType -> Float -> Shape
@@ -176,6 +184,9 @@ classicRockPolygon3 =
 classicRockPolygon4 =
     polygon classicRock4
 
+modernRockPolygon5 =
+    polygon modernRock5
+
 
 lookup rockType =
     case rockType of
@@ -190,6 +201,10 @@ lookup rockType =
 
         Classic4 ->
             classicRockPolygon4
+
+        Modern5 ->
+            modernRockPolygon5
+
 
 
 polygon : List ( Float, Float ) -> Polygon2d

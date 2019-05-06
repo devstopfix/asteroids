@@ -5361,8 +5361,9 @@ var author$project$Asteroids$Classic1 = {$: 'Classic1'};
 var author$project$Asteroids$Classic2 = {$: 'Classic2'};
 var author$project$Asteroids$Classic3 = {$: 'Classic3'};
 var author$project$Asteroids$Classic4 = {$: 'Classic4'};
+var author$project$Asteroids$Modern5 = {$: 'Modern5'};
 var author$project$Asteroids$chooseShape = function (i) {
-	var _n0 = A2(elm$core$Basics$modBy, 4, i);
+	var _n0 = A2(elm$core$Basics$modBy, 5, i);
 	switch (_n0) {
 		case 0:
 			return author$project$Asteroids$Classic1;
@@ -5370,8 +5371,10 @@ var author$project$Asteroids$chooseShape = function (i) {
 			return author$project$Asteroids$Classic2;
 		case 2:
 			return author$project$Asteroids$Classic3;
-		default:
+		case 3:
 			return author$project$Asteroids$Classic4;
+		default:
+			return author$project$Asteroids$Modern5;
 	}
 };
 var avh4$elm_color$Color$scaleFrom255 = function (c) {
@@ -5555,6 +5558,20 @@ var author$project$Asteroids$classicRock4 = _List_fromArray(
 		_Utils_Tuple2(0.25, 0.0)
 	]);
 var author$project$Asteroids$classicRockPolygon4 = author$project$Asteroids$polygon(author$project$Asteroids$classicRock4);
+var author$project$Asteroids$modernRock5 = _List_fromArray(
+	[
+		_Utils_Tuple2(-1, 0),
+		_Utils_Tuple2(-0.5, 0.7),
+		_Utils_Tuple2(-0.3, 0.4),
+		_Utils_Tuple2(0.1, 1),
+		_Utils_Tuple2(0.5, 0.4),
+		_Utils_Tuple2(1, 0),
+		_Utils_Tuple2(0.5, -0.6),
+		_Utils_Tuple2(0.2, -1),
+		_Utils_Tuple2(-0.4, -1),
+		_Utils_Tuple2(-0.4, -0.5)
+	]);
+var author$project$Asteroids$modernRockPolygon5 = author$project$Asteroids$polygon(author$project$Asteroids$modernRock5);
 var author$project$Asteroids$lookup = function (rockType) {
 	switch (rockType.$) {
 		case 'Classic1':
@@ -5563,8 +5580,10 @@ var author$project$Asteroids$lookup = function (rockType) {
 			return author$project$Asteroids$classicRockPolygon2;
 		case 'Classic3':
 			return author$project$Asteroids$classicRockPolygon3;
-		default:
+		case 'Classic4':
 			return author$project$Asteroids$classicRockPolygon4;
+		default:
+			return author$project$Asteroids$modernRockPolygon5;
 	}
 };
 var author$project$Points$closePolygon = function (list) {
