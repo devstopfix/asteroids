@@ -6045,7 +6045,7 @@ var ianmackenzie$elm_geometry$Polygon2d$translateBy = function (vector) {
 		ianmackenzie$elm_geometry$Point2d$translateBy(vector),
 		false);
 };
-var author$project$SpaceShip$centreAboutMass = function (ship) {
+var author$project$Spaceship$centreAboutMass = function (ship) {
 	var _n0 = author$project$Polygon$polygonCentroid(ship);
 	if (_n0.$ === 'Nothing') {
 		return ship;
@@ -6057,7 +6057,7 @@ var author$project$SpaceShip$centreAboutMass = function (ship) {
 			ship);
 	}
 };
-var author$project$SpaceShip$arcadeShipEast = author$project$SpaceShip$centreAboutMass(
+var author$project$Spaceship$arcadeShipEast = author$project$Spaceship$centreAboutMass(
 	A3(
 		ianmackenzie$elm_geometry$Polygon2d$scaleAbout,
 		ianmackenzie$elm_geometry$Point2d$origin,
@@ -6073,9 +6073,9 @@ var author$project$SpaceShip$arcadeShipEast = author$project$SpaceShip$centreAbo
 						_Utils_Tuple2(-24, 16),
 						_Utils_Tuple2(24, 0)
 					])))));
-var author$project$SpaceShip$shipWithRadius = function (r) {
+var author$project$Spaceship$shipWithRadius = function (r) {
 	return author$project$Polygon$polygonToShape(
-		A3(ianmackenzie$elm_geometry$Polygon2d$scaleAbout, ianmackenzie$elm_geometry$Point2d$origin, r, author$project$SpaceShip$arcadeShipEast));
+		A3(ianmackenzie$elm_geometry$Polygon2d$scaleAbout, ianmackenzie$elm_geometry$Point2d$origin, r, author$project$Spaceship$arcadeShipEast));
 };
 var author$project$Ships$newShip = F3(
 	function (id, position, theta) {
@@ -6083,7 +6083,7 @@ var author$project$Ships$newShip = F3(
 			color: A3(avh4$elm_color$Color$rgb255, 251, 255, 251),
 			id: id,
 			position: position,
-			shape: author$project$SpaceShip$shipWithRadius(
+			shape: author$project$Spaceship$shipWithRadius(
 				ianmackenzie$elm_geometry$Circle2d$radius(position)),
 			tagColor: A4(avh4$elm_color$Color$rgba, 1, 1, 1, 0.8),
 			theta: theta
@@ -6142,7 +6142,7 @@ var author$project$Game$mergeGame = F2(
 				ships: A2(author$project$Game$updateShips, graphics.ships, game.ships)
 			});
 	});
-var author$project$StateParser$Graphics = F5(
+var author$project$GraphicsDecoder$Graphics = F5(
 	function (asteroids, bullets, dimensions, explosions, ships) {
 		return {asteroids: asteroids, bullets: bullets, dimensions: dimensions, explosions: explosions, ships: ships};
 	});
@@ -6163,7 +6163,7 @@ var ianmackenzie$elm_geometry$Circle2d$withRadius = F2(
 				radius: elm$core$Basics$abs(radius_)
 			});
 	});
-var author$project$StateParser$asteroidDecoder = A2(
+var author$project$GraphicsDecoder$asteroidDecoder = A2(
 	elm$json$Json$Decode$andThen,
 	function (id) {
 		return A2(
@@ -6193,8 +6193,8 @@ var author$project$StateParser$asteroidDecoder = A2(
 	},
 	A2(elm$json$Json$Decode$field, '0', elm$json$Json$Decode$int));
 var elm$json$Json$Decode$list = _Json_decodeList;
-var author$project$StateParser$asteroidsDecoder = elm$json$Json$Decode$list(author$project$StateParser$asteroidDecoder);
-var author$project$StateParser$bulletDecoder = A2(
+var author$project$GraphicsDecoder$asteroidsDecoder = elm$json$Json$Decode$list(author$project$GraphicsDecoder$asteroidDecoder);
+var author$project$GraphicsDecoder$bulletDecoder = A2(
 	elm$json$Json$Decode$andThen,
 	function (id) {
 		return A2(
@@ -6215,7 +6215,7 @@ var author$project$StateParser$bulletDecoder = A2(
 			A2(elm$json$Json$Decode$field, '1', elm$json$Json$Decode$float));
 	},
 	A2(elm$json$Json$Decode$field, '0', elm$json$Json$Decode$int));
-var author$project$StateParser$bulletsDecoder = elm$json$Json$Decode$list(author$project$StateParser$bulletDecoder);
+var author$project$GraphicsDecoder$bulletsDecoder = elm$json$Json$Decode$list(author$project$GraphicsDecoder$bulletDecoder);
 var elm$json$Json$Decode$fail = _Json_fail;
 var elm$core$Basics$min = F2(
 	function (x, y) {
@@ -6249,7 +6249,7 @@ var ianmackenzie$elm_geometry$BoundingBox2d$from = F2(
 				minY: A2(elm$core$Basics$min, y1, y2)
 			});
 	});
-var author$project$StateParser$dimHelp = function (fs) {
+var author$project$GraphicsDecoder$dimHelp = function (fs) {
 	if ((fs.b && fs.b.b) && (!fs.b.b.b)) {
 		var x = fs.a;
 		var _n1 = fs.b;
@@ -6264,11 +6264,11 @@ var author$project$StateParser$dimHelp = function (fs) {
 		return elm$json$Json$Decode$fail('Expecting 2 floats');
 	}
 };
-var author$project$StateParser$dimDecoder = A2(
+var author$project$GraphicsDecoder$dimDecoder = A2(
 	elm$json$Json$Decode$andThen,
-	author$project$StateParser$dimHelp,
+	author$project$GraphicsDecoder$dimHelp,
 	elm$json$Json$Decode$list(elm$json$Json$Decode$float));
-var author$project$StateParser$explosionDecoder = A2(
+var author$project$GraphicsDecoder$explosionDecoder = A2(
 	elm$json$Json$Decode$andThen,
 	function (x) {
 		return A2(
@@ -6281,8 +6281,8 @@ var author$project$StateParser$explosionDecoder = A2(
 			A2(elm$json$Json$Decode$field, '1', elm$json$Json$Decode$float));
 	},
 	A2(elm$json$Json$Decode$field, '0', elm$json$Json$Decode$float));
-var author$project$StateParser$explosionsDecoder = elm$json$Json$Decode$list(author$project$StateParser$explosionDecoder);
-var author$project$StateParser$shipDecoder = A2(
+var author$project$GraphicsDecoder$explosionsDecoder = elm$json$Json$Decode$list(author$project$GraphicsDecoder$explosionDecoder);
+var author$project$GraphicsDecoder$shipDecoder = A2(
 	elm$json$Json$Decode$andThen,
 	function (tag) {
 		return A2(
@@ -6317,7 +6317,7 @@ var author$project$StateParser$shipDecoder = A2(
 			A2(elm$json$Json$Decode$field, '1', elm$json$Json$Decode$float));
 	},
 	A2(elm$json$Json$Decode$field, '0', elm$json$Json$Decode$string));
-var author$project$StateParser$shipsDecoder = elm$json$Json$Decode$list(author$project$StateParser$shipDecoder);
+var author$project$GraphicsDecoder$shipsDecoder = elm$json$Json$Decode$list(author$project$GraphicsDecoder$shipDecoder);
 var elm$json$Json$Decode$map5 = _Json_map5;
 var elm$json$Json$Decode$oneOf = _Json_oneOf;
 var elm$json$Json$Decode$maybe = function (decoder) {
@@ -6328,19 +6328,19 @@ var elm$json$Json$Decode$maybe = function (decoder) {
 				elm$json$Json$Decode$succeed(elm$core$Maybe$Nothing)
 			]));
 };
-var author$project$StateParser$gameDecoder = A6(
+var author$project$GraphicsDecoder$gameDecoder = A6(
 	elm$json$Json$Decode$map5,
-	author$project$StateParser$Graphics,
-	A2(elm$json$Json$Decode$field, 'a', author$project$StateParser$asteroidsDecoder),
-	A2(elm$json$Json$Decode$field, 'b', author$project$StateParser$bulletsDecoder),
+	author$project$GraphicsDecoder$Graphics,
+	A2(elm$json$Json$Decode$field, 'a', author$project$GraphicsDecoder$asteroidsDecoder),
+	A2(elm$json$Json$Decode$field, 'b', author$project$GraphicsDecoder$bulletsDecoder),
 	elm$json$Json$Decode$maybe(
-		A2(elm$json$Json$Decode$field, 'dim', author$project$StateParser$dimDecoder)),
-	A2(elm$json$Json$Decode$field, 'x', author$project$StateParser$explosionsDecoder),
-	A2(elm$json$Json$Decode$field, 's', author$project$StateParser$shipsDecoder));
+		A2(elm$json$Json$Decode$field, 'dim', author$project$GraphicsDecoder$dimDecoder)),
+	A2(elm$json$Json$Decode$field, 'x', author$project$GraphicsDecoder$explosionsDecoder),
+	A2(elm$json$Json$Decode$field, 's', author$project$GraphicsDecoder$shipsDecoder));
 var elm$json$Json$Decode$decodeString = _Json_runOnString;
 var author$project$Main$mergeGraphics = F2(
 	function (state_json, model) {
-		var _n0 = A2(elm$json$Json$Decode$decodeString, author$project$StateParser$gameDecoder, state_json);
+		var _n0 = A2(elm$json$Json$Decode$decodeString, author$project$GraphicsDecoder$gameDecoder, state_json);
 		if (_n0.$ === 'Ok') {
 			var graphics = _n0.a;
 			return A2(author$project$Game$mergeGame, model, graphics);

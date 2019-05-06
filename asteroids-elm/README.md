@@ -1,6 +1,16 @@
 # Asteroids Graphics for Elixoids
 
 
+## Development
+
+Start a reactor that serves your files, and a process that compiles the code when the sources change:
+
+    elm reactor && find src | entr -r elm make src/main.elm --output public/elixoids.dev.js
+
+Open the browser:
+
+    http://localhost:8000/public/dev.html
+
 
 
 ## Credits
