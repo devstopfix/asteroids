@@ -3,8 +3,9 @@ module Ships exposing (Ship, newShip, renderShip, renderTag)
 import Canvas exposing (..)
 import Circle2d exposing (Circle2d, centerPoint, radius)
 import Color exposing (Color)
-import SpaceShip exposing (shipWithRadius)
 import Point2d exposing (coordinates)
+import Spaceship exposing (shipWithRadius)
+
 
 type alias Id =
     String
@@ -87,7 +88,8 @@ tagOffset =
 
 
 tagFont =
-    "normal lighter Source Code Pro,Source Code Pro,monospace"
+    "Source Code Pro,monospace"
+
 
 trimTag =
-    (String.left 3) << String.trim
+    String.left 3 << String.trim

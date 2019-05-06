@@ -9,39 +9,33 @@ type alias Radius =
     Float
 
 
-type alias Opacity =
-    Float
-
-
 type alias Explosion =
-    { position : Point2d, color : Color, framesRemaining : Int, radius : Radius, opacity : Opacity }
+    { position : Point2d, color : Color, framesRemaining : Int, radius : Radius }
 
 
 explosionDuration =
-    20
+    15
 
 
 newExplosion : Point2d -> Explosion
 newExplosion p =
     { position = p
     , framesRemaining = explosionDuration
-    , color = Color.rgb 0.86 1.0 1.0
-    , radius = 60.0
-    , opacity = 0.98
+    , color = Color.rgba 1 1 1 0.9
+    , radius = 40.0
     }
 
 
-updateExplosions : Int -> List Explosion -> List Explosion
-updateExplosions t =
-    List.filter isActive << List.map (updateExplosion t)
+updateExplosions : Float -> List Explosion -> List Explosion
+updateExplosions msSincePreviousFrame =
+    List.filter isActive << List.map (updateExplosion msSincePreviousFrame)
 
 
-updateExplosion : Int -> Explosion -> Explosion
-updateExplosion t explosion =
+updateExplosion : Float -> Explosion -> Explosion
+updateExplosion msSincePreviousFrame explosion =
     { explosion
         | radius = explosion.radius * 1.05
         , framesRemaining = explosion.framesRemaining - 1
-        , opacity = explosion.opacity * 0.90
     }
 
 

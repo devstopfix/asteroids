@@ -4,27 +4,30 @@ import Asteroids exposing (rotateAsteroids)
 import Browser
 import Browser.Events exposing (onAnimationFrameDelta)
 import Canvas exposing (..)
-import Debug exposing (log)
+import Dict exposing (Dict)
 import Explosions exposing (updateExplosions)
-import Game exposing (Game, newGame, viewGame, mergeGame)
+import Game exposing (Game, mergeGame, newGame, viewGame)
+import GraphicsDecoder exposing (Frame, gameDecoder)
 import Html exposing (Html, div, p, text)
 import Html.Attributes exposing (style)
-import Json.Decode exposing (decodeString, Error)
-import StateParser exposing (gameDecoder)
+import Json.Decode exposing (Error, decodeString)
 
 
 port graphicsIn : (String -> msg) -> Sub msg
 
 
+port addGame : (Int -> msg) -> Sub msg
+
+
+
 type alias Model =
-    { count : Int
-    , games : List Game
-    }
+    Dict Int Game
 
 
 type Msg
     = Frame Float
     | GraphicsIn String
+    | AddGame Int
 
 
 main : Program () Model Msg
@@ -32,7 +35,7 @@ main =
     Browser.element
         { init =
             \() ->
-                ( initState
+                ( Dict.empty
                 , Cmd.none
                 )
         , view = view
@@ -46,75 +49,50 @@ subscriptions model =
     Sub.batch
         [ graphicsIn GraphicsIn
         , onAnimationFrameDelta Frame
+        , addGame AddGame
         ]
 
 
-initState =
-    { count = 0
-    , games = sampleGames
-    }
-
-
-sampleGames =
-    [ newGame ( 800, 450 )
-    -- , newGame ( 400, 225 )
-    -- , newGame ( 400, 225 )
-    -- , newGame ( 200, 112 )
-    -- , newGame ( 200, 112 )
-    -- , newGame ( 200, 112 )
-    -- , newGame ( 200, 112 )
-    ]
-
-
 view : Model -> Html msg
-view model =
-    let
-        t =
-            model.count
-    in
+view games =
     div []
-        (List.append
-            (List.map (\g -> Game.viewGame g) model.games)
-            [ p [] [ text "Hello, Player!" ] ]
-        )
+        (List.map (\g -> Game.viewGame g) (Dict.values games))
 
 
-update msg model =
+update: Msg -> Model -> ( Model, Cmd Msg)
+update msg games =
     case msg of
-        Frame _ ->
-            ( { model
-                | count = model.count + 1
-                , games = updateGames model.count model.games
-              }
+        Frame msSincePreviousFrame ->
+            -- ( Dict.map (\_ g -> updateGame msSincePreviousFrame g)
+            ( Dict.map (updateGame msSincePreviousFrame) games
             , Cmd.none
             )
 
-        GraphicsIn state_json ->
-            case model.games of
-                [] ->
-                    ( model, Cmd.none)
-                [game] ->
-                    ( {model | games = [ (mergeGraphics game state_json) ] }, Cmd.none)
-                _ ->
-                    ( model, Cmd.none )
+        GraphicsIn frame_json ->
+            ( Dict.update 1 (Maybe.map (mergeGraphics frame_json)) games, Cmd.none )
+
+        AddGame id ->
+            let
+                game =
+                    newGame ( 1400, 788 )
+            in
+            ( Dict.insert id game games, Cmd.none )
 
 
-mergeGraphics model state_json =
-    case Json.Decode.decodeString StateParser.gameDecoder state_json of
-        Ok graphics ->
-            mergeGame model graphics
+mergeGraphics: String -> Game -> Game
+mergeGraphics state_json game =
+    case Json.Decode.decodeString gameDecoder state_json of
+        Ok frame ->
+            mergeGame frame game
+
         Err _ ->
-            model
+            game
 
 
-updateGames : Int -> List Game -> List Game
-updateGames t =
-    List.map (updateGame t)
 
-
-updateGame : Int -> Game -> Game
-updateGame t game =
+updateGame : Float -> Int -> Game -> Game
+updateGame msSincePreviousFrame game_id game =
     { game
-        | asteroids = rotateAsteroids t game.asteroids
-        , explosions = updateExplosions t game.explosions
+        | asteroids = rotateAsteroids msSincePreviousFrame game.asteroids
+        , explosions = updateExplosions msSincePreviousFrame game.explosions
     }

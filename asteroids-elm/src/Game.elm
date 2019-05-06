@@ -7,12 +7,12 @@ import Circle2d exposing (Circle2d, withRadius)
 import Color exposing (Color)
 import Dict exposing (Dict)
 import Explosions exposing (Explosion, newExplosion, renderExplosion)
+import GraphicsDecoder exposing (..)
 import Html exposing (Html)
 import Html.Attributes exposing (style)
 import List.FlatMap exposing (flatMap)
 import Point2d exposing (origin)
 import Ships exposing (..)
-import StateParser exposing (AsteroidLocation, BulletLocation, Graphics, Id, ShipLocation)
 
 
 type alias Dimension =
@@ -53,22 +53,16 @@ newGame dims =
     , explosions = []
     , ships = Dict.empty
     , spaceColor = Color.black
-    , transform = gameTransform dims gameDimensions
+    , transform =
+        applyMatrix
+            { m11 = canvas_x / game_x
+            , m22 = -1 * (canvas_y / game_y)
+            , m12 = 0
+            , m21 = 0
+            , dx = 0
+            , dy = canvas_y
+            }
     }
-
-
-gameTransform : Dimension -> Dimension -> WorldTransform
-gameTransform ( canvas_x, canvas_y ) ( game_x, game_y ) =
-    [ translate 0 canvas_y
-    , applyMatrix
-        { m11 = canvas_x / game_x
-        , m22= -1 * (canvas_y / game_y)
-        , m12 = 0
-        , m21 = 0
-        , dx = 0
-        , dy = 0
-        }
-    ]
 
 
 viewGame : Game -> Html msg
@@ -96,7 +90,7 @@ viewGame game =
             renderSpace game
     in
     Canvas.toHtml ( round width, round height )
-        [ style "border" "2px solid darkred" ]
+        []
         (List.foldl List.append [] [ explosions, asteroids, ships, bullets, tags, space ])
 
 
@@ -132,13 +126,13 @@ renderShips tf =
     List.map (renderShip tf)
 
 
-mergeGame : Game -> Graphics -> Game
-mergeGame game graphics =
+mergeGame : Frame -> Game -> Game
+mergeGame frame game =
     { game
-        | asteroids = updateAsteroids graphics.asteroids game.asteroids
-        , bullets = updateBullets graphics.bullets game.bullets
-        , explosions = appendExplosions graphics.explosions game.explosions
-        , ships = updateShips graphics.ships game.ships
+        | asteroids = updateAsteroids frame.asteroids game.asteroids
+        , bullets = updateBullets frame.bullets game.bullets
+        , explosions = appendExplosions frame.explosions game.explosions
+        , ships = updateShips frame.ships game.ships
     }
 
 
