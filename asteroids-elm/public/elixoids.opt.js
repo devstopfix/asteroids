@@ -784,11 +784,11 @@ function _Debug_crash_UNUSED(identifier, fact1, fact2, fact3, fact4)
 
 function _Debug_regionToString(region)
 {
-	if (region.by.aF === region.bJ.aF)
+	if (region.by.aE === region.bJ.aE)
 	{
-		return 'on line ' + region.by.aF;
+		return 'on line ' + region.by.aE;
 	}
-	return 'on lines ' + region.by.aF + ' through ' + region.bJ.aF;
+	return 'on lines ' + region.by.aE + ' through ' + region.bJ.aE;
 }
 
 
@@ -3923,7 +3923,7 @@ var _Browser_document = _Debugger_document || F4(function(impl, flagDecoder, deb
 		impl.cS,
 		impl.cP,
 		function(sendToApp, initialModel) {
-			var divertHrefToApp = impl.aK && impl.aK(sendToApp)
+			var divertHrefToApp = impl.aJ && impl.aJ(sendToApp)
 			var view = impl.cU;
 			var title = _VirtualDom_doc.title;
 			var bodyNode = _VirtualDom_doc.body;
@@ -3998,7 +3998,7 @@ function _Browser_application(impl)
 	var key = function() { key.a(onUrlChange(_Browser_getUrl())); };
 
 	return _Browser_document({
-		aK: function(sendToApp)
+		aJ: function(sendToApp)
 		{
 			key.a = sendToApp;
 			_Browser_window.addEventListener('popstate', key);
@@ -5280,17 +5280,58 @@ var author$project$Game$newGame = function (dims) {
 			{cj: 0, ck: canvas_y, cz: canvas_x / game_x, cA: 0, cB: 0, cC: (-1) * (canvas_y / game_y)})
 	};
 };
-var author$project$Explosions$explosionDuration = 15;
+var author$project$Explosions$explosionDurationMS = 100;
+var avh4$elm_color$Color$hsla = F4(
+	function (hue, sat, light, alpha) {
+		var _n0 = _Utils_Tuple3(hue, sat, light);
+		var h = _n0.a;
+		var s = _n0.b;
+		var l = _n0.c;
+		var m2 = (l <= 0.5) ? (l * (s + 1)) : ((l + s) - (l * s));
+		var m1 = (l * 2) - m2;
+		var hueToRgb = function (h__) {
+			var h_ = (h__ < 0) ? (h__ + 1) : ((h__ > 1) ? (h__ - 1) : h__);
+			return ((h_ * 6) < 1) ? (m1 + (((m2 - m1) * h_) * 6)) : (((h_ * 2) < 1) ? m2 : (((h_ * 3) < 2) ? (m1 + (((m2 - m1) * ((2 / 3) - h_)) * 6)) : m1));
+		};
+		var b = hueToRgb(h - (1 / 3));
+		var g = hueToRgb(h);
+		var r = hueToRgb(h + (1 / 3));
+		return A4(avh4$elm_color$Color$RgbaSpace, r, g, b, alpha);
+	});
 var avh4$elm_color$Color$rgba = F4(
 	function (r, g, b, a) {
 		return A4(avh4$elm_color$Color$RgbaSpace, r, g, b, a);
 	});
+var elm$core$Basics$modBy = _Basics_modBy;
+var author$project$Explosions$pickColor = function (n) {
+	var _n0 = A2(elm$core$Basics$modBy, 8, n);
+	switch (_n0) {
+		case 0:
+			return A4(avh4$elm_color$Color$rgba, 1.0, 1.0, 1.0, 1.0);
+		case 1:
+			return A4(avh4$elm_color$Color$hsla, 31 / 360, 1.0, 0.49, 0.9);
+		case 2:
+			return A4(avh4$elm_color$Color$hsla, 48 / 360, 0.89, 0.8, 0.9);
+		case 3:
+			return A4(avh4$elm_color$Color$hsla, 204 / 360, 0.71, 0.81, 0.9);
+		default:
+			return A4(avh4$elm_color$Color$rgba, 1, 1, 1, 0.9);
+	}
+};
+var elm$core$Basics$truncate = _Basics_truncate;
+var ianmackenzie$elm_geometry$Point2d$coordinates = function (_n0) {
+	var coordinates_ = _n0;
+	return coordinates_;
+};
 var author$project$Explosions$newExplosion = function (p) {
+	var _n0 = ianmackenzie$elm_geometry$Point2d$coordinates(p);
+	var x = _n0.a;
+	var y = _n0.b;
 	return {
-		a4: A4(avh4$elm_color$Color$rgba, 1, 1, 1, 0.9),
-		aC: author$project$Explosions$explosionDuration,
+		a4: author$project$Explosions$pickColor((x + y) | 0),
 		br: p,
-		aI: 40.0
+		aH: 40.0,
+		aO: author$project$Explosions$explosionDurationMS
 	};
 };
 var elm$core$List$append = F2(
@@ -5312,7 +5353,6 @@ var author$project$Asteroids$Classic1 = 0;
 var author$project$Asteroids$Classic2 = 1;
 var author$project$Asteroids$Classic3 = 2;
 var author$project$Asteroids$Classic4 = 3;
-var elm$core$Basics$modBy = _Basics_modBy;
 var author$project$Asteroids$chooseShape = function (i) {
 	var _n0 = A2(elm$core$Basics$modBy, 4, i);
 	switch (_n0) {
@@ -5523,10 +5563,6 @@ var author$project$Points$closePolygon = function (list) {
 				[p]));
 	}
 };
-var ianmackenzie$elm_geometry$Point2d$coordinates = function (_n0) {
-	var coordinates_ = _n0;
-	return coordinates_;
-};
 var author$project$Points$convertPoints = elm$core$List$map(ianmackenzie$elm_geometry$Point2d$coordinates);
 var joakin$elm_canvas$Canvas$LineTo = function (a) {
 	return {$: 2, a: a};
@@ -5642,7 +5678,7 @@ var author$project$Asteroids$rockWithRadius = F2(
 	});
 var ianmackenzie$elm_geometry$Circle2d$radius = function (_n0) {
 	var properties = _n0;
-	return properties.aI;
+	return properties.aH;
 };
 var author$project$Asteroids$newAsteroid = F2(
 	function (id, position) {
@@ -5652,7 +5688,7 @@ var author$project$Asteroids$newAsteroid = F2(
 			author$project$Asteroids$rockWithRadius,
 			rock,
 			ianmackenzie$elm_geometry$Circle2d$radius(position));
-		return {a4: author$project$Asteroids$granite, bO: id, br: position, bw: shape, aM: theta0};
+		return {a4: author$project$Asteroids$granite, bO: id, br: position, bw: shape, aL: theta0};
 	});
 var elm$core$Dict$Black = 1;
 var elm$core$Dict$RBNode_elm_builtin = F5(
@@ -6057,7 +6093,7 @@ var author$project$Ships$newShip = F3(
 			bw: author$project$Spaceship$shipWithRadius(
 				ianmackenzie$elm_geometry$Circle2d$radius(position)),
 			bB: A4(avh4$elm_color$Color$rgba, 1, 1, 1, 0.8),
-			aM: theta
+			aL: theta
 		};
 	});
 var author$project$Game$mergeShips = F2(
@@ -6069,7 +6105,7 @@ var author$project$Game$mergeShips = F2(
 					return A2(
 						elm$core$Dict$insert,
 						id,
-						A3(author$project$Ships$newShip, id, a.ak, a.aM));
+						A3(author$project$Ships$newShip, id, a.ak, a.aL));
 				}),
 			F3(
 				function (id, a, b) {
@@ -6078,7 +6114,7 @@ var author$project$Game$mergeShips = F2(
 						id,
 						_Utils_update(
 							b,
-							{br: a.ak, aM: a.aM}));
+							{br: a.ak, aL: a.aL}));
 				}),
 			F2(
 				function (id, _n0) {
@@ -6128,7 +6164,7 @@ var ianmackenzie$elm_geometry$Circle2d$withRadius = F2(
 	function (radius_, centerPoint_) {
 		return {
 			ce: centerPoint_,
-			aI: elm$core$Basics$abs(radius_)
+			aH: elm$core$Basics$abs(radius_)
 		};
 	});
 var author$project$GraphicsDecoder$asteroidDecoder = A2(
@@ -6270,7 +6306,7 @@ var author$project$GraphicsDecoder$shipDecoder = A2(
 													r,
 													ianmackenzie$elm_geometry$Point2d$fromCoordinates(
 														_Utils_Tuple2(x, y))),
-												aM: theta
+												aL: theta
 											});
 									},
 									A2(elm$json$Json$Decode$field, '4', elm$json$Json$Decode$float));
@@ -6320,7 +6356,7 @@ var author$project$Asteroids$rotateAsteroid = F2(
 		var delta_theta = ((elm$core$Basics$pi * 2) * delta_t) / 30;
 		return _Utils_update(
 			asteroid,
-			{aM: asteroid.aM + delta_theta});
+			{aL: asteroid.aL + delta_theta});
 	});
 var elm$core$Dict$map = F2(
 	function (func, dict) {
@@ -6347,14 +6383,14 @@ var author$project$Asteroids$rotateAsteroids = function (msSincePreviousFrame) {
 			return author$project$Asteroids$rotateAsteroid(msSincePreviousFrame);
 		});
 };
-var author$project$Explosions$isActive = function (e) {
-	return e.aC > 0;
+var author$project$Explosions$isActive = function (explosion) {
+	return explosion.aO > 0;
 };
 var author$project$Explosions$updateExplosion = F2(
 	function (msSincePreviousFrame, explosion) {
 		return _Utils_update(
 			explosion,
-			{aC: explosion.aC - 1, aI: explosion.aI * 1.05});
+			{aH: explosion.aH * 1.08, aO: explosion.aO - msSincePreviousFrame});
 	});
 var elm$core$List$filter = F2(
 	function (isGood, list) {
@@ -7134,7 +7170,7 @@ var author$project$Asteroids$renderAsteroid = F2(
 			[
 				tf,
 				A2(joakin$elm_canvas$Canvas$translate, x, y),
-				joakin$elm_canvas$Canvas$rotate(asteroid.aM)
+				joakin$elm_canvas$Canvas$rotate(asteroid.aL)
 			]);
 		return A2(
 			joakin$elm_canvas$Canvas$shapes,
@@ -7201,7 +7237,7 @@ var author$project$Explosions$renderExplosion = F2(
 					A2(
 					joakin$elm_canvas$Canvas$circle,
 					_Utils_Tuple2(0, 0),
-					explosion.aI)
+					explosion.aH)
 				]));
 	});
 var author$project$Game$renderExplosions = function (tf) {
@@ -7218,7 +7254,7 @@ var author$project$Ships$renderShip = F2(
 			[
 				tf,
 				A2(joakin$elm_canvas$Canvas$translate, x, y),
-				joakin$elm_canvas$Canvas$rotate(ship.aM)
+				joakin$elm_canvas$Canvas$rotate(ship.aL)
 			]);
 		return A2(
 			joakin$elm_canvas$Canvas$shapes,
@@ -7324,12 +7360,12 @@ var joakin$elm_canvas$Canvas$text = F3(
 				Q: _List_Nil,
 				ay: joakin$elm_canvas$Canvas$NotSpecified,
 				az: joakin$elm_canvas$Canvas$DrawableText(
-					{aG: elm$core$Maybe$Nothing, bq: point, aZ: str})
+					{aF: elm$core$Maybe$Nothing, bq: point, aZ: str})
 			});
 	});
 var author$project$Ships$renderTag = F2(
 	function (tf, ship) {
-		var tagTheta = author$project$Ships$offset90deg(ship.aM);
+		var tagTheta = author$project$Ships$offset90deg(ship.aL);
 		var tagDY = author$project$Ships$tagOffset(
 			ianmackenzie$elm_geometry$Circle2d$radius(ship.br));
 		var tag = author$project$Ships$trimTag(ship.bO);
@@ -7756,7 +7792,7 @@ var joakin$elm_canvas$Canvas$renderTextFill = F5(
 	function (txt, x, y, color, cmds) {
 		return A2(
 			elm$core$List$cons,
-			A4(joakin$elm_canvas$Canvas$Internal$fillText, txt.aZ, x, y, txt.aG),
+			A4(joakin$elm_canvas$Canvas$Internal$fillText, txt.aZ, x, y, txt.aF),
 			A2(
 				elm$core$List$cons,
 				joakin$elm_canvas$Canvas$Internal$fillStyle(color),
@@ -7792,7 +7828,7 @@ var joakin$elm_canvas$Canvas$renderTextStroke = F5(
 	function (txt, x, y, color, cmds) {
 		return A2(
 			elm$core$List$cons,
-			A4(joakin$elm_canvas$Canvas$Internal$strokeText, txt.aZ, x, y, txt.aG),
+			A4(joakin$elm_canvas$Canvas$Internal$strokeText, txt.aZ, x, y, txt.aF),
 			A2(
 				elm$core$List$cons,
 				joakin$elm_canvas$Canvas$Internal$strokeStyle(color),

@@ -5288,14 +5288,55 @@ var author$project$Game$newGame = function (dims) {
 			{dx: 0, dy: canvas_y, m11: canvas_x / game_x, m12: 0, m21: 0, m22: (-1) * (canvas_y / game_y)})
 	};
 };
-var author$project$Explosions$explosionDurationMS = 200;
+var author$project$Explosions$explosionDurationMS = 100;
+var avh4$elm_color$Color$hsla = F4(
+	function (hue, sat, light, alpha) {
+		var _n0 = _Utils_Tuple3(hue, sat, light);
+		var h = _n0.a;
+		var s = _n0.b;
+		var l = _n0.c;
+		var m2 = (l <= 0.5) ? (l * (s + 1)) : ((l + s) - (l * s));
+		var m1 = (l * 2) - m2;
+		var hueToRgb = function (h__) {
+			var h_ = (h__ < 0) ? (h__ + 1) : ((h__ > 1) ? (h__ - 1) : h__);
+			return ((h_ * 6) < 1) ? (m1 + (((m2 - m1) * h_) * 6)) : (((h_ * 2) < 1) ? m2 : (((h_ * 3) < 2) ? (m1 + (((m2 - m1) * ((2 / 3) - h_)) * 6)) : m1));
+		};
+		var b = hueToRgb(h - (1 / 3));
+		var g = hueToRgb(h);
+		var r = hueToRgb(h + (1 / 3));
+		return A4(avh4$elm_color$Color$RgbaSpace, r, g, b, alpha);
+	});
 var avh4$elm_color$Color$rgba = F4(
 	function (r, g, b, a) {
 		return A4(avh4$elm_color$Color$RgbaSpace, r, g, b, a);
 	});
+var elm$core$Basics$modBy = _Basics_modBy;
+var author$project$Explosions$pickColor = function (n) {
+	var _n0 = A2(elm$core$Basics$modBy, 8, n);
+	switch (_n0) {
+		case 0:
+			return A4(avh4$elm_color$Color$rgba, 1.0, 1.0, 1.0, 1.0);
+		case 1:
+			return A4(avh4$elm_color$Color$hsla, 31 / 360, 1.0, 0.49, 0.9);
+		case 2:
+			return A4(avh4$elm_color$Color$hsla, 48 / 360, 0.89, 0.8, 0.9);
+		case 3:
+			return A4(avh4$elm_color$Color$hsla, 204 / 360, 0.71, 0.81, 0.9);
+		default:
+			return A4(avh4$elm_color$Color$rgba, 1, 1, 1, 0.9);
+	}
+};
+var elm$core$Basics$truncate = _Basics_truncate;
+var ianmackenzie$elm_geometry$Point2d$coordinates = function (_n0) {
+	var coordinates_ = _n0.a;
+	return coordinates_;
+};
 var author$project$Explosions$newExplosion = function (p) {
+	var _n0 = ianmackenzie$elm_geometry$Point2d$coordinates(p);
+	var x = _n0.a;
+	var y = _n0.b;
 	return {
-		color: A4(avh4$elm_color$Color$rgba, 1, 1, 1, 0.9),
+		color: author$project$Explosions$pickColor((x + y) | 0),
 		position: p,
 		radius: 40.0,
 		ttl: author$project$Explosions$explosionDurationMS
@@ -5320,7 +5361,6 @@ var author$project$Asteroids$Classic1 = {$: 'Classic1'};
 var author$project$Asteroids$Classic2 = {$: 'Classic2'};
 var author$project$Asteroids$Classic3 = {$: 'Classic3'};
 var author$project$Asteroids$Classic4 = {$: 'Classic4'};
-var elm$core$Basics$modBy = _Basics_modBy;
 var author$project$Asteroids$chooseShape = function (i) {
 	var _n0 = A2(elm$core$Basics$modBy, 4, i);
 	switch (_n0) {
@@ -5539,10 +5579,6 @@ var author$project$Points$closePolygon = function (list) {
 			_List_fromArray(
 				[p]));
 	}
-};
-var ianmackenzie$elm_geometry$Point2d$coordinates = function (_n0) {
-	var coordinates_ = _n0.a;
-	return coordinates_;
 };
 var author$project$Points$convertPoints = elm$core$List$map(ianmackenzie$elm_geometry$Point2d$coordinates);
 var joakin$elm_canvas$Canvas$LineTo = function (a) {

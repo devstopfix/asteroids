@@ -4,7 +4,6 @@ import Canvas exposing (..)
 import Color exposing (Color)
 import Point2d exposing (Point2d, coordinates)
 
-
 type alias Radius =
     Float
 
@@ -14,14 +13,18 @@ type alias Explosion =
 
 
 explosionDurationMS =
-    200
+    100
+
 
 
 newExplosion : Point2d -> Explosion
 newExplosion p =
+    let
+        (x, y) = coordinates p
+        in
     { position = p
     , ttl = explosionDurationMS
-    , color = Color.rgba 1 1 1 0.9
+    , color = (x + y) |> truncate |> pickColor
     , radius = 40.0
     }
 
@@ -55,3 +58,19 @@ renderExplosion tf explosion =
     shapes
         [ stroke color, fill color, transform [ tf, translate x y ] ]
         [ circle ( 0, 0 ) explosion.radius ]
+
+
+pickColor : Int -> Color
+pickColor n =
+    case modBy 8 n of
+        0 ->
+            Color.rgba 1.0 1.0 1.0 1.0
+        1 ->
+            Color.hsla (31 / 360) 1.0 0.49 0.9
+        2 ->
+            Color.hsla (48 / 360) 0.89 0.8 0.9
+        3 ->
+            Color.hsla (204 / 360) 0.71 0.81 0.9
+        _ ->
+            Color.rgba 1 1 1 0.9
+
