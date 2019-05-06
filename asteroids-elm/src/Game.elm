@@ -19,7 +19,6 @@ type alias Dimension =
     ( Float, Float )
 
 
-
 type alias Game =
     { dimension : Dimension
     , asteroids : Dict Int Asteroid

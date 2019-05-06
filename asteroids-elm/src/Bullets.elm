@@ -27,10 +27,16 @@ renderBullet tf bullet =
     let
         ( x, y ) =
             coordinates bullet.position
+<<<<<<< HEAD
 
         transformations =
             [tf, translate x y]
     in
     shapes
         [ stroke bullet.color, fill bullet.color, transform transformations ]
+=======
+    in
+    shapes
+        [ stroke bullet.color, fill bullet.color, transform [ tf, translate x y ] ]
+>>>>>>> 91879cd66b9d0c3de899d661c451170870cbbd26
         [ bullet.shape ]

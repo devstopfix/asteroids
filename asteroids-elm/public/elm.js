@@ -5770,6 +5770,44 @@ var elm$core$Dict$insertHelp = F3(
 						nLeft,
 						A3(elm$core$Dict$insertHelp, key, value, nRight));
 			}
+		} else {
+			return elm$core$Dict$RBEmpty_elm_builtin;
+		}
+	});
+var elm$core$Dict$remove = F2(
+	function (key, dict) {
+		var _n0 = A2(elm$core$Dict$removeHelp, key, dict);
+		if ((_n0.$ === 'RBNode_elm_builtin') && (_n0.a.$ === 'Red')) {
+			var _n1 = _n0.a;
+			var k = _n0.b;
+			var v = _n0.c;
+			var l = _n0.d;
+			var r = _n0.e;
+			return A5(elm$core$Dict$RBNode_elm_builtin, elm$core$Dict$Black, k, v, l, r);
+		} else {
+			var x = _n0;
+			return x;
+		}
+	});
+var elm$core$Dict$update = F3(
+	function (targetKey, alter, dictionary) {
+		var _n0 = alter(
+			A2(elm$core$Dict$get, targetKey, dictionary));
+		if (_n0.$ === 'Just') {
+			var value = _n0.a;
+			return A3(elm$core$Dict$insert, targetKey, value, dictionary);
+		} else {
+			return A2(elm$core$Dict$remove, targetKey, dictionary);
+		}
+	});
+var elm$core$Maybe$map = F2(
+	function (f, maybe) {
+		if (maybe.$ === 'Just') {
+			var value = maybe.a;
+			return elm$core$Maybe$Just(
+				f(value));
+		} else {
+			return elm$core$Maybe$Nothing;
 		}
 	});
 var elm$core$Dict$insert = F3(
@@ -7132,8 +7170,12 @@ var joakin$elm_canvas$Canvas$Internal$translate = F2(
 			'translate',
 			_List_fromArray(
 				[
-					elm$json$Json$Encode$float(x),
-					elm$json$Json$Encode$float(y)
+					elm$json$Json$Encode$float(a),
+					elm$json$Json$Encode$float(b),
+					elm$json$Json$Encode$float(c),
+					elm$json$Json$Encode$float(d),
+					elm$json$Json$Encode$float(e),
+					elm$json$Json$Encode$float(f)
 				]));
 	});
 var joakin$elm_canvas$Canvas$transform = function (transforms) {
