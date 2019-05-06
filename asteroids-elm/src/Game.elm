@@ -1,7 +1,7 @@
 module Game exposing (Game, mergeGame, newGame, viewGame)
 
 import Asteroids exposing (..)
-import Bullets exposing (Bullet, newBullet, renderBullet)
+import Bullets exposing (..)
 import Canvas exposing (..)
 import Circle2d exposing (Circle2d, withRadius)
 import Color exposing (Color)
@@ -107,7 +107,7 @@ renderAsteroids tf =
 
 
 renderBullets tf =
-    List.map (renderBullet tf)
+    flatMap (renderBullet tf)
 
 
 renderExplosions tf =
@@ -168,15 +168,6 @@ toBulletMap =
     Dict.fromList << List.map (\a -> ( a.id, a ))
 
 
-mergeBullets : Dict Int BulletLocation -> Dict Int Bullet -> Dict Int Bullet
-mergeBullets graphics_bullets game_bullets =
-    Dict.merge
-        (\id a -> Dict.insert id (newBullet id a.location))
-        (\id a b -> Dict.insert id { b | position = a.location })
-        (\id _ -> identity)
-        graphics_bullets
-        game_bullets
-        Dict.empty
 
 
 updateShips ships game_ships =

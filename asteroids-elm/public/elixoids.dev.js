@@ -5958,6 +5958,27 @@ var author$project$Game$updateAsteroids = F2(
 			author$project$Game$toAsteroidMap(asteroids),
 			game_asteroids);
 	});
+var author$project$Bullets$longestTail = 40.0 * 40.0;
+var ianmackenzie$elm_geometry$Vector2d$squaredLength = function (vector) {
+	var _n0 = ianmackenzie$elm_geometry$Vector2d$components(vector);
+	var x = _n0.a;
+	var y = _n0.b;
+	return (x * x) + (y * y);
+};
+var author$project$Bullets$mergeBullet = F2(
+	function (f, b) {
+		var tail = A2(ianmackenzie$elm_geometry$Vector2d$from, b.position, f.location);
+		return (_Utils_cmp(
+			ianmackenzie$elm_geometry$Vector2d$squaredLength(tail),
+			author$project$Bullets$longestTail) > 0) ? _Utils_update(
+			b,
+			{position: f.location, tail: elm$core$Maybe$Nothing}) : _Utils_update(
+			b,
+			{
+				position: f.location,
+				tail: elm$core$Maybe$Just(tail)
+			});
+	});
 var joakin$elm_canvas$Canvas$Circle = F2(
 	function (a, b) {
 		return {$: 'Circle', a: a, b: b};
@@ -5975,28 +5996,27 @@ var author$project$Bullets$newBullet = F2(
 			shape: A2(
 				joakin$elm_canvas$Canvas$circle,
 				_Utils_Tuple2(0, 0),
-				4)
+				4),
+			tail: elm$core$Maybe$Nothing
 		};
 	});
-var author$project$Game$mergeBullets = F2(
+var author$project$Bullets$mergeBullets = F2(
 	function (graphics_bullets, game_bullets) {
 		return A6(
 			elm$core$Dict$merge,
 			F2(
-				function (id, a) {
+				function (id, f) {
 					return A2(
 						elm$core$Dict$insert,
 						id,
-						A2(author$project$Bullets$newBullet, id, a.location));
+						A2(author$project$Bullets$newBullet, id, f.location));
 				}),
 			F3(
-				function (id, a, b) {
+				function (id, f, b) {
 					return A2(
 						elm$core$Dict$insert,
 						id,
-						_Utils_update(
-							b,
-							{position: a.location}));
+						A2(author$project$Bullets$mergeBullet, f, b));
 				}),
 			F2(
 				function (id, _n0) {
@@ -6016,7 +6036,7 @@ var author$project$Game$toBulletMap = A2(
 var author$project$Game$updateBullets = F2(
 	function (bullets, game_bullets) {
 		return A2(
-			author$project$Game$mergeBullets,
+			author$project$Bullets$mergeBullets,
 			author$project$Game$toBulletMap(bullets),
 			game_bullets);
 	});
@@ -7219,29 +7239,107 @@ var author$project$Game$renderAsteroids = function (tf) {
 	return elm$core$List$map(
 		author$project$Asteroids$renderAsteroid(tf));
 };
-var author$project$Bullets$renderBullet = F2(
+var avh4$elm_color$Color$hsl = F3(
+	function (h, s, l) {
+		return A4(avh4$elm_color$Color$hsla, h, s, l, 1.0);
+	});
+var author$project$Bullets$tailColor = A3(avh4$elm_color$Color$hsl, 199 / 360, 0.96, 0.82);
+var author$project$Bullets$renderTail = F2(
+	function (tf, bullet) {
+		var _n0 = bullet.tail;
+		if (_n0.$ === 'Just') {
+			var tail = _n0.a;
+			var _n1 = ianmackenzie$elm_geometry$Vector2d$components(tail);
+			var x = _n1.a;
+			var y = _n1.b;
+			var _n2 = ianmackenzie$elm_geometry$Point2d$coordinates(bullet.position);
+			var ox = _n2.a;
+			var oy = _n2.b;
+			return elm$core$Maybe$Just(
+				A2(
+					joakin$elm_canvas$Canvas$shapes,
+					_List_fromArray(
+						[
+							joakin$elm_canvas$Canvas$stroke(author$project$Bullets$tailColor),
+							joakin$elm_canvas$Canvas$lineWidth(2.0),
+							joakin$elm_canvas$Canvas$transform(
+							_List_fromArray(
+								[tf]))
+						]),
+					_List_fromArray(
+						[
+							A2(
+							joakin$elm_canvas$Canvas$path,
+							_Utils_Tuple2(ox, oy),
+							_List_fromArray(
+								[
+									joakin$elm_canvas$Canvas$lineTo(
+									_Utils_Tuple2(ox - x, oy - y))
+								]))
+						])));
+		} else {
+			return elm$core$Maybe$Nothing;
+		}
+	});
+var author$project$Bullets$renderWarhead = F2(
 	function (tf, bullet) {
 		var _n0 = ianmackenzie$elm_geometry$Point2d$coordinates(bullet.position);
 		var x = _n0.a;
 		var y = _n0.b;
+		return elm$core$Maybe$Just(
+			A2(
+				joakin$elm_canvas$Canvas$shapes,
+				_List_fromArray(
+					[
+						joakin$elm_canvas$Canvas$stroke(bullet.color),
+						joakin$elm_canvas$Canvas$fill(bullet.color),
+						joakin$elm_canvas$Canvas$transform(
+						_List_fromArray(
+							[
+								tf,
+								A2(joakin$elm_canvas$Canvas$translate, x, y)
+							]))
+					]),
+				_List_fromArray(
+					[bullet.shape])));
+	});
+var elm$core$List$maybeCons = F3(
+	function (f, mx, xs) {
+		var _n0 = f(mx);
+		if (_n0.$ === 'Just') {
+			var x = _n0.a;
+			return A2(elm$core$List$cons, x, xs);
+		} else {
+			return xs;
+		}
+	});
+var elm$core$List$filterMap = F2(
+	function (f, xs) {
+		return A3(
+			elm$core$List$foldr,
+			elm$core$List$maybeCons(f),
+			_List_Nil,
+			xs);
+	});
+var author$project$Bullets$renderBullet = F2(
+	function (tf, bullet) {
 		return A2(
-			joakin$elm_canvas$Canvas$shapes,
+			elm$core$List$filterMap,
+			elm$core$Basics$identity,
 			_List_fromArray(
 				[
-					joakin$elm_canvas$Canvas$stroke(bullet.color),
-					joakin$elm_canvas$Canvas$fill(bullet.color),
-					joakin$elm_canvas$Canvas$transform(
-					_List_fromArray(
-						[
-							tf,
-							A2(joakin$elm_canvas$Canvas$translate, x, y)
-						]))
-				]),
-			_List_fromArray(
-				[bullet.shape]));
+					A2(author$project$Bullets$renderWarhead, tf, bullet),
+					A2(author$project$Bullets$renderTail, tf, bullet)
+				]));
+	});
+var ccapndave$elm_flat_map$List$FlatMap$join = A2(elm$core$List$foldr, elm$core$Basics$append, _List_Nil);
+var ccapndave$elm_flat_map$List$FlatMap$flatMap = F2(
+	function (f, list) {
+		return ccapndave$elm_flat_map$List$FlatMap$join(
+			A2(elm$core$List$map, f, list));
 	});
 var author$project$Game$renderBullets = function (tf) {
-	return elm$core$List$map(
+	return ccapndave$elm_flat_map$List$FlatMap$flatMap(
 		author$project$Bullets$renderBullet(tf));
 };
 var author$project$Explosions$renderExplosion = F2(
@@ -7430,12 +7528,6 @@ var author$project$Ships$renderTag = F2(
 				_Utils_Tuple2(x, y),
 				tag)
 			]);
-	});
-var ccapndave$elm_flat_map$List$FlatMap$join = A2(elm$core$List$foldr, elm$core$Basics$append, _List_Nil);
-var ccapndave$elm_flat_map$List$FlatMap$flatMap = F2(
-	function (f, list) {
-		return ccapndave$elm_flat_map$List$FlatMap$join(
-			A2(elm$core$List$map, f, list));
 	});
 var author$project$Game$renderTags = function (tf) {
 	return ccapndave$elm_flat_map$List$FlatMap$flatMap(
