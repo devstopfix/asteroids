@@ -1,10 +1,10 @@
-module SpaceShip exposing (arcadeShipEast, shipWithRadius)
+module Spaceship exposing (shipWithRadius)
 
 import Canvas exposing (Shape)
 import Point2d exposing (origin)
 import Points exposing (readPoints)
-import Polygon exposing (pointsToShape, polygonCentroid, polygonToShape)
-import Polygon2d exposing (outerLoop, scaleAbout, singleLoop, translateBy)
+import Polygon exposing (polygonCentroid, polygonToShape)
+import Polygon2d exposing (scaleAbout, singleLoop, translateBy)
 import Vector2d exposing (from)
 
 

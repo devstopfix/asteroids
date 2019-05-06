@@ -12,7 +12,7 @@ import Html.Attributes exposing (style)
 import List.FlatMap exposing (flatMap)
 import Point2d exposing (origin)
 import Ships exposing (..)
-import StateParser exposing (AsteroidLocation, BulletLocation, Graphics, Id, ShipLocation)
+import GraphicsDecoder exposing (..)
 
 
 type alias Dimension =

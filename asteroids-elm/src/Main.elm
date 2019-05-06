@@ -10,7 +10,7 @@ import Game exposing (Game, mergeGame, newGame, viewGame)
 import Html exposing (Html, div, p, text)
 import Html.Attributes exposing (style)
 import Json.Decode exposing (Error, decodeString)
-import StateParser exposing (gameDecoder)
+import GraphicsDecoder exposing (gameDecoder)
 
 
 port graphicsIn : (String -> msg) -> Sub msg
@@ -81,7 +81,7 @@ update msg games =
 
 
 mergeGraphics state_json model =
-    case Json.Decode.decodeString StateParser.gameDecoder state_json of
+    case Json.Decode.decodeString gameDecoder state_json of
         Ok graphics ->
             mergeGame model graphics
 

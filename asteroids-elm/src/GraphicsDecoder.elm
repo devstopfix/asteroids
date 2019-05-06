@@ -1,4 +1,4 @@
-module StateParser exposing (AsteroidLocation, BulletLocation, Graphics, Id, ShipLocation, gameDecoder)
+module GraphicsDecoder exposing (AsteroidLocation, BulletLocation, Graphics, Id, ShipLocation, gameDecoder)
 
 import BoundingBox2d exposing (BoundingBox2d, from)
 import Circle2d exposing (Circle2d, withRadius)

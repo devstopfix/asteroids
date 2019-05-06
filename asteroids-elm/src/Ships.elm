@@ -3,7 +3,7 @@ module Ships exposing (Ship, newShip, renderShip, renderTag)
 import Canvas exposing (..)
 import Circle2d exposing (Circle2d, centerPoint, radius)
 import Color exposing (Color)
-import SpaceShip exposing (shipWithRadius)
+import Spaceship exposing (shipWithRadius)
 import Point2d exposing (coordinates)
 
 type alias Id =
