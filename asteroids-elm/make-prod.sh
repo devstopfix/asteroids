@@ -31,7 +31,6 @@ if closure-compiler --js $target2 $canvas $resources --compilation_level SIMPLE_
     cp $target $prod_target
     md5 $prod_target
 
-    gzip -k -f $prod_target
     echo "OK!"
 fi
 
