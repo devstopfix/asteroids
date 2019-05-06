@@ -7188,18 +7188,18 @@ var author$project$Bullets$renderBullet = F2(
 		var _n0 = ianmackenzie$elm_geometry$Point2d$coordinates(bullet.position);
 		var x = _n0.a;
 		var y = _n0.b;
-		var transformations = _List_fromArray(
-			[
-				tf,
-				A2(joakin$elm_canvas$Canvas$translate, x, y)
-			]);
 		return A2(
 			joakin$elm_canvas$Canvas$shapes,
 			_List_fromArray(
 				[
 					joakin$elm_canvas$Canvas$stroke(bullet.color),
 					joakin$elm_canvas$Canvas$fill(bullet.color),
-					joakin$elm_canvas$Canvas$transform(transformations)
+					joakin$elm_canvas$Canvas$transform(
+					_List_fromArray(
+						[
+							tf,
+							A2(joakin$elm_canvas$Canvas$translate, x, y)
+						]))
 				]),
 			_List_fromArray(
 				[bullet.shape]));
@@ -7214,18 +7214,18 @@ var author$project$Explosions$renderExplosion = F2(
 		var _n0 = ianmackenzie$elm_geometry$Point2d$coordinates(explosion.position);
 		var x = _n0.a;
 		var y = _n0.b;
-		var transformations = _List_fromArray(
-			[
-				tf,
-				A2(joakin$elm_canvas$Canvas$translate, x, y)
-			]);
 		return A2(
 			joakin$elm_canvas$Canvas$shapes,
 			_List_fromArray(
 				[
 					joakin$elm_canvas$Canvas$stroke(color),
 					joakin$elm_canvas$Canvas$fill(color),
-					joakin$elm_canvas$Canvas$transform(transformations)
+					joakin$elm_canvas$Canvas$transform(
+					_List_fromArray(
+						[
+							tf,
+							A2(joakin$elm_canvas$Canvas$translate, x, y)
+						]))
 				]),
 			_List_fromArray(
 				[
