@@ -45,7 +45,7 @@
       var nextGameId = 0;
 
       if (app && app.ports) {
-        run(serverURL, nextGameId+=1 )
+        run(localURL, nextGameId+=1 )
         app.ports.addGame.send(nextGameId+=1);
       }
     </script>

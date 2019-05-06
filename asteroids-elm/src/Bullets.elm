@@ -28,8 +28,8 @@ newBullet id position =
 renderBullet : Transform -> Bullet -> List Renderable
 renderBullet tf bullet =
     List.filterMap identity
-        [ renderWarhead tf bullet
-        , renderTail tf bullet
+        [ renderTail tf bullet
+        , renderWarhead tf bullet
         ]
 
 
@@ -69,14 +69,14 @@ renderTail tf bullet =
 mergeBullets graphics_bullets game_bullets =
     Dict.merge
         (\id f -> Dict.insert id (newBullet id f.location))
-        (\id f b -> Dict.insert id (mergeBullet f b))
+        (\id f b -> Dict.insert id (bulletAndTail f b))
         (\id _ -> identity)
         graphics_bullets
         game_bullets
         Dict.empty
 
 
-mergeBullet f b =
+bulletAndTail f b =
     let
         tail =
             from b.position f.location
@@ -93,4 +93,4 @@ tailColor =
 
 
 longestTail =
-    40.0 * 40.0
+    80.0 * 80.0

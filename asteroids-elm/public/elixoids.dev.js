@@ -5958,14 +5958,14 @@ var author$project$Game$updateAsteroids = F2(
 			author$project$Game$toAsteroidMap(asteroids),
 			game_asteroids);
 	});
-var author$project$Bullets$longestTail = 40.0 * 40.0;
+var author$project$Bullets$longestTail = 80.0 * 80.0;
 var ianmackenzie$elm_geometry$Vector2d$squaredLength = function (vector) {
 	var _n0 = ianmackenzie$elm_geometry$Vector2d$components(vector);
 	var x = _n0.a;
 	var y = _n0.b;
 	return (x * x) + (y * y);
 };
-var author$project$Bullets$mergeBullet = F2(
+var author$project$Bullets$bulletAndTail = F2(
 	function (f, b) {
 		var tail = A2(ianmackenzie$elm_geometry$Vector2d$from, b.position, f.location);
 		return (_Utils_cmp(
@@ -6016,7 +6016,7 @@ var author$project$Bullets$mergeBullets = F2(
 					return A2(
 						elm$core$Dict$insert,
 						id,
-						A2(author$project$Bullets$mergeBullet, f, b));
+						A2(author$project$Bullets$bulletAndTail, f, b));
 				}),
 			F2(
 				function (id, _n0) {
@@ -7328,8 +7328,8 @@ var author$project$Bullets$renderBullet = F2(
 			elm$core$Basics$identity,
 			_List_fromArray(
 				[
-					A2(author$project$Bullets$renderWarhead, tf, bullet),
-					A2(author$project$Bullets$renderTail, tf, bullet)
+					A2(author$project$Bullets$renderTail, tf, bullet),
+					A2(author$project$Bullets$renderWarhead, tf, bullet)
 				]));
 	});
 var ccapndave$elm_flat_map$List$FlatMap$join = A2(elm$core$List$foldr, elm$core$Basics$append, _List_Nil);
