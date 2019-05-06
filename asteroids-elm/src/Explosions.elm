@@ -1,48 +1,57 @@
-module Explosions exposing (Explosion, newExplosion, updateExplosions)
+module Explosions exposing (Explosion, newExplosion, renderExplosion, updateExplosions)
 
-import Canvas exposing (Point)
+import Canvas exposing (..)
 import Color exposing (Color)
+import Point2d exposing (Point2d, coordinates)
 
 
 type alias Radius =
     Float
 
 
-type alias Opacity =
-    Float
-
-
 type alias Explosion =
-    { position : Point, color : Color, framesRemaining : Int, radius : Radius, opacity : Opacity }
+    { position : Point2d, color : Color, framesRemaining : Int, radius : Radius }
 
 
 explosionDuration =
-    20
+    15
 
 
-newExplosion : Point -> Explosion
+newExplosion : Point2d -> Explosion
 newExplosion p =
     { position = p
     , framesRemaining = explosionDuration
-    , color = Color.rgba 1 1 0.8 0.8
-    , radius = 60.0
-    , opacity = 0.98
+    , color = Color.rgba 1 1 1 0.9
+    , radius = 40.0
     }
 
 
-updateExplosions : Int -> List Explosion -> List Explosion
-updateExplosions t =
-    List.filter isActive << List.map (updateExplosion t)
+updateExplosions : Float -> List Explosion -> List Explosion
+updateExplosions msSincePreviousFrame =
+    List.filter isActive << List.map (updateExplosion msSincePreviousFrame)
 
 
-updateExplosion : Int -> Explosion -> Explosion
-updateExplosion t explosion =
+updateExplosion : Float -> Explosion -> Explosion
+updateExplosion msSincePreviousFrame explosion =
     { explosion
         | radius = explosion.radius * 1.05
         , framesRemaining = explosion.framesRemaining - 1
-        , opacity = explosion.opacity * 0.99
     }
 
 
 isActive e =
     e.framesRemaining > 0
+
+
+renderExplosion : Transform -> Explosion -> Renderable
+renderExplosion tf explosion =
+    let
+        ( x, y ) =
+            coordinates explosion.position
+
+        color =
+            explosion.color
+    in
+    shapes
+        [ stroke color, fill color, transform [ tf, translate x y ] ]
+        [ circle ( 0, 0 ) explosion.radius ]
