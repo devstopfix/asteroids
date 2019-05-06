@@ -7431,6 +7431,11 @@ var author$project$Game$renderSpace = function (game) {
 		]);
 };
 var author$project$Ships$offset90deg = elm$core$Basics$add(elm$core$Basics$pi / 2);
+var avh4$elm_color$Color$rgb = F3(
+	function (r, g, b) {
+		return A4(avh4$elm_color$Color$RgbaSpace, r, g, b, 1.0);
+	});
+var author$project$Ships$tagColor = A3(avh4$elm_color$Color$rgb, 0.6, 0.6, 0.6);
 var author$project$Ships$tagFont = 'Source Code Pro,monospace';
 var author$project$Ships$tagOffset = elm$core$Basics$mul(3.0);
 var elm$core$String$trim = _String_trim;
@@ -7518,8 +7523,8 @@ var author$project$Ships$renderTag = F2(
 				joakin$elm_canvas$Canvas$text,
 				_List_fromArray(
 					[
-						joakin$elm_canvas$Canvas$stroke(color),
-						joakin$elm_canvas$Canvas$fill(color),
+						joakin$elm_canvas$Canvas$stroke(author$project$Ships$tagColor),
+						joakin$elm_canvas$Canvas$fill(author$project$Ships$tagColor),
 						joakin$elm_canvas$Canvas$transform(transformations),
 						joakin$elm_canvas$Canvas$font(
 						{family: author$project$Ships$tagFont, size: 36}),

@@ -74,7 +74,7 @@ renderTag tf ship =
         transformations =
             [ tf, translate x y, rotate tagTheta, translate -x -y, translate 0 tagDY ]
     in
-    [ text [ stroke color, fill color, transform transformations, font { size = 36, family = tagFont }, align Center ] ( x, y ) tag ]
+    [ text [ stroke tagColor, fill tagColor, transform transformations, font { size = 36, family = tagFont }, align Center ] ( x, y ) tag ]
 
 
 offset90deg =
@@ -91,3 +91,6 @@ tagFont =
 
 trimTag =
     String.left 3 << String.trim
+
+tagColor =
+    Color.rgb 0.6 0.6 0.6
