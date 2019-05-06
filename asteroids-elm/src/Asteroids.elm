@@ -23,7 +23,7 @@ type alias Radius =
 
 
 type alias Asteroid =
-    { id : Id, position : Circle2d, theta : Theta, theta0 : Theta, shape : Shape, color : Color }
+    { id : Id, position : Circle2d, theta : Theta, shape : Shape, color : Color }
 
 
 newAsteroid : Id -> Circle2d -> Asteroid
@@ -34,11 +34,13 @@ newAsteroid id position =
 
         shape =
             rockWithRadius rock (radius position)
+
+        theta0 =
+            modBy 628 id |> toFloat
     in
     { id = id
     , position = position
-    , theta = 0.0
-    , theta0 = thetaOffset id
+    , theta = theta0
     , shape = shape
     , color = granite
     }
@@ -68,18 +70,21 @@ chooseShape i =
             Classic4
 
 
-rotateAsteroids : Int -> Dict Int Asteroid -> Dict Int Asteroid
-rotateAsteroids t =
+rotateAsteroids : Float -> Dict Int Asteroid -> Dict Int Asteroid
+rotateAsteroids msSincePreviousFrame =
+    Dict.map (\_ -> rotateAsteroid msSincePreviousFrame)
+
+
+rotateAsteroid : Float -> Asteroid -> Asteroid
+rotateAsteroid msSincePreviousFrame asteroid =
     let
-        theta =
-            cycle t
+        delta_t =
+            msSincePreviousFrame / 1000
+
+        delta_theta =
+            (pi * 2) * delta_t / 30
     in
-    Dict.map (rotateAsteroid theta)
-
-
-rotateAsteroid : Theta -> Int -> Asteroid -> Asteroid
-rotateAsteroid theta _ asteroid =
-    { asteroid | theta = theta + asteroid.theta0 }
+    { asteroid | theta = asteroid.theta + delta_theta }
 
 
 cycle : Int -> Theta

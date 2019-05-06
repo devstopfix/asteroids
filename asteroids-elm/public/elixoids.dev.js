@@ -5659,29 +5659,19 @@ var author$project$Asteroids$rockWithRadius = F2(
 		return author$project$Polygon$polygonToShape(
 			A3(ianmackenzie$elm_geometry$Polygon2d$scaleAbout, ianmackenzie$elm_geometry$Point2d$origin, radius, rock));
 	});
-var author$project$Asteroids$thetaOffset = function (n) {
-	var two_pi = 314;
-	return A2(elm$core$Basics$modBy, two_pi, n) / two_pi;
-};
 var ianmackenzie$elm_geometry$Circle2d$radius = function (_n0) {
 	var properties = _n0.a;
 	return properties.radius;
 };
 var author$project$Asteroids$newAsteroid = F2(
 	function (id, position) {
+		var theta0 = A2(elm$core$Basics$modBy, 628, id);
 		var rock = author$project$Asteroids$chooseShape(id);
 		var shape = A2(
 			author$project$Asteroids$rockWithRadius,
 			rock,
 			ianmackenzie$elm_geometry$Circle2d$radius(position));
-		return {
-			color: author$project$Asteroids$granite,
-			id: id,
-			position: position,
-			shape: shape,
-			theta: 0.0,
-			theta0: author$project$Asteroids$thetaOffset(id)
-		};
+		return {color: author$project$Asteroids$granite, id: id, position: position, shape: shape, theta: theta0};
 	});
 var elm$core$Dict$Black = {$: 'Black'};
 var elm$core$Dict$RBNode_elm_builtin = F5(
@@ -6132,17 +6122,17 @@ var author$project$Game$updateShips = F2(
 			game_ships);
 	});
 var author$project$Game$mergeGame = F2(
-	function (game, graphics) {
+	function (frame, game) {
 		return _Utils_update(
 			game,
 			{
-				asteroids: A2(author$project$Game$updateAsteroids, graphics.asteroids, game.asteroids),
-				bullets: A2(author$project$Game$updateBullets, graphics.bullets, game.bullets),
-				explosions: A2(author$project$Game$appendExplosions, graphics.explosions, game.explosions),
-				ships: A2(author$project$Game$updateShips, graphics.ships, game.ships)
+				asteroids: A2(author$project$Game$updateAsteroids, frame.asteroids, game.asteroids),
+				bullets: A2(author$project$Game$updateBullets, frame.bullets, game.bullets),
+				explosions: A2(author$project$Game$appendExplosions, frame.explosions, game.explosions),
+				ships: A2(author$project$Game$updateShips, frame.ships, game.ships)
 			});
 	});
-var author$project$GraphicsDecoder$Graphics = F5(
+var author$project$GraphicsDecoder$Frame = F5(
 	function (asteroids, bullets, dimensions, explosions, ships) {
 		return {asteroids: asteroids, bullets: bullets, dimensions: dimensions, explosions: explosions, ships: ships};
 	});
@@ -6330,7 +6320,7 @@ var elm$json$Json$Decode$maybe = function (decoder) {
 };
 var author$project$GraphicsDecoder$gameDecoder = A6(
 	elm$json$Json$Decode$map5,
-	author$project$GraphicsDecoder$Graphics,
+	author$project$GraphicsDecoder$Frame,
 	A2(elm$json$Json$Decode$field, 'a', author$project$GraphicsDecoder$asteroidsDecoder),
 	A2(elm$json$Json$Decode$field, 'b', author$project$GraphicsDecoder$bulletsDecoder),
 	elm$json$Json$Decode$maybe(
@@ -6339,27 +6329,23 @@ var author$project$GraphicsDecoder$gameDecoder = A6(
 	A2(elm$json$Json$Decode$field, 's', author$project$GraphicsDecoder$shipsDecoder));
 var elm$json$Json$Decode$decodeString = _Json_runOnString;
 var author$project$Main$mergeGraphics = F2(
-	function (state_json, model) {
+	function (state_json, game) {
 		var _n0 = A2(elm$json$Json$Decode$decodeString, author$project$GraphicsDecoder$gameDecoder, state_json);
 		if (_n0.$ === 'Ok') {
-			var graphics = _n0.a;
-			return A2(author$project$Game$mergeGame, model, graphics);
+			var frame = _n0.a;
+			return A2(author$project$Game$mergeGame, frame, game);
 		} else {
-			return model;
+			return game;
 		}
 	});
 var elm$core$Basics$pi = _Basics_pi;
-var author$project$Asteroids$cycle = function (t) {
-	var framesPerRevolution = 960;
-	var n = A2(elm$core$Basics$modBy, framesPerRevolution, t);
-	var f = n / framesPerRevolution;
-	return (f * 2) * elm$core$Basics$pi;
-};
-var author$project$Asteroids$rotateAsteroid = F3(
-	function (theta, _n0, asteroid) {
+var author$project$Asteroids$rotateAsteroid = F2(
+	function (msSincePreviousFrame, asteroid) {
+		var delta_t = msSincePreviousFrame / 1000;
+		var delta_theta = ((elm$core$Basics$pi * 2) * delta_t) / 30;
 		return _Utils_update(
 			asteroid,
-			{theta: theta + asteroid.theta0});
+			{theta: asteroid.theta + delta_theta});
 	});
 var elm$core$Dict$map = F2(
 	function (func, dict) {
@@ -6380,16 +6366,17 @@ var elm$core$Dict$map = F2(
 				A2(elm$core$Dict$map, func, right));
 		}
 	});
-var author$project$Asteroids$rotateAsteroids = function (t) {
-	var theta = author$project$Asteroids$cycle(t);
+var author$project$Asteroids$rotateAsteroids = function (msSincePreviousFrame) {
 	return elm$core$Dict$map(
-		author$project$Asteroids$rotateAsteroid(theta));
+		function (_n0) {
+			return author$project$Asteroids$rotateAsteroid(msSincePreviousFrame);
+		});
 };
 var author$project$Explosions$isActive = function (e) {
 	return e.framesRemaining > 0;
 };
 var author$project$Explosions$updateExplosion = F2(
-	function (t, explosion) {
+	function (msSincePreviousFrame, explosion) {
 		return _Utils_update(
 			explosion,
 			{framesRemaining: explosion.framesRemaining - 1, radius: explosion.radius * 1.05});
@@ -6405,29 +6392,22 @@ var elm$core$List$filter = F2(
 			_List_Nil,
 			list);
 	});
-var author$project$Explosions$updateExplosions = function (t) {
+var author$project$Explosions$updateExplosions = function (msSincePreviousFrame) {
 	return A2(
 		elm$core$Basics$composeL,
 		elm$core$List$filter(author$project$Explosions$isActive),
 		elm$core$List$map(
-			author$project$Explosions$updateExplosion(t)));
+			author$project$Explosions$updateExplosion(msSincePreviousFrame)));
 };
-var author$project$Main$updateGame = F2(
-	function (t, game) {
+var author$project$Main$updateGame = F3(
+	function (msSincePreviousFrame, game_id, game) {
 		return _Utils_update(
 			game,
 			{
-				asteroids: A2(author$project$Asteroids$rotateAsteroids, t, game.asteroids),
-				explosions: A2(author$project$Explosions$updateExplosions, t, game.explosions)
+				asteroids: A2(author$project$Asteroids$rotateAsteroids, msSincePreviousFrame, game.asteroids),
+				explosions: A2(author$project$Explosions$updateExplosions, msSincePreviousFrame, game.explosions)
 			});
 	});
-var author$project$Main$updateGames = function (t) {
-	return elm$core$Dict$map(
-		F2(
-			function (_n0, g) {
-				return A2(author$project$Main$updateGame, t, g);
-			}));
-};
 var elm$core$Dict$get = F2(
 	function (targetKey, dict) {
 		get:
@@ -6848,17 +6828,21 @@ var author$project$Main$update = F2(
 	function (msg, games) {
 		switch (msg.$) {
 			case 'Frame':
+				var msSincePreviousFrame = msg.a;
 				return _Utils_Tuple2(
-					A2(author$project$Main$updateGames, 0, games),
+					A2(
+						elm$core$Dict$map,
+						author$project$Main$updateGame(msSincePreviousFrame),
+						games),
 					elm$core$Platform$Cmd$none);
 			case 'GraphicsIn':
-				var state_json = msg.a;
+				var frame_json = msg.a;
 				return _Utils_Tuple2(
 					A3(
 						elm$core$Dict$update,
 						1,
 						elm$core$Maybe$map(
-							author$project$Main$mergeGraphics(state_json)),
+							author$project$Main$mergeGraphics(frame_json)),
 						games),
 					elm$core$Platform$Cmd$none);
 			default:

@@ -26,13 +26,13 @@ newExplosion p =
     }
 
 
-updateExplosions : Int -> List Explosion -> List Explosion
-updateExplosions t =
-    List.filter isActive << List.map (updateExplosion t)
+updateExplosions : Float -> List Explosion -> List Explosion
+updateExplosions msSincePreviousFrame =
+    List.filter isActive << List.map (updateExplosion msSincePreviousFrame)
 
 
-updateExplosion : Int -> Explosion -> Explosion
-updateExplosion t explosion =
+updateExplosion : Float -> Explosion -> Explosion
+updateExplosion msSincePreviousFrame explosion =
     { explosion
         | radius = explosion.radius * 1.05
         , framesRemaining = explosion.framesRemaining - 1

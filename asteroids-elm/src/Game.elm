@@ -122,13 +122,13 @@ renderShips tf =
     List.map (renderShip tf)
 
 
-mergeGame : Game -> Graphics -> Game
-mergeGame game graphics =
+mergeGame : Frame -> Game -> Game
+mergeGame frame game =
     { game
-        | asteroids = updateAsteroids graphics.asteroids game.asteroids
-        , bullets = updateBullets graphics.bullets game.bullets
-        , explosions = appendExplosions graphics.explosions game.explosions
-        , ships = updateShips graphics.ships game.ships
+        | asteroids = updateAsteroids frame.asteroids game.asteroids
+        , bullets = updateBullets frame.bullets game.bullets
+        , explosions = appendExplosions frame.explosions game.explosions
+        , ships = updateShips frame.ships game.ships
     }
 
 

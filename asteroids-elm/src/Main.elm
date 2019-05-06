@@ -7,7 +7,7 @@ import Canvas exposing (..)
 import Dict exposing (Dict)
 import Explosions exposing (updateExplosions)
 import Game exposing (Game, mergeGame, newGame, viewGame)
-import GraphicsDecoder exposing (gameDecoder)
+import GraphicsDecoder exposing (Frame, gameDecoder)
 import Html exposing (Html, div, p, text)
 import Html.Attributes exposing (style)
 import Json.Decode exposing (Error, decodeString)
@@ -19,12 +19,9 @@ port graphicsIn : (String -> msg) -> Sub msg
 port addGame : (Int -> msg) -> Sub msg
 
 
-type alias GameId =
-    Int
-
 
 type alias Model =
-    Dict GameId Game
+    Dict Int Game
 
 
 type Msg
@@ -62,15 +59,17 @@ view games =
         (List.map (\g -> Game.viewGame g) (Dict.values games))
 
 
+update: Msg -> Model -> ( Model, Cmd Msg)
 update msg games =
     case msg of
-        Frame _ ->
-            ( updateGames 0 games
+        Frame msSincePreviousFrame ->
+            -- ( Dict.map (\_ g -> updateGame msSincePreviousFrame g)
+            ( Dict.map (updateGame msSincePreviousFrame) games
             , Cmd.none
             )
 
-        GraphicsIn state_json ->
-            ( Dict.update 1 (Maybe.map (mergeGraphics state_json)) games, Cmd.none )
+        GraphicsIn frame_json ->
+            ( Dict.update 1 (Maybe.map (mergeGraphics frame_json)) games, Cmd.none )
 
         AddGame id ->
             let
@@ -80,23 +79,20 @@ update msg games =
             ( Dict.insert id game games, Cmd.none )
 
 
-mergeGraphics state_json model =
+mergeGraphics: String -> Game -> Game
+mergeGraphics state_json game =
     case Json.Decode.decodeString gameDecoder state_json of
-        Ok graphics ->
-            mergeGame model graphics
+        Ok frame ->
+            mergeGame frame game
 
         Err _ ->
-            model
+            game
 
 
-updateGames : GameId -> Dict GameId Game -> Dict GameId Game
-updateGames t =
-    Dict.map (\_ g -> updateGame t g)
 
-
-updateGame : Int -> Game -> Game
-updateGame t game =
+updateGame : Float -> Int -> Game -> Game
+updateGame msSincePreviousFrame game_id game =
     { game
-        | asteroids = rotateAsteroids t game.asteroids
-        , explosions = updateExplosions t game.explosions
+        | asteroids = rotateAsteroids msSincePreviousFrame game.asteroids
+        , explosions = updateExplosions msSincePreviousFrame game.explosions
     }
