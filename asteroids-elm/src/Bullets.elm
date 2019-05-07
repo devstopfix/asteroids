@@ -12,13 +12,12 @@ type alias Id =
 
 
 type alias Bullet =
-    { id : Id, position : Point2d, tail : Maybe Vector2d, color : Color, shape : Shape }
+    { id : Id, position : Point2d, tail : Maybe Vector2d, shape : Shape }
 
 
 newBullet : Id -> Point2d -> Bullet
 newBullet id position =
     { id = id
-    , color = Color.rgb255 251 251 255
     , position = position
     , shape = circle ( 0, 0 ) 4
     , tail = Nothing
@@ -40,7 +39,7 @@ renderWarhead tf bullet =
     in
     Just
         (shapes
-            [ stroke bullet.color, fill bullet.color, transform [ tf, translate x y ] ]
+            [ stroke warheadColor, fill warheadColor, transform [ tf, translate x y ] ]
             [ bullet.shape ]
         )
 
@@ -90,6 +89,9 @@ bulletAndTail f b =
 
 tailColor =
     Color.hsl (199 / 360) 0.96 0.82
+
+warheadColor =
+    Color.hsl (199 / 360) 0.96 0.9
 
 
 longestTail =

@@ -6024,7 +6024,6 @@ var joakin$elm_canvas$Canvas$circle = F2(
 var author$project$Bullets$newBullet = F2(
 	function (id, position) {
 		return {
-			color: A3(avh4$elm_color$Color$rgb255, 251, 251, 255),
 			id: id,
 			position: position,
 			shape: A2(
@@ -7340,6 +7339,7 @@ var author$project$Bullets$renderTail = F2(
 			return elm$core$Maybe$Nothing;
 		}
 	});
+var author$project$Bullets$warheadColor = A3(avh4$elm_color$Color$hsl, 199 / 360, 0.96, 0.9);
 var author$project$Bullets$renderWarhead = F2(
 	function (tf, bullet) {
 		var _n0 = ianmackenzie$elm_geometry$Point2d$coordinates(bullet.position);
@@ -7350,8 +7350,8 @@ var author$project$Bullets$renderWarhead = F2(
 				joakin$elm_canvas$Canvas$shapes,
 				_List_fromArray(
 					[
-						joakin$elm_canvas$Canvas$stroke(bullet.color),
-						joakin$elm_canvas$Canvas$fill(bullet.color),
+						joakin$elm_canvas$Canvas$stroke(author$project$Bullets$warheadColor),
+						joakin$elm_canvas$Canvas$fill(author$project$Bullets$warheadColor),
 						joakin$elm_canvas$Canvas$transform(
 						_List_fromArray(
 							[
