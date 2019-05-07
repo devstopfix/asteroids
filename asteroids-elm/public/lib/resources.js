@@ -33,3 +33,5 @@ function graphicsURL(window_location_href) {
 
     return url;
 }
+
+

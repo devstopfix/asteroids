@@ -1,8 +1,8 @@
 #!/bin/bash
 
 input=src/main.elm
-canvas=public/elm-canvas.2.2.js
-resources=public/resources.js
+canvas=public/lib/elm-canvas.2.2.js
+resources=public/lib/resources.js
 
 target1=public/elixoids.dev.js
 target2=public/elixoids.opt.js
