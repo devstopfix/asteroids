@@ -43,10 +43,6 @@ newAsteroid id position =
     }
 
 
-
--- https://encycolorpedia.com/2f353b
-
-
 granite =
     Color.rgb255 5 8 9
 
@@ -134,10 +130,8 @@ rockWithRadius rt radius =
     scaleAbout origin radius rock |> polygonToShape
 
 
-
--- Arcade shapes http://computerarcheology.com/Arcade/Asteroids/VectorROM.html
-
-
+{-| <http://computerarcheology.com/Arcade/Asteroids/VectorROM.html>
+-}
 type RockType
     = Classic1
     | Classic2

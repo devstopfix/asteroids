@@ -4,6 +4,7 @@ import Canvas exposing (..)
 import Color exposing (Color)
 import Point2d exposing (Point2d, coordinates)
 
+
 type alias Radius =
     Float
 
@@ -12,16 +13,12 @@ type alias Explosion =
     { position : Point2d, color : Color, ttl : Float, radius : Radius }
 
 
-explosionDurationMS =
-    100
-
-
-
 newExplosion : Point2d -> Explosion
 newExplosion p =
     let
-        (x, y) = coordinates p
-        in
+        ( x, y ) =
+            coordinates p
+    in
     { position = p
     , ttl = explosionDurationMS
     , color = (x + y) |> truncate |> pickColor
@@ -37,7 +34,7 @@ updateExplosions msSincePreviousFrame =
 updateExplosion : Float -> Explosion -> Explosion
 updateExplosion msSincePreviousFrame explosion =
     { explosion
-        | radius = explosion.radius * 1.08
+        | radius = explosion.radius * explosionExpansion
         , ttl = explosion.ttl - msSincePreviousFrame
     }
 
@@ -65,12 +62,25 @@ pickColor n =
     case modBy 8 n of
         0 ->
             Color.rgba 1.0 1.0 1.0 1.0
+
         1 ->
-            Color.hsla (31 / 360) 1.0 0.49 0.8feat:
+            Color.hsla (31 / 360) 1.0 0.49 0.8
+
         2 ->
-            Color.hsla (48 / 360) 0.90 0.5 0.9
+            Color.hsla (48 / 360) 0.9 0.5 0.9
+
         3 ->
             Color.hsla (204 / 360) 0.71 0.81 0.9
+
         _ ->
             Color.rgba 1 1 1 0.9
 
+
+{-| At 60 FPS explosion is shown for 6 frames. 1.21^6 == x3 growth
+-}
+explosionExpansion =
+    1.21
+
+
+explosionDurationMS =
+    100

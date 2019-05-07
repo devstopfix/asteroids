@@ -6904,11 +6904,12 @@ var author$project$Asteroids$rotateAsteroids = function (msSincePreviousFrame) {
 var author$project$Explosions$isActive = function (explosion) {
 	return explosion.ttl > 0;
 };
+var author$project$Explosions$explosionExpansion = 1.21;
 var author$project$Explosions$updateExplosion = F2(
 	function (msSincePreviousFrame, explosion) {
 		return _Utils_update(
 			explosion,
-			{radius: explosion.radius * 1.08, ttl: explosion.ttl - msSincePreviousFrame});
+			{radius: explosion.radius * author$project$Explosions$explosionExpansion, ttl: explosion.ttl - msSincePreviousFrame});
 	});
 var elm$core$List$filter = F2(
 	function (isGood, list) {
