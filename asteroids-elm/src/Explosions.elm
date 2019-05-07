@@ -64,19 +64,19 @@ pickColor n =
             Color.rgba 1.0 1.0 1.0 1.0
 
         1 ->
-            Color.hsla (31 / 360) 1.0 0.49 0.8
+            Color.hsla (31 / 360) 1.0 0.49 0.95
 
         2 ->
-            Color.hsla (48 / 360) 0.9 0.5 0.9
+            Color.hsla (48 / 360) 0.9 0.5 0.95
 
         3 ->
-            Color.hsla (204 / 360) 0.71 0.81 0.9
+            Color.hsla (204 / 360) 0.71 0.81 0.95
 
         _ ->
-            Color.rgba 1 1 1 0.9
+            Color.rgba 1 1 1 0.95
 
 
-{-| At 60 FPS explosion is shown for 6 frames. 1.21^6 == x3 growth
+{-| At 60 FPS explosion is shown for 6 frames. 1.123^6 == x2 growth
 -}
 explosionExpansion =
     1.21
