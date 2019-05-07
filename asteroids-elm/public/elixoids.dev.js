@@ -4799,10 +4799,9 @@ var author$project$Main$Frame = function (a) {
 var author$project$Main$GraphicsIn = function (a) {
 	return {$: 'GraphicsIn', a: a};
 };
-var elm$json$Json$Decode$int = _Json_decodeInt;
-var author$project$Main$addGame = _Platform_incomingPort('addGame', elm$json$Json$Decode$int);
-var elm$json$Json$Decode$string = _Json_decodeString;
-var author$project$Main$graphicsIn = _Platform_incomingPort('graphicsIn', elm$json$Json$Decode$string);
+var elm$json$Json$Decode$value = _Json_decodeValue;
+var author$project$Main$addGame = _Platform_incomingPort('addGame', elm$json$Json$Decode$value);
+var author$project$Main$graphicsIn = _Platform_incomingPort('graphicsIn', elm$json$Json$Decode$value);
 var elm$browser$Browser$AnimationManager$Delta = function (a) {
 	return {$: 'Delta', a: a};
 };
@@ -5280,8 +5279,8 @@ var author$project$Game$newGame = function (dims) {
 	var game_x = _n0.a;
 	var game_y = _n0.b;
 	var _n1 = dims;
-	var canvas_x = _n1.a;
-	var canvas_y = _n1.b;
+	var canvas_width = _n1.a;
+	var canvas_height = _n1.b;
 	return {
 		asteroids: elm$core$Dict$empty,
 		bullets: elm$core$Dict$empty,
@@ -5290,9 +5289,21 @@ var author$project$Game$newGame = function (dims) {
 		ships: elm$core$Dict$empty,
 		spaceColor: avh4$elm_color$Color$black,
 		transform: joakin$elm_canvas$Canvas$applyMatrix(
-			{dx: 0, dy: canvas_y, m11: canvas_x / game_x, m12: 0, m21: 0, m22: (-1) * (canvas_y / game_y)})
+			{dx: 0, dy: canvas_height, m11: canvas_width / game_x, m12: 0, m21: 0, m22: (-1) * (canvas_height / game_y)})
 	};
 };
+var author$project$Main$FrameInput = F2(
+	function (id, frame) {
+		return {frame: frame, id: id};
+	});
+var elm$json$Json$Decode$field = _Json_decodeField;
+var elm$json$Json$Decode$int = _Json_decodeInt;
+var elm$json$Json$Decode$string = _Json_decodeString;
+var author$project$Main$frameInputDecoder = A3(
+	elm$json$Json$Decode$map2,
+	author$project$Main$FrameInput,
+	A2(elm$json$Json$Decode$field, 'id', elm$json$Json$Decode$int),
+	A2(elm$json$Json$Decode$field, 'frame', elm$json$Json$Decode$string));
 var author$project$Explosions$explosionDurationMS = 100;
 var avh4$elm_color$Color$hsla = F4(
 	function (hue, sat, light, alpha) {
@@ -6216,7 +6227,6 @@ var author$project$GraphicsDecoder$Frame = F5(
 		return {asteroids: asteroids, bullets: bullets, dimensions: dimensions, explosions: explosions, ships: ships};
 	});
 var elm$json$Json$Decode$andThen = _Json_andThen;
-var elm$json$Json$Decode$field = _Json_decodeField;
 var elm$json$Json$Decode$float = _Json_decodeFloat;
 var elm$core$Basics$abs = function (n) {
 	return (n < 0) ? (-n) : n;
@@ -6416,76 +6426,6 @@ var author$project$Main$mergeGraphics = F2(
 		} else {
 			return game;
 		}
-	});
-var elm$core$Basics$pi = _Basics_pi;
-var author$project$Asteroids$rotateAsteroid = F2(
-	function (msSincePreviousFrame, asteroid) {
-		var delta_t = msSincePreviousFrame / 1000;
-		var delta_theta = ((elm$core$Basics$pi * 2) * delta_t) / 30;
-		return _Utils_update(
-			asteroid,
-			{theta: asteroid.theta + delta_theta});
-	});
-var elm$core$Dict$map = F2(
-	function (func, dict) {
-		if (dict.$ === 'RBEmpty_elm_builtin') {
-			return elm$core$Dict$RBEmpty_elm_builtin;
-		} else {
-			var color = dict.a;
-			var key = dict.b;
-			var value = dict.c;
-			var left = dict.d;
-			var right = dict.e;
-			return A5(
-				elm$core$Dict$RBNode_elm_builtin,
-				color,
-				key,
-				A2(func, key, value),
-				A2(elm$core$Dict$map, func, left),
-				A2(elm$core$Dict$map, func, right));
-		}
-	});
-var author$project$Asteroids$rotateAsteroids = function (msSincePreviousFrame) {
-	return elm$core$Dict$map(
-		function (_n0) {
-			return author$project$Asteroids$rotateAsteroid(msSincePreviousFrame);
-		});
-};
-var author$project$Explosions$isActive = function (explosion) {
-	return explosion.ttl > 0;
-};
-var author$project$Explosions$updateExplosion = F2(
-	function (msSincePreviousFrame, explosion) {
-		return _Utils_update(
-			explosion,
-			{radius: explosion.radius * 1.08, ttl: explosion.ttl - msSincePreviousFrame});
-	});
-var elm$core$List$filter = F2(
-	function (isGood, list) {
-		return A3(
-			elm$core$List$foldr,
-			F2(
-				function (x, xs) {
-					return isGood(x) ? A2(elm$core$List$cons, x, xs) : xs;
-				}),
-			_List_Nil,
-			list);
-	});
-var author$project$Explosions$updateExplosions = function (msSincePreviousFrame) {
-	return A2(
-		elm$core$Basics$composeL,
-		elm$core$List$filter(author$project$Explosions$isActive),
-		elm$core$List$map(
-			author$project$Explosions$updateExplosion(msSincePreviousFrame)));
-};
-var author$project$Main$updateGame = F3(
-	function (msSincePreviousFrame, game_id, game) {
-		return _Utils_update(
-			game,
-			{
-				asteroids: A2(author$project$Asteroids$rotateAsteroids, msSincePreviousFrame, game.asteroids),
-				explosions: A2(author$project$Explosions$updateExplosions, msSincePreviousFrame, game.explosions)
-			});
 	});
 var elm$core$Dict$get = F2(
 	function (targetKey, dict) {
@@ -6901,6 +6841,103 @@ var elm$core$Maybe$map = F2(
 			return elm$core$Maybe$Nothing;
 		}
 	});
+var elm$json$Json$Decode$decodeValue = _Json_run;
+var author$project$Main$handleFrame = F2(
+	function (framev, games) {
+		var _n0 = A2(elm$json$Json$Decode$decodeValue, author$project$Main$frameInputDecoder, framev);
+		if (_n0.$ === 'Ok') {
+			var frame = _n0.a;
+			return A3(
+				elm$core$Dict$update,
+				frame.id,
+				elm$core$Maybe$map(
+					author$project$Main$mergeGraphics(frame.frame)),
+				games);
+		} else {
+			return games;
+		}
+	});
+var author$project$Main$NewGameInput = F3(
+	function (id, width, height) {
+		return {height: height, id: id, width: width};
+	});
+var elm$json$Json$Decode$map3 = _Json_map3;
+var author$project$Main$newGameInputDecoder = A4(
+	elm$json$Json$Decode$map3,
+	author$project$Main$NewGameInput,
+	A2(elm$json$Json$Decode$field, 'id', elm$json$Json$Decode$int),
+	A2(elm$json$Json$Decode$field, 'width', elm$json$Json$Decode$int),
+	A2(elm$json$Json$Decode$field, 'height', elm$json$Json$Decode$int));
+var elm$core$Basics$pi = _Basics_pi;
+var author$project$Asteroids$rotateAsteroid = F2(
+	function (msSincePreviousFrame, asteroid) {
+		var delta_t = msSincePreviousFrame / 1000;
+		var delta_theta = ((elm$core$Basics$pi * 2) * delta_t) / 30;
+		return _Utils_update(
+			asteroid,
+			{theta: asteroid.theta + delta_theta});
+	});
+var elm$core$Dict$map = F2(
+	function (func, dict) {
+		if (dict.$ === 'RBEmpty_elm_builtin') {
+			return elm$core$Dict$RBEmpty_elm_builtin;
+		} else {
+			var color = dict.a;
+			var key = dict.b;
+			var value = dict.c;
+			var left = dict.d;
+			var right = dict.e;
+			return A5(
+				elm$core$Dict$RBNode_elm_builtin,
+				color,
+				key,
+				A2(func, key, value),
+				A2(elm$core$Dict$map, func, left),
+				A2(elm$core$Dict$map, func, right));
+		}
+	});
+var author$project$Asteroids$rotateAsteroids = function (msSincePreviousFrame) {
+	return elm$core$Dict$map(
+		function (_n0) {
+			return author$project$Asteroids$rotateAsteroid(msSincePreviousFrame);
+		});
+};
+var author$project$Explosions$isActive = function (explosion) {
+	return explosion.ttl > 0;
+};
+var author$project$Explosions$updateExplosion = F2(
+	function (msSincePreviousFrame, explosion) {
+		return _Utils_update(
+			explosion,
+			{radius: explosion.radius * 1.08, ttl: explosion.ttl - msSincePreviousFrame});
+	});
+var elm$core$List$filter = F2(
+	function (isGood, list) {
+		return A3(
+			elm$core$List$foldr,
+			F2(
+				function (x, xs) {
+					return isGood(x) ? A2(elm$core$List$cons, x, xs) : xs;
+				}),
+			_List_Nil,
+			list);
+	});
+var author$project$Explosions$updateExplosions = function (msSincePreviousFrame) {
+	return A2(
+		elm$core$Basics$composeL,
+		elm$core$List$filter(author$project$Explosions$isActive),
+		elm$core$List$map(
+			author$project$Explosions$updateExplosion(msSincePreviousFrame)));
+};
+var author$project$Main$updateGame = F3(
+	function (msSincePreviousFrame, game_id, game) {
+		return _Utils_update(
+			game,
+			{
+				asteroids: A2(author$project$Asteroids$rotateAsteroids, msSincePreviousFrame, game.asteroids),
+				explosions: A2(author$project$Explosions$updateExplosions, msSincePreviousFrame, game.explosions)
+			});
+	});
 var author$project$Main$update = F2(
 	function (msg, games) {
 		switch (msg.$) {
@@ -6914,18 +6951,22 @@ var author$project$Main$update = F2(
 			case 'GraphicsIn':
 				var frame_json = msg.a;
 				return author$project$Main$cmdNone(
-					A3(
-						elm$core$Dict$update,
-						1,
-						elm$core$Maybe$map(
-							author$project$Main$mergeGraphics(frame_json)),
-						games));
+					A2(author$project$Main$handleFrame, frame_json, games));
 			default:
-				var id = msg.a;
-				var game = author$project$Game$newGame(
-					_Utils_Tuple2(1400, 788));
-				return author$project$Main$cmdNone(
-					A3(elm$core$Dict$insert, id, game, games));
+				var input = msg.a;
+				var _n1 = A2(elm$json$Json$Decode$decodeValue, author$project$Main$newGameInputDecoder, input);
+				if (_n1.$ === 'Ok') {
+					var g = _n1.a;
+					return author$project$Main$cmdNone(
+						A3(
+							elm$core$Dict$insert,
+							g.id,
+							author$project$Game$newGame(
+								_Utils_Tuple2(g.width, g.height)),
+							games));
+				} else {
+					return author$project$Main$cmdNone(games);
+				}
 		}
 	});
 var avh4$elm_color$Color$gray = A4(avh4$elm_color$Color$RgbaSpace, 211 / 255, 215 / 255, 207 / 255, 1.0);

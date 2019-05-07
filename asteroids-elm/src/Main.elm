@@ -10,13 +10,31 @@ import Game exposing (Game, mergeGame, newGame, viewGame)
 import GraphicsDecoder exposing (Frame, gameDecoder)
 import Html exposing (Html, div, p, text)
 import Html.Attributes exposing (style)
-import Json.Decode exposing (Error, decodeString)
+import Json.Decode as Decode exposing (..)
+import Json.Encode as E
 
 
-port graphicsIn : (String -> msg) -> Sub msg
+port graphicsIn : (E.Value -> msg) -> Sub msg
 
 
-port addGame : (Int -> msg) -> Sub msg
+port addGame : (E.Value -> msg) -> Sub msg
+
+
+
+-- JS Interface
+
+
+type alias FrameInput =
+    { id : Int
+    , frame : String
+    }
+
+
+type alias NewGameInput =
+    { id : Int
+    , width : Int
+    , height : Int
+    }
 
 
 type alias Model =
@@ -25,8 +43,8 @@ type alias Model =
 
 type Msg
     = Frame Float
-    | GraphicsIn String
-    | AddGame Int
+    | GraphicsIn E.Value
+    | AddGame E.Value
 
 
 main : Program () Model Msg
@@ -64,19 +82,30 @@ update msg games =
 
         GraphicsIn frame_json ->
             cmdNone
-                (Dict.update 1 (Maybe.map (mergeGraphics frame_json)) games)
+                (handleFrame frame_json games)
 
-        AddGame id ->
-            let
-                game =
-                    newGame ( 1400, 788 )
-            in
-            cmdNone (Dict.insert id game games)
+        AddGame input ->
+            case Decode.decodeValue newGameInputDecoder input of
+                Ok g ->
+                    cmdNone (Dict.insert g.id (newGame ( toFloat g.width, toFloat g.height )) games)
+
+                Err _ ->
+                    cmdNone games
+
+
+handleFrame : E.Value -> Model -> Model
+handleFrame framev games =
+    case Decode.decodeValue frameInputDecoder framev of
+        Ok frame ->
+            Dict.update frame.id (Maybe.map (mergeGraphics frame.frame)) games
+
+        Err _ ->
+            games
 
 
 mergeGraphics : String -> Game -> Game
 mergeGraphics state_json game =
-    case Json.Decode.decodeString gameDecoder state_json of
+    case Decode.decodeString gameDecoder state_json of
         Ok frame ->
             mergeGame frame game
 
@@ -94,3 +123,20 @@ updateGame msSincePreviousFrame game_id game =
 
 cmdNone msg =
     ( msg, Cmd.none )
+
+
+frameInputDecoder : Decoder FrameInput
+frameInputDecoder =
+    Decode.map2
+        FrameInput
+        (Decode.field "id" Decode.int)
+        (Decode.field "frame" Decode.string)
+
+
+newGameInputDecoder : Decoder NewGameInput
+newGameInputDecoder =
+    Decode.map3
+        NewGameInput
+        (Decode.field "id" Decode.int)
+        (Decode.field "width" Decode.int)
+        (Decode.field "height" Decode.int)

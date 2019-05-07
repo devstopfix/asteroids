@@ -37,7 +37,7 @@ gameDimensions =
 newGame : Dimension -> Game
 newGame dims =
     let
-        ( canvas_x, canvas_y ) =
+        ( canvas_width, canvas_height ) =
             dims
 
         ( game_x, game_y ) =
@@ -51,12 +51,12 @@ newGame dims =
     , spaceColor = Color.black
     , transform =
         applyMatrix
-            { m11 = canvas_x / game_x
-            , m22 = -1 * (canvas_y / game_y)
+            { m11 = canvas_width / game_x
+            , m22 = -1 * (canvas_height / game_y)
             , m12 = 0
             , m21 = 0
             , dx = 0
-            , dy = canvas_y
+            , dy = canvas_height
             }
     }
 
@@ -153,7 +153,6 @@ mergeAsteroids graphics_asteroids game_asteroids =
         (\id a -> Dict.insert id (newAsteroid id a.location))
         (\id a b -> Dict.insert id { b | position = a.location })
         (\id _ -> identity)
-        -- Remove
         graphics_asteroids
         game_asteroids
         Dict.empty
@@ -166,8 +165,6 @@ updateBullets bullets game_bullets =
 toBulletMap : List BulletLocation -> Dict Id BulletLocation
 toBulletMap =
     Dict.fromList << List.map (\a -> ( a.id, a ))
-
-
 
 
 updateShips ships game_ships =
