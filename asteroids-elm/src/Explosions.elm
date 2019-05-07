@@ -66,9 +66,9 @@ pickColor n =
         0 ->
             Color.rgba 1.0 1.0 1.0 1.0
         1 ->
-            Color.hsla (31 / 360) 1.0 0.49 0.9
+            Color.hsla (31 / 360) 1.0 0.49 0.8feat:
         2 ->
-            Color.hsla (48 / 360) 0.89 0.8 0.9
+            Color.hsla (48 / 360) 0.90 0.5 0.9
         3 ->
             Color.hsla (204 / 360) 0.71 0.81 0.9
         _ ->

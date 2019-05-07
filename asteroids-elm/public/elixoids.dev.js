@@ -5333,9 +5333,9 @@ var author$project$Explosions$pickColor = function (n) {
 		case 0:
 			return A4(avh4$elm_color$Color$rgba, 1.0, 1.0, 1.0, 1.0);
 		case 1:
-			return A4(avh4$elm_color$Color$hsla, 31 / 360, 1.0, 0.49, 0.9);
+			return A4(avh4$elm_color$Color$hsla, 31 / 360, 1.0, 0.49, 0.8);
 		case 2:
-			return A4(avh4$elm_color$Color$hsla, 48 / 360, 0.89, 0.8, 0.9);
+			return A4(avh4$elm_color$Color$hsla, 48 / 360, 0.9, 0.5, 0.9);
 		case 3:
 			return A4(avh4$elm_color$Color$hsla, 204 / 360, 0.71, 0.81, 0.9);
 		default:
