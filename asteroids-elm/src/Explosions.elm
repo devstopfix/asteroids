@@ -76,10 +76,10 @@ pickColor n =
             Color.rgba 1 1 1 0.95
 
 
-{-| At 60 FPS explosion is shown for 6 frames. 1.123^6 == x2 growth
+{-| At 60 FPS explosion is shown for 6 frames. 1.07^6 == x1.5 growth
 -}
 explosionExpansion =
-    1.21
+    1.07
 
 
 explosionDurationMS =
