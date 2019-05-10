@@ -40,8 +40,8 @@ function graphicsURL(window_location_href) {
     }
 
     /* If in development, hardcode to game zero. TODO config? */
-    if (url.pathname.match(/\/\d+\/game$/)) {
-        url.pathname = url.pathname.replace(/game$/, 'graphics');
+    if (url.pathname.match(/\/\d+\/game\w*$/)) {
+        url.pathname = url.pathname.replace(/game\w*/, 'graphics');
     } else {
         url.pathname = "/0/graphics";
     }
