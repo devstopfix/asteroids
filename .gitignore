@@ -2,3 +2,7 @@ node_modules
 
 bin/
 package-lock.json
+
+elm-stuff/
+.psci_modules/
+bower_components/

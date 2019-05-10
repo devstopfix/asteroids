@@ -28,6 +28,8 @@ function scalePoint(p, s) {
 
 export const asteroid = (n, radius) => rocks[n % rocks.length].map(p => scalePoint(p, radius))
 
+const scale = (value, radius) => value / 10 * radius
+
 export const ship = (radius) => ([
     { x: scale(-5, radius), y: scale(4, radius) },
     { x: scale(0, radius), y: scale(-12, radius) },

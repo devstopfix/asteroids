@@ -3,12 +3,12 @@ import * as shapes from './shapes'
 import * as utils from './utils'
 
 export default class Ship {
-    constructor({id, x, y, r, colour}, canvas) {
+    constructor({id, x, y, r}, canvas) {
         this.ship = new fabric.Polygon(shapes.ship(r), {
             left: x,
             top: y,
             fill: 'transparent',
-            stroke: fabric.Color.fromHex(colour).toRgb(),
+            stroke: fabric.Color.fromHex('#FFFFFF').toRgb(),
             selectable: false,
             originX: 'center',
             originY: 'center'
@@ -19,7 +19,7 @@ export default class Ship {
             left: x,
             top: y + r,
             fontSize: 16,
-            fill: fabric.Color.fromHex(colour).toRgb(),
+            fill: fabric.Color.fromHex('#CCCCCC').toRgb(),
             originX: 'center',
             originY: 'top',
         })
