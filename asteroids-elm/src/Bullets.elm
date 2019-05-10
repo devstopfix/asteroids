@@ -46,8 +46,8 @@ renderWarhead tf bullet =
 
 renderTail : Transform -> Bullet -> Maybe Renderable
 renderTail tf bullet =
-    case bullet.tail of
-        Just tail ->
+    Maybe.map
+        (\tail ->
             let
                 ( ox, oy ) =
                     coordinates bullet.position
@@ -55,14 +55,11 @@ renderTail tf bullet =
                 ( x, y ) =
                     components tail
             in
-            Just
-                (shapes
-                    [ stroke tailColor, lineWidth 2.0, transform [ tf ] ]
-                    [ path ( ox, oy ) [ lineTo ( ox - x, oy - y ) ] ]
-                )
-
-        Nothing ->
-            Nothing
+            shapes
+                [ stroke tailColor, lineWidth 2.0, transform [ tf ] ]
+                [ path ( ox, oy ) [ lineTo ( ox - x, oy - y ) ] ]
+        )
+        bullet.tail
 
 
 mergeBullets graphics_bullets game_bullets =
@@ -89,6 +86,7 @@ bulletAndTail f b =
 
 tailColor =
     Color.hsl (199 / 360) 0.96 0.82
+
 
 warheadColor =
     Color.hsl (199 / 360) 0.96 0.9
