@@ -10,7 +10,9 @@ readPoints =
 
 
 
--- Convert from Geometry points to Canvas points
+{--Convert from Geometry points to Canvas points
+
+-}
 
 
 convertPoints : List Point2d -> List Point

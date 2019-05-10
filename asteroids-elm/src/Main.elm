@@ -20,10 +20,6 @@ port graphicsIn : (E.Value -> msg) -> Sub msg
 port addGame : (E.Value -> msg) -> Sub msg
 
 
-
--- JS Interface
-
-
 type alias FrameInput =
     { id : Int
     , frame : String

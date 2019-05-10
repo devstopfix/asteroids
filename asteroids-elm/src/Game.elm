@@ -142,10 +142,6 @@ updateAsteroids asteroids game_asteroids =
     mergeAsteroids (toAsteroidMap asteroids) game_asteroids
 
 
-toAsteroidMap : List AsteroidLocation -> Dict Id AsteroidLocation
-toAsteroidMap =
-    Dict.fromList << List.map (\a -> ( a.id, a ))
-
 
 mergeAsteroids : Dict Int AsteroidLocation -> Dict Int Asteroid -> Dict Int Asteroid
 mergeAsteroids graphics_asteroids game_asteroids =
@@ -162,18 +158,9 @@ updateBullets bullets game_bullets =
     mergeBullets (toBulletMap bullets) game_bullets
 
 
-toBulletMap : List BulletLocation -> Dict Id BulletLocation
-toBulletMap =
-    Dict.fromList << List.map (\a -> ( a.id, a ))
-
 
 updateShips ships game_ships =
     mergeShips (toShipMap ships) game_ships
-
-
-toShipMap : List ShipLocation -> Dict String ShipLocation
-toShipMap =
-    Dict.fromList << List.map (\a -> ( a.id, a ))
 
 
 mergeShips : Dict String ShipLocation -> Dict String Ship -> Dict String Ship
@@ -185,3 +172,20 @@ mergeShips graphics_ships game_ships =
         graphics_ships
         game_ships
         Dict.empty
+
+
+toAsteroidMap : List AsteroidLocation -> Dict Id AsteroidLocation
+toAsteroidMap =
+    Dict.fromList << List.map (\a -> ( a.id, a ))
+
+
+
+toBulletMap : List BulletLocation -> Dict Id BulletLocation
+toBulletMap =
+    Dict.fromList << List.map (\a -> ( a.id, a ))
+
+
+toShipMap : List ShipLocation -> Dict String ShipLocation
+toShipMap =
+    Dict.fromList << List.map (\a -> ( a.id, a ))
+

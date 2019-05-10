@@ -5333,13 +5333,13 @@ var author$project$Explosions$pickColor = function (n) {
 		case 0:
 			return A4(avh4$elm_color$Color$rgba, 1.0, 1.0, 1.0, 1.0);
 		case 1:
-			return A4(avh4$elm_color$Color$hsla, 31 / 360, 1.0, 0.49, 0.8);
+			return A4(avh4$elm_color$Color$hsla, 31 / 360, 1.0, 0.49, 0.95);
 		case 2:
-			return A4(avh4$elm_color$Color$hsla, 48 / 360, 0.9, 0.5, 0.9);
+			return A4(avh4$elm_color$Color$hsla, 48 / 360, 0.9, 0.5, 0.95);
 		case 3:
-			return A4(avh4$elm_color$Color$hsla, 204 / 360, 0.71, 0.81, 0.9);
+			return A4(avh4$elm_color$Color$hsla, 204 / 360, 0.71, 0.81, 0.95);
 		default:
-			return A4(avh4$elm_color$Color$rgba, 1, 1, 1, 0.9);
+			return A4(avh4$elm_color$Color$rgba, 1, 1, 1, 0.95);
 	}
 };
 var elm$core$Basics$truncate = _Basics_truncate;
@@ -5736,12 +5736,17 @@ var ianmackenzie$elm_geometry$Circle2d$radius = function (_n0) {
 };
 var author$project$Asteroids$newAsteroid = F2(
 	function (id, position) {
-		var theta0 = A2(elm$core$Basics$modBy, 628, id);
 		var shape = A2(
 			author$project$Asteroids$rockWithRadius,
 			author$project$Asteroids$chooseShape(id),
 			ianmackenzie$elm_geometry$Circle2d$radius(position));
-		return {color: author$project$Asteroids$granite, id: id, position: position, shape: shape, theta: theta0};
+		return {
+			color: author$project$Asteroids$granite,
+			id: id,
+			position: position,
+			shape: shape,
+			theta: A2(elm$core$Basics$modBy, 628, id)
+		};
 	});
 var elm$core$Dict$Black = {$: 'Black'};
 var elm$core$Dict$RBNode_elm_builtin = F5(
@@ -6904,7 +6909,7 @@ var author$project$Asteroids$rotateAsteroids = function (msSincePreviousFrame) {
 var author$project$Explosions$isActive = function (explosion) {
 	return explosion.ttl > 0;
 };
-var author$project$Explosions$explosionExpansion = 1.21;
+var author$project$Explosions$explosionExpansion = 1.07;
 var author$project$Explosions$updateExplosion = F2(
 	function (msSincePreviousFrame, explosion) {
 		return _Utils_update(
@@ -7305,17 +7310,16 @@ var avh4$elm_color$Color$hsl = F3(
 var author$project$Bullets$tailColor = A3(avh4$elm_color$Color$hsl, 199 / 360, 0.96, 0.82);
 var author$project$Bullets$renderTail = F2(
 	function (tf, bullet) {
-		var _n0 = bullet.tail;
-		if (_n0.$ === 'Just') {
-			var tail = _n0.a;
-			var _n1 = ianmackenzie$elm_geometry$Vector2d$components(tail);
-			var x = _n1.a;
-			var y = _n1.b;
-			var _n2 = ianmackenzie$elm_geometry$Point2d$coordinates(bullet.position);
-			var ox = _n2.a;
-			var oy = _n2.b;
-			return elm$core$Maybe$Just(
-				A2(
+		return A2(
+			elm$core$Maybe$map,
+			function (tail) {
+				var _n0 = ianmackenzie$elm_geometry$Vector2d$components(tail);
+				var x = _n0.a;
+				var y = _n0.b;
+				var _n1 = ianmackenzie$elm_geometry$Point2d$coordinates(bullet.position);
+				var ox = _n1.a;
+				var oy = _n1.b;
+				return A2(
 					joakin$elm_canvas$Canvas$shapes,
 					_List_fromArray(
 						[
@@ -7335,10 +7339,9 @@ var author$project$Bullets$renderTail = F2(
 									joakin$elm_canvas$Canvas$lineTo(
 									_Utils_Tuple2(ox - x, oy - y))
 								]))
-						])));
-		} else {
-			return elm$core$Maybe$Nothing;
-		}
+						]));
+			},
+			bullet.tail);
 	});
 var author$project$Bullets$warheadColor = A3(avh4$elm_color$Color$hsl, 199 / 360, 0.96, 0.9);
 var author$project$Bullets$renderWarhead = F2(
