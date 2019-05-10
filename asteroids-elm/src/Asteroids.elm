@@ -31,13 +31,10 @@ newAsteroid id position =
     let
         shape =
             rockWithRadius (chooseShape id) (radius position)
-
-        theta0 =
-            modBy 628 id |> toFloat
     in
     { id = id
     , position = position
-    , theta = theta0
+    , theta = modBy 628 id |> toFloat
     , shape = shape
     , color = granite
     }
@@ -96,15 +93,6 @@ cycle t =
             toFloat n / framesPerRevolution
     in
     f * 2 * pi
-
-
-thetaOffset : Int -> Theta
-thetaOffset n =
-    let
-        two_pi =
-            314
-    in
-    toFloat (modBy two_pi n) / two_pi
 
 
 renderAsteroid : Transform -> Asteroid -> Renderable
